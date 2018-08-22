@@ -22,7 +22,12 @@ module Alu #(
                   (i_ope_sel == 6'b100110)? i_dato_a ^ i_dato_b: /* XOR */
                   (i_ope_sel == 6'b100111)? ~(i_dato_a | i_dato_b): /* NOR */
                   (i_ope_sel == 6'b000010)? i_dato_a >> i_dato_b: /* SRL */
-                  (i_ope_sel == 6'b000011)? $signed(i_dato_a) >>> i_dato_b: /* SRA */
+                  (i_ope_sel == 6'b000011)? {{NB_BITS{i_dato_a[NB_BITS-1]}},
+                                             i_dato_a[NB_BITS-1:0]} >> i_dato_b: /* SRA */
                   8'h00; /* default */
-   
+   /*
+    reg [8:0] sra
+    always @(*) begin
+    sra = $signed(i_dato_a) >>> i_dato_b;
+   end */
 endmodule
