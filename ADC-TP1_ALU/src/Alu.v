@@ -8,10 +8,10 @@ module Alu #(
              parameter NB_BITS = `NB_BITS, /* asigancion de parametro local */
              parameter NB_OPE = `NB_OPE
              )(
-               output [NB_BITS:0]         o_led, /* N bits more carry */
-               input signed [NB_BITS-1:0] i_dato_a,
-               input signed [NB_BITS-1:0] i_dato_b,
-               input [NB_OPE-1:0]         i_ope_sel
+               output [NB_BITS:0]  o_led, /* N bits more carry */
+               input [NB_BITS-1:0] i_dato_a,
+               input [NB_BITS-1:0] i_dato_b,
+               input [NB_OPE-1:0]  i_ope_sel
                );
    
    /* asignacion de la salida sintax switch case = MUX */
