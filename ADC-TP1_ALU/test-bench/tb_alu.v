@@ -20,8 +20,8 @@ module tb_alu();
       i_data_b = 8'h01;
 
       #20 i_ope_sel = 6'b100010; // sub
-      i_data_a = 8'h07;
-      i_data_b = 8'h05;
+      i_data_a = 8'h05;
+      i_data_b = 8'h07;
       #20 i_ope_sel = 6'b100100; // and
       i_data_a = 8'hff;
       i_data_b = 8'h08;

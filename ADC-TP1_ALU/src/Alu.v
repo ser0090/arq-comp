@@ -14,24 +14,24 @@ module Alu #(
                input [NB_OPE-1:0]  i_ope_sel
                );
 
-   reg [8:0]                       sra;
+   reg [8:0]                       out_alu;
    
-   /* asignacion de la salida sintax switch case = MUX */
-   assign o_led = (i_ope_sel == 6'b100000)? i_dato_a + i_dato_b: /* ADD */
-                  (i_ope_sel == 6'b100010)? i_dato_a - i_dato_b: /* SUB */
-                  (i_ope_sel == 6'b100100)? i_dato_a & i_dato_b: /* AND */
-                  (i_ope_sel == 6'b100101)? i_dato_a | i_dato_b: /* OR */
-                  (i_ope_sel == 6'b100110)? i_dato_a ^ i_dato_b: /* XOR */
-                  (i_ope_sel == 6'b100111)? ~(i_dato_a | i_dato_b): /* NOR */
-                  (i_ope_sel == 6'b000010)? i_dato_a >> i_dato_b: /* SRL */
-                  (i_ope_sel == 6'b000011)? sra: /* SRA */
-                  8'h00; /* default */
-   
-   /* Alternativa dentro del assign 
+   assign o_led = out_alu;
+   /* Alternativa dentro del assign
     * {{NB_BITS{i_dato_a[NB_BITS-1]}},i_dato_a[NB_BITS-1:0]} >> i_dato_b */
-   
-   /* always (*) se interpreta como combinacional */
+   /* always (*) se interpreta como combinacional
+    * asignacion de la salida sintax switch case = MUX */
     always @(*) begin
-       sra = $signed(i_dato_a) >>> i_dato_b;
+       case (i_ope_sel)
+         6'b100000: out_alu = $signed(i_dato_a) + $signed(i_dato_b); /* ADD */
+         6'b100010: out_alu = $signed(i_dato_a) - $signed(i_dato_b); /* SUB */
+         6'b100100: out_alu = i_dato_a & i_dato_b; /* AND */
+         6'b100101: out_alu = i_dato_a | i_dato_b; /* OR */
+         6'b100110: out_alu = i_dato_a ^ i_dato_b; /* XOR */
+         6'b100111: out_alu = ~(i_dato_a | i_dato_b); /* NOR */
+         6'b000010: out_alu = i_dato_a >> i_dato_b; /* SRL */
+         6'b000011: out_alu = $signed(i_dato_a) >>> i_dato_b; /* SRA */
+         default: out_alu = 8'h00; /* default */
+       endcase // case (i_ope_sel)
     end
 endmodule
