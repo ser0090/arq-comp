@@ -1,12 +1,8 @@
 `timescale 1ns / 1ps
 
-/* definicion de parametros globales */
-`define NB_BITS 8
-`define NB_OPE 6
-
 module Alu #(
-             parameter NB_BITS = `NB_BITS, /* asigancion de parametro local */
-             parameter NB_OPE = `NB_OPE
+             parameter NB_BITS = 8, /* asigancion de parametro local */
+             parameter NB_OPE = 6
              )(
                output [NB_BITS:0]  o_led, /* N bits more carry */
                input [NB_BITS-1:0] i_dato_a,
