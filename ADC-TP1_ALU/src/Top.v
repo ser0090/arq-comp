@@ -8,8 +8,7 @@ module Top #(
    parameter NB_BITS = `NB_BITS,
    parameter NB_OPE = `NB_OPE
    )(
-     output [NB_BITS-1:0] o_led,
-     output               debug_led,
+     output [NB_BITS:0] o_led,
      input [NB_BITS-1:0]  i_sw,
 	 input                i_btnL,
      input                i_btnC,
@@ -61,7 +60,7 @@ module Top #(
 	end // always @ (posedge i_clk)
    
    Alu #(.NB_BITS(NB_BITS), .NB_OPE(NB_OPE)) /* asigancion de parametro a la instancia */
-      u_alu(.o_led({debug_led, o_led}),
+      u_alu(.o_led( o_led),
         	.i_dato_a(data_a),
             .i_dato_b(data_b),
            	.i_ope_sel(sel_op));
