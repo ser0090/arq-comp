@@ -11,7 +11,7 @@ module tb_alu();
    reg [NB_OPE-1:0]  i_ope_sel;
    reg               i_clk;
    
-   wire [NB_BITS:0]   o_led;
+   wire [NB_BITS-1:0]   o_led;
    
    initial begin
       i_clk = 1'b0;
