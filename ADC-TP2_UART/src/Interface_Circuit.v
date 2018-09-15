@@ -18,23 +18,23 @@ module Interface_Circuit #
    );
    
    reg [NB_BITS-1:0]     registers[LEN-1:0]; /* register file */
-   reg [NB_STATE-1:0]    state; /* estados de FSM */
-   reg [NB_BITS-1:0]     out_alu; /* reg latch out alu */
-   reg                   tx_start; /* salida aviso para el TX UART */
+   reg [NB_STATE-1:0]    state; 	/* estados de FSM */
+   reg [NB_BITS-1:0]     out_alu; 	/* reg latch out alu */
+   reg                   tx_start; 	/* salida aviso para el TX UART */
    
    reg                   rx_done_prev; /* reg para latch estado previo rx_done */
    reg                   tx_done_prev; /* reg para latch estado previo tx_done */
    
-   reg [NB_SEL-1:0]      operator; /* cable para salida de la tabla traduct */
+   reg [NB_SEL-1:0]      operator; 	/* cable para salida de la tabla traduct */
    
-   wire [NB_BITS-1:0]    from_alu; /* wire resultado desde ALU */
+   wire [NB_BITS-1:0]    from_alu; 	/* wire resultado desde ALU */
    
-   integer              ptr; /* index to "for" */
+   integer              ptr; 		/* index to "for" */
 
    assign o_data = out_alu;
    assign o_tx_start = tx_start;
    
-   always @(posedge i_clk or posedge i_rx_done) begin
+   always @(posedge i_clk) begin
       if(i_rst) begin
          /* reset valores del Register File */
          for(ptr = 0; ptr < LEN; ptr = ptr + 1)
@@ -44,23 +44,25 @@ module Interface_Circuit #
          out_alu <= {NB_BITS{1'b0}};
          rx_done_prev <= 1'b0;
          tx_done_prev <= 1'b0;
+         tx_start <= 1'b0;
       end
       else begin
          
          rx_done_prev <= i_rx_done; /* deteccion de flanco de rx_done */
          tx_done_prev <= i_tx_done; /* deteccion de flanco de tx_done */
+         out_alu <= from_alu;
          
          if(state >= 3'd0 && state < 3'd3) begin
-            if(i_rx_done && rx_done_prev == 1'b0) begin
+            if(i_rx_done && !rx_done_prev && !tx_start) begin
                /* desde el estado e0 - e3 se cargan datos
-                         [2]| data_a |
-                         [1]|operator|
+                             [2]| data_a |
+                             [1]|operator|
                 i_rx_data ==>[0]| data_b |
                 se cargan en el reg[0] y se deplazada a los demas
                 se agrupan los estados porque tiene el mismo comportameinto */
                registers[0] <= i_rx_data;
                for( ptr = 1; ptr < LEN; ptr = ptr +1)
-                 registers[ptr+1] <= registers[ptr];
+                 registers[ptr] <= registers[ptr-1];
               
                state <= state +1;
             end // if (i_rx_done && rx_done_prev == 1'b0)
@@ -72,7 +74,6 @@ module Interface_Circuit #
             end // else: !if(i_rx_done && rx_done_prev == 1'b0)
          end // if (state >= 3'd0 && state < 3'd3)
          else if (state == 3'd3) begin
-            out_alu <= from_alu;
             tx_start <= 1'b1;
             state = 3'd4;
          end
@@ -99,10 +100,10 @@ module Interface_Circuit #
 
    always @(*) begin
       case (registers[1])
-        8'd43: operator = 6'b100000;
-        8'd45: operator = 6'b100010;
-        8'd38: operator = 6'b100100;
-        8'd124: operator = 6'b100101;
+        8'd43: operator = 6'b100000; /* ADD */
+        8'd45: operator = 6'b100010; /* SUB */
+        8'd38: operator = 6'b100100; /* AND */
+        8'd124: operator = 6'b100101;/* OR  */
         default : operator = 6'd0;
       endcase // case (registers[1])
    end
@@ -114,4 +115,4 @@ module Interface_Circuit #
 			   .i_dato_b  ({4'h0,registers[2][3:0]}),
 			   .i_ope_sel (operator)
          );
-endmodule
+endmodule // Interface_Circuit
