@@ -1,16 +1,18 @@
 `timescale 1ns / 1ps
 
-module Alu #(
-             parameter NB_BITS = 8, /* asigancion de parametro local */
-             parameter NB_OPE = 6
-             )(
-               output [NB_BITS:0]  o_led, /* N bits more carry */
-               input [NB_BITS-1:0] i_dato_a,
-               input [NB_BITS-1:0] i_dato_b,
-               input [NB_OPE-1:0]  i_ope_sel
-               );
+module Alu #
+  (
+   parameter NB_BITS = 8, /* asigancion de parametro local */
+   parameter NB_OPE = 6
+   )
+   (
+    output [NB_BITS-1:0] o_led, /* N bits more carry */
+    input [NB_BITS-1:0]  i_dato_a,
+    input [NB_BITS-1:0]  i_dato_b,
+    input [NB_OPE-1:0]   i_ope_sel
+    );
 
-   reg [8:0]                       out_alu;
+   reg [NB_BITS-1:0]     out_alu;
    
    assign o_led = out_alu;
    /* Alternativa dentro del assign
