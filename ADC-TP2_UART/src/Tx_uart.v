@@ -38,6 +38,8 @@ always @(posedge i_clk or posedge i_rst) begin
 	else begin
       	state <= next_state;
       	time_count <= time_count + 1;
+      	tx_done <= 1'b0;
+
 	end
 end
 
@@ -54,12 +56,13 @@ always @(*) begin
             end
             else
             	next_state = next_state;
+            	
           end
 
     sending: begin
            	    if(data_count == NB_BITS + 2)begin
            	    	tx_done = 1'b1;
-           	    	next_state = sending;
+           	    	next_state = idle;
            	    end	
            	    else if(time_count[4] == 1'b1) begin
            	    	{shift_register,tx} = {shift_register,tx} >> 1;
