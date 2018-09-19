@@ -32,23 +32,18 @@ always @(posedge i_clk or posedge i_rst) begin
     time_count <= 5'h0;
     data_count <= 4'h0;
     shift_reg <= {NB_BITS{1'b0}};
+    rx_data <= {NB_BITS{1'b0}};
+    rx_done <= 1'b0;
   end
   else begin
       state <= next_state;
       time_count <= time_count + 1;
+      
   end
 end
 
 
 always @(*) begin
-  if (i_rst) begin
-    
-    shift_reg = {NB_BITS{1'b0}}; // inicializa el registro en 0x00
-    data_count = 4'h0;
-    rx_data = {NB_BITS{1'b0}};
-    rx_done = 1'b0;
-  end
-  else begin
   case (state)
     idle: begin
             if(i_rx == 1'b0) begin
@@ -105,7 +100,6 @@ always @(*) begin
                 end    
           end
   endcase
-  end
 end
 
 endmodule
