@@ -3,13 +3,14 @@
 
 module tb_Tx_uart (); /* this is automatically generated */
 parameter NB_BITS = 8;
-		
+
 	reg clk;
 	reg res;
 	reg [NB_BITS-1:0] data;
 	reg data_ready;
 	wire done;
 	wire tx;
+	wire rate;
 	// clock
 	initial begin
 		clk = 0;
@@ -21,7 +22,7 @@ parameter NB_BITS = 8;
 		#10 data = 8'b01010011; //start
 			data_ready = 1'b1;
 		#20 data_ready = 1'b0; 
-		#200 $finish;
+		#500000 $finish;
 	end
 
 	always #0.5 clk = ~clk;
@@ -33,9 +34,17 @@ parameter NB_BITS = 8;
 			.o_tx_done    (done),
 			.i_data_ready (data_ready),
 			.i_clk        (clk),
-			.i_rate		  (clk),
+			.i_rate		  (rate),
 			.i_rst        (res),
 			.i_data       (data)
+		);
+
+	Baud_rate_gen 
+		inst_Baud_rate_gen 
+		(
+			.o_rate (rate),
+			.i_clk  (clk),
+			.i_rst  (res)
 		);
 
 	

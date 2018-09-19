@@ -10,6 +10,7 @@ module tb_Rx_uart (); /* this is automatically generated */
 	reg res;
 	wire[NB_BITS-1:0] data;
 	wire done;
+	wire rate;
 	// clock
 	initial begin
 		clk = 0;
@@ -19,18 +20,18 @@ module tb_Rx_uart (); /* this is automatically generated */
 
 		#10 rx = 1'b0; //start
 
-		#16 rx = 1'b1; // data
-		#16 rx = 1'b0;
-		#16 rx = 1'b0;
-		#16 rx = 1'b0;
-		#16 rx = 1'b1;
-		#16 rx = 1'b0;
-		#16 rx = 1'b1;
-		#16 rx = 1'b0;
+		#5200 rx = 1'b1; // data
+		#5200 rx = 1'b0;
+		#5200 rx = 1'b0;
+		#5200 rx = 1'b0;
+		#5200 rx = 1'b1;
+		#5200 rx = 1'b0;
+		#5200 rx = 1'b1;
+		#5200 rx = 1'b0;
 
-		#16 rx = 1'b1; // stop
+		#5200 rx = 1'b1; // stop
 
-		#50 $finish;
+		#10000 $finish;
 
 	end
 
@@ -44,9 +45,16 @@ module tb_Rx_uart (); /* this is automatically generated */
 			.o_data    (data),
 			.o_rx_done (done),
 			.i_clk     (clk),
-			.i_rate    (clk),
+			.i_rate    (rate),
 			.i_rx      (rx),
 			.i_rst     (res)
+		);
+	Baud_rate_gen 
+		inst_Baud_rate_gen 
+		(
+			.o_rate (rate),
+			.i_clk  (clk),
+			.i_rst  (res)
 		);
 
 	
