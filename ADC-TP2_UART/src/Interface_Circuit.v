@@ -75,15 +75,15 @@ module Interface_Circuit #
          end // if (state >= 3'd0 && state < 3'd3)
          else if (state == 3'd3) begin
             tx_start <= 1'b1;
-            state = 3'd4;
+            state <= 3'd4;
          end
          else if(state == 3'd4) begin
             if(i_tx_done && tx_done_prev == 1'b0) begin
-               tx_start = 1'b0;
+               tx_start <= 1'b0;
                state <= 3'd0;
             end
             else begin
-               tx_start = tx_start;
+               tx_start <= tx_start;
                state <= state;
             end
          end
