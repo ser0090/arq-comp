@@ -38,7 +38,7 @@ always @(posedge i_clk or posedge i_rst) begin
   else begin
       state <= next_state;
       time_count <= time_count + 1;
-      
+      rx_done <= 1'b0;
   end
 end
 
