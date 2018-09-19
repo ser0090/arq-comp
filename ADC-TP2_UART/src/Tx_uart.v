@@ -7,6 +7,7 @@ module Tx_uart #(
                output o_tx_done,
                input i_data_ready,
                input i_clk,
+               input i_rate,
                input i_rst,
                [NB_BITS:0]  i_data /* N bits more carry */
                );
@@ -26,6 +27,7 @@ assign o_tx = tx;
 assign o_tx_done = tx_done;
 
 always @(posedge i_clk or posedge i_rst) begin
+
 	if (i_rst) begin
 		state <= idle;
 		next_state <= idle;
@@ -35,12 +37,11 @@ always @(posedge i_clk or posedge i_rst) begin
 		tx <= 1'b1;
 		time_count <= 5'h0;
 	end
-	else begin
-      	state <= next_state;
+	else if(i_rate == 1'b1) begin 	
       	time_count <= time_count + 1;
-      	tx_done <= 1'b0;
-
 	end
+	state <= next_state;
+	tx_done <= 1'b0;
 end
 
 

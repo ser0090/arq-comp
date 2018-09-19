@@ -33,6 +33,7 @@ parameter NB_BITS = 8;
 			.o_tx_done    (done),
 			.i_data_ready (data_ready),
 			.i_clk        (clk),
+			.i_rate		  (clk),
 			.i_rst        (res),
 			.i_data       (data)
 		);

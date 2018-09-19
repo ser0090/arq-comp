@@ -6,6 +6,7 @@ module Rx_uart #(
                output [NB_BITS:0]  o_data, /* N bits more carry */
                output o_rx_done,
                input i_clk,
+               input i_rate,
                input i_rx,
                input i_rst
                );
@@ -35,11 +36,11 @@ always @(posedge i_clk or posedge i_rst) begin
     rx_data <= {NB_BITS{1'b0}};
     rx_done <= 1'b0;
   end
-  else begin
-      state <= next_state;
+  else if(i_rate == 1'b1) begin
       time_count <= time_count + 1;
-      rx_done <= 1'b0;
   end
+  state <= next_state;
+  rx_done <= 1'b0;
 end
 
 

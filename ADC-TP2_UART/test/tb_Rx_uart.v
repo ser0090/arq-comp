@@ -44,6 +44,7 @@ module tb_Rx_uart (); /* this is automatically generated */
 			.o_data    (data),
 			.o_rx_done (done),
 			.i_clk     (clk),
+			.i_rate    (clk),
 			.i_rx      (rx),
 			.i_rst     (res)
 		);
