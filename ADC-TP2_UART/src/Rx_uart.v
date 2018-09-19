@@ -3,7 +3,7 @@
 module Rx_uart #(
              parameter NB_BITS = 8 /* asigancion de parametro local */
              )(
-               output [NB_BITS:0]  o_data, /* N bits more carry */
+               output [NB_BITS-1:0]  o_data, /* N bits more carry */
                output o_rx_done,
                input i_clk,
                input i_rate,
