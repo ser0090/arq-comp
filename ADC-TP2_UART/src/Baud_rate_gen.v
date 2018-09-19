@@ -25,11 +25,11 @@ module Baud_rate_gen #
       else begin
          if(counter >= CYCLES) begin
             counter <= 0;
-            rate <= ~rate;
+            rate <= 1'b1;
          end
          else begin
             counter <= counter + 1;
-            rate <= rate;
+            rate <= 1'b0;
          end
       end // else: !if(i_rst)
    end // always @ (posedge i_clk or posedge i_rst)

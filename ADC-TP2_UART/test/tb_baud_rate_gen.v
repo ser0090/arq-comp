@@ -2,7 +2,7 @@
 `timescale 1ns/1ps
 
 
-module tb_baud_rate_get(); /* this is automatically generated */
+module tb_baud_rate_gen(); /* this is automatically generated */
 	 reg i_clk;
 	 reg i_rst;
    
