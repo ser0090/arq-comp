@@ -22,7 +22,7 @@ parameter NB_BITS = 8;
 		#10 data = 8'b01010011; //start
 			data_ready = 1'b1;
 		#20 data_ready = 1'b0; 
-		#500000 $finish;
+		#60000 $finish;
 	end
 
 	always #0.5 clk = ~clk;

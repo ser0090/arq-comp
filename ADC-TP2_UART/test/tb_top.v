@@ -8,11 +8,11 @@ module tb_top(); /* this is automatically generated */
 	 reg i_rst;
    
    reg i_rx;
-   wire tx;
+   wire o_tx;
   
 	 // clock
 	 initial begin
-		  i_clk = 0;
+		  i_clk = 1'b0;
 		  i_rst = 1'b1;
       i_rx = 1'b0;
 
@@ -64,13 +64,13 @@ module tb_top(); /* this is automatically generated */
 
 	 always #0.5 i_clk = ~i_clk;
 
-   Top
+   Top 
      u_top 
        (
-			  .o_tx_uart (tx),
-			  .i_rx_uart (i_rx),
-			  .i_clk     (i_clk),
-			  .i_rst     (i_rst)
+			  .UART_RXD_OUT (o_tx),
+			  .UART_TXD_IN  (i_rx),
+			  .i_clk        (i_clk),
+			  .BTNC         (i_rst)
 		    );
-
+   
 endmodule // tb_baud_rate_get

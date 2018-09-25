@@ -31,7 +31,7 @@ module Interface_Circuit #
    
    integer              ptr; 		/* index to "for" */
 
-   assign o_data = out_alu;
+   assign o_data = {4'h03, out_alu[3:0]};
    assign o_tx_start = tx_start;
    
    always @(posedge i_clk) begin

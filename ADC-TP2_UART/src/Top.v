@@ -8,10 +8,10 @@ module Top #
    parameter NB_BITS =`NB_BITS
    )
   (
-   output o_tx_uart,
-   input  i_rx_uart,
+   output UART_RXD_OUT,
+   input  UART_TXD_IN,
    input  i_clk,
-   input  i_rst
+   input  BTNC
    );
 
    wire   rate;
@@ -20,6 +20,12 @@ module Top #
    wire               rx_done;
    wire               tx_start;
    wire               tx_done;
+   
+   wire i_rst;
+   wire i_rx_uart;
+   wire o_tx_uart;
+   
+   assign i_rst = BTNC;
    
    Baud_rate_gen
      u_baud_rate_gen 
@@ -36,7 +42,7 @@ module Top #
 			  .o_rx_done (rx_done),
 			  .i_clk     (i_clk),
 			  .i_rate    (rate),
-			  .i_rx      (i_rx_uart),
+			  .i_rx      (UART_TXD_IN),
 			  .i_rst     (i_rst)
 		    );
 
@@ -53,9 +59,9 @@ module Top #
 		    );
 
    Tx_uart  
-     inst_Tx_uart 
+     u_Tx_uart 
        (
-			  .o_tx         (o_tx_uart),
+			  .o_tx         (UART_RXD_OUT),
 			  .o_tx_done    (tx_done),
 			  .i_data_ready (tx_start),
 			  .i_clk        (i_clk),
