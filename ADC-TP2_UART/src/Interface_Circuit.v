@@ -111,8 +111,8 @@ module Interface_Circuit #
    Alu #(.NB_BITS(NB_BITS), .NB_OPE(NB_SEL))
    u_alu(
          .o_led(from_alu),
-			   .i_dato_a  ({4'h0,registers[0][3:0]}),
-			   .i_dato_b  ({4'h0,registers[2][3:0]}),
+			   .i_dato_a  ({4'h0,registers[2][3:0]}),
+			   .i_dato_b  ({4'h0,registers[0][3:0]}),
 			   .i_ope_sel (operator)
          );
 endmodule // Interface_Circuit
