@@ -1,0 +1,1 @@
+KERNEL=="ttyACM*", SYMLINK+="ttyUSB%n" , MODE="0666"

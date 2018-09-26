@@ -1,0 +1,2 @@
+# Altera USB-Blaster rule to set mode to 666.
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="09fb", ATTRS{idProduct}=="6001", MODE="0666"
