@@ -14,13 +14,14 @@ module Tx_uart #
     input [NB_BITS-1:0] i_data /* N bits more carry */
     );
 
-   localparam idle = 1'b0;
-   localparam sending = 1'b1;
+   localparam idle = 2'b00;
+   localparam sending = 2'b01;
+   localparam stop = 2'b10;
    
    reg                tx_done;
    reg                tx;
-   reg                state;
-   reg                next_state;
+   reg [1:0]          state;
+   reg [1:0]          next_state;
    reg [3:0]          data_count;
    reg [4:0]          time_count;
    reg [NB_BITS+1:0]  shift_register; // tamaño NB_BITs + bit start + bit stop
@@ -47,7 +48,6 @@ module Tx_uart #
          
          case (state)
            idle: begin
-	            tx_done <= 1'b0;
               if(i_data_ready == 1'b1)begin
                  shift_register[NB_BITS:0] <= {i_data,1'b0}; //StopBit + data + StartBit
                  shift_register[NB_BITS+1] <= 1'b1;
@@ -67,7 +67,8 @@ module Tx_uart #
            sending: begin
            	  if(data_count == NB_BITS + 2)begin
            	     tx_done <= 1'b1;
-           	     state <= idle;
+                 time_count <= 5'h0;
+           	     state <= stop;
            	  end
            	  else if(time_count[4] == 1'b1) begin
            	     {shift_register,tx} <= {shift_register,tx} >> 1;
@@ -83,6 +84,16 @@ module Tx_uart #
            	     tx <= tx;
            	  end // else: !if(time_count[4] == 1'b1)
            end // case: sending
+           default: begin
+              tx_done <= 1'b0;
+              if(time_count[4] == 1'b1)begin
+                 state <= idle;
+              end
+              else begin
+                 state <= state;
+              end
+           end
+           
          endcase // case (state)
       end // else: !if(i_rst)
    end // always @ (posedge i_clk)

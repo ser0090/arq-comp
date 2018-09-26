@@ -58,7 +58,7 @@ module tb_top(); /* this is automatically generated */
 		  #5200 i_rx = 1'b1; // stop
  
       
-		  #200000 $finish;
+		  #900000 $finish;
 
 	 end
 
