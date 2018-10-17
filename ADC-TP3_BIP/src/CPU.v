@@ -38,8 +38,7 @@ module CPU #
 
     Datapath #(
       .NB_BITS(NB_BITS),
-      .NB_SIGX(NB_SIGX),
-      .NB_SELA(NB_SELA)
+      .NB_SIGX(NB_SIGX)
     ) inst_Datapath (
       .o_data     (data),
       .i_data_mem (i_data_mem),
@@ -54,8 +53,7 @@ module CPU #
   Control #(
       .NB_BITS(NB_BITS),
       .INS_MEM_DEPTH(INS_MEM_DEPTH),
-      .NB_SIGX(NB_SIGX),
-      .NB_SELA(NB_SELA)
+      .NB_SIGX(NB_SIGX)
     ) inst_Control (
       .o_addr_ins    (addr_ins),
       .o_data_ins    (data_ins),

@@ -3,26 +3,22 @@
 
 module tb_BIP (); /* this is automatically generated */
 
-	logic rstb;
-	logic srst;
-	logic clk;
+	reg  i_clk;
+	reg  i_rst;
 
 	// clock
 	initial begin
-		clk = 0;
-		forever #5 clk = ~clk;
+		i_clk = 0;
+		forever #0.5 i_clk = ~i_clk;
 	end
 
 	// reset
 	initial begin
-		rstb = 0;
-		srst = 0;
+		i_rst = 1;
 		#20
-		rstb = 1;
-		repeat (5) @(posedge clk);
-		srst = 1;
-		repeat (1) @(posedge clk);
-		srst = 0;
+		i_rst = 0;
+		#200
+		$finish;
 	end
 
 	// (*NOTE*) replace reset, clock, others
@@ -31,37 +27,20 @@ module tb_BIP (); /* this is automatically generated */
 	parameter INS_MEM_DEPTH  = 2048;
 	parameter DATA_MEM_DEPTH = 1024;
 	parameter NB_SIGX        = 11;
-	parameter PROGRAM_FILE   = "";
-	parameter NB_SELA        = 2;
+	parameter PROGRAM_FILE   = "/home/martin/Documentos/arq-comp/ADC-TP3_BIP/program_memory.txt";
 
-	logic  i_clk;
-	logic  i_rst;
+
 
 	BIP #(
 			.NB_BITS(NB_BITS),
 			.INS_MEM_DEPTH(INS_MEM_DEPTH),
 			.DATA_MEM_DEPTH(DATA_MEM_DEPTH),
 			.NB_SIGX(NB_SIGX),
-			.PROGRAM_FILE(PROGRAM_FILE),
-			.NB_SELA(NB_SELA)
+			.PROGRAM_FILE(PROGRAM_FILE)
 		) inst_BIP (
 			.i_clk (i_clk),
 			.i_rst (i_rst)
 		);
 
-	initial begin
-		// do something
-
-		repeat(10)@(posedge clk);
-		$finish;
-	end
-
-	// dump wave
-	initial begin
-		if ( $test$plusargs("fsdb") ) begin
-			$fsdbDumpfile("tb_BIP.fsdb");
-			$fsdbDumpvars(0, "tb_BIP", "+mda", "+functions");
-		end
-	end
 
 endmodule

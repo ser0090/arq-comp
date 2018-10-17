@@ -2,7 +2,7 @@ module BIP #
   (
    parameter NB_BITS = 16,
    parameter INS_MEM_DEPTH = 2048,
-   parameter DATA_MEM_DEPTH = 1024,
+   parameter DATA_MEM_DEPTH = 2048,
    parameter NB_SIGX = 11, //catidad de bits sin la extension
    parameter PROGRAM_FILE = "",
    localparam NB_SELA = 2
@@ -25,8 +25,7 @@ module BIP #
     CPU #(
       .NB_BITS(NB_BITS),
       .INS_MEM_DEPTH(INS_MEM_DEPTH),
-      .NB_SIGX(NB_SIGX),
-      .NB_SELA(NB_SELA)
+      .NB_SIGX(NB_SIGX)
     ) inst_CPU (
       .o_addr_ins    (addr_ins),
       .o_addr_data   (addr_data),
@@ -57,8 +56,8 @@ module BIP #
 
       Program_Memory #(
       .RAM_WIDTH(NB_BITS),
-      .RAM_DEPTH(INS_MEM_DEPTH),
-      .INIT_FILE(PROGRAM_FILE)
+      .RAM_DEPTH(INS_MEM_DEPTH)
+//      .INIT_FILE(PROGRAM_FILE)
     ) inst_Program_Memory (
       .o_data (instruction),
       .i_addr (addr_ins),

@@ -18,14 +18,17 @@ module Program_Memory #
 
 
    assign o_data = ram_data;
-   
+   integer ram_index;
    generate
       if (INIT_FILE != "") begin: use_init_file
-         initial
-           $readmemh(INIT_FILE, BRAM, 0, RAM_DEPTH-1);
+         initial begin
+           $readmemh(INIT_FILE, BRAM, 0, 19);//RAM_DEPTH-1);
+           for (ram_index = 20; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
+             BRAM[ram_index] = {RAM_WIDTH{1'b0}};
+            end
       end 
       else begin: init_bram_to_zero
-         integer ram_index;
+         
          initial
            for (ram_index = 0; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
              BRAM[ram_index] = {RAM_WIDTH{1'b0}};
