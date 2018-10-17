@@ -8,6 +8,7 @@ module Control #
    localparam NB_SELA = 2
    )
    (
+    output [clogb2(INS_MEM_DEPTH-1)-1:0]  o_addr_ins,
     output [NB_SIGX-1:0]  o_data_ins,
     output [NB_SELA-1:0]  o_sel_a,
     output                o_sel_b,
@@ -28,6 +29,7 @@ module Control #
     reg                op_code;
     reg                wr;
     reg                rd;
+
     assign o_sel_a = sel_a;
     assign o_sel_b = sel_b;
     assign o_wr_acc = wr_acc;
@@ -35,6 +37,7 @@ module Control #
     assign o_wr = wr;
     assign o_rd = rd;
 
+    assign o_addr_ins = PC;
 
    /* ACTUALIZACION DEL PC */
    always @(posedge i_clk) begin
