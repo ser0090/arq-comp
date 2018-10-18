@@ -56,8 +56,8 @@ module BIP #
 
       Program_Memory #(
       .RAM_WIDTH(NB_BITS),
-      .RAM_DEPTH(INS_MEM_DEPTH)
-//      .INIT_FILE(PROGRAM_FILE)
+      .RAM_DEPTH(INS_MEM_DEPTH),
+      .INIT_FILE(PROGRAM_FILE)
     ) inst_Program_Memory (
       .o_data (instruction),
       .i_addr (addr_ins),

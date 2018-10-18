@@ -27,7 +27,7 @@ module tb_BIP (); /* this is automatically generated */
 	parameter INS_MEM_DEPTH  = 2048;
 	parameter DATA_MEM_DEPTH = 1024;
 	parameter NB_SIGX        = 11;
-	parameter PROGRAM_FILE   = "/home/martin/Documentos/arq-comp/ADC-TP3_BIP/program_memory.txt";
+	parameter PROGRAM_FILE   = "/home/sergio/Documentos/ADC/arq-comp/ADC-TP3_BIP/src/program_memory.txt";
 
 
 

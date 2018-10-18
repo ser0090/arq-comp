@@ -31,7 +31,7 @@ module CPU #
    wire [NB_SIGX-1:0]  data_ins;
 
    assign o_addr_ins = addr_ins;
-   assign o_addr_data = addr_data;
+   assign o_addr_data = data_ins; //addr_data;
    assign o_data = data;
    assign o_rd = rd;
    assign o_wr = wr;
