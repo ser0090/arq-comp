@@ -28,6 +28,7 @@ module Data_Memory #
 
    reg [RAM_WIDTH-1:0]              BRAM [RAM_DEPTH-1:0];
    reg [RAM_WIDTH-1:0]              ram_data = {RAM_WIDTH{1'b0}};
+   assign o_data = ram_data;
 
   // The following code either initializes the memory values to a specified file or to all zeros to match hardware
   generate
