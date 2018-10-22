@@ -8,6 +8,7 @@ module Datapath #
    localparam NB_SELA = 2
    )
    (
+    output [NB_BITS-1:0] o_acc, //add syntesis
     output [NB_BITS-1:0] o_data,
     input [NB_BITS-1:0]  i_data_mem,
     input [NB_SIGX-1:0]  i_data_ins,
@@ -20,7 +21,7 @@ module Datapath #
     );
    
    reg [NB_BITS-1:0]     acc;
-
+   
    wire [NB_BITS-1:0]    mux_2;
    wire [NB_BITS-1:0]    result;
    wire [NB_BITS-1:0]    sig_extension;
@@ -28,14 +29,15 @@ module Datapath #
    /*definicion del comportamiento de  mux 2*/
    assign mux_2 = (i_sel_b)? sig_extension :
                   i_data_mem;
-
-  /*definicion del comportamiento de la ALU simple*/
+   
+   /*definicion del comportamiento de la ALU simple*/
    assign result = (i_op_code)? acc + mux_2:
                    acc - mux_2;
   
    /* Signal Extension */
    assign sig_extension = {{NB_BITS-NB_SIGX{i_data_ins[NB_SIGX-1]}}, i_data_ins};
    assign o_data = acc;
+   assign o_acc = acc;
    
    always @ (posedge i_clk) begin
       if (i_rst) begin
