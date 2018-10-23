@@ -2,33 +2,30 @@
 
 module Data_Memory #
   (
-   parameter RAM_WIDTH = 16,                       // Specify RAM data width
-   parameter RAM_DEPTH = 1024,                     // Specify RAM depth (number of entries)
-   parameter INIT_FILE = ""                        // Specify name/location of RAM initialization file if using one (leave blank if not)
+   parameter RAM_WIDTH = 16,                // Specify RAM data width
+   parameter RAM_DEPTH = 1024,              // Specify RAM depth (number of entries)
+   parameter INIT_FILE = ""                 // Specify name/location of RAM initialization file if using one (leave blank if not)
    )
    (
     output [RAM_WIDTH-1:0]          o_data, // RAM output dat
     input [clogb2(RAM_DEPTH-1)-1:0] i_addr, // Address bus, width determined from RAM_DEPTH
     input [RAM_WIDTH-1:0]           i_data, // RAM input data
-    input                           i_clk, // Clock
+    input                           i_clk,  // Clock
     input                           i_wr,
-    input                           i_rd, // Write/Read enable
-    //    input                           i_enb, // RAM Enable, for additional power savings, disable port when not in use
-    input                           i_rst // Output reset (does not affect memory contents)
-    //input                           regcea, // Output register enable
+    input                           i_rd,   // Write/Read enable
+    input                           i_rst   // Output reset (does not affect memory contents)
     );
    
    reg [RAM_WIDTH-1:0]              BRAM [RAM_DEPTH-1:0];
    reg [RAM_WIDTH-1:0]              ram_data;
-   /*correccoines para ajusta al diagrama del paper*/
-   wire                             i_w_r;
+   /* correccoines para ajusta al diagrama del paper */
    wire                             i_enb;
 
    assign o_data = ram_data;
-   assign i_w_r = i_wr;
    assign i_enb = i_rd ^ i_wr;
    
-  // The following code either initializes the memory values to a specified file or to all zeros to match hardware
+  /* The following code either initializes the memory values to a 
+     specified file or to all zeros to match hardware */
   generate
     if (INIT_FILE != "") begin: use_init_file
       initial
@@ -46,7 +43,7 @@ module Data_Memory #
          ram_data <= {RAM_WIDTH{1'b0}};
       end
       else if (i_enb) begin
-         if (i_w_r) begin /* write */
+         if (i_wr) begin /* write */
             BRAM[i_addr] <= i_data;
          end
          else begin /* read */
