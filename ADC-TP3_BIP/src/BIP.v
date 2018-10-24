@@ -22,7 +22,7 @@ module BIP #
    localparam NB_SELA = 2
    )
    (
-    output [DATA_WIDTH-1:0]                  o_acc,
+    output [DATA_WIDTH-1:0]               o_acc,
     output [clogb2(INS_MEM_DEPTH-1)-2:0]  o_addr_bus_per,
     output                                o_cs_perif,
     output                                o_w_r_per,
