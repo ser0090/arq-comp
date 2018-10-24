@@ -12,7 +12,7 @@ module Mem_IO #
     output [RAM_WIDTH-1:0]                            o_data, // RAM output data to CPU.
     output                                            o_r_w,   // select w/r operation.
     output                                            o_cs_perif,
-    output                                            o_addr_bus,
+    output[clogb2(RAM_DEPTH+PERIPHERALS_SPACE-1)-2:0] o_addr_bus,
     input [clogb2(RAM_DEPTH+PERIPHERALS_SPACE-1)-1:0] i_addr, // Address bus, width determined from RAM_DEPTH
     input [RAM_WIDTH-1:0]                             i_data, // RAM input data
     input                                             i_clk, // Clock

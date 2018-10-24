@@ -25,6 +25,7 @@ module BIP #
     output [DATA_WIDTH-1:0]                  o_acc,
     output [clogb2(INS_MEM_DEPTH-1)-2:0]  o_addr_bus_per,
     output                                o_cs_perif,
+    output                                o_w_r_per,
     input                                 i_clk,
     input                                 i_rst,
     inout [DATA_WIDTH-1:0]                   io_per_data_bus // data bus to peripherals
@@ -59,11 +60,15 @@ module BIP #
       );
    
 
-     wire addr_bus;
-     wire r_w;
-     wire data_bus;
-     wire cs_perif;
+     wire [clogb2(INS_MEM_DEPTH-1)-2:0] addr_bus_per;
+     wire [DATA_WIDTH-1:0]              data_bus_per;
+     wire                               r_w;
+     wire                               cs_perif;
      assign o_cs_perif = cs_perif;
+     assign o_addr_bus_per = addr_bus_per;
+     assign io_per_data_bus = data_bus_per;
+     assign o_cs_perif = cs_perif;
+     assign o_w_r_per = r_w;
 
     Mem_IO #(
       .RAM_WIDTH(DATA_WIDTH),
@@ -72,7 +77,7 @@ module BIP #
       .INIT_FILE("")
     ) inst_Mem_IO (
       .o_data      (data_memory_to_cpu),
-      .o_addr_bus  (addr_bus),
+      .o_addr_bus  (addr_bus_per),
       .o_r_w       (r_w),
       .o_cs_perif  (cs_perif),
       .i_addr      (addr_data),
@@ -81,7 +86,7 @@ module BIP #
       .i_wr        (wr),
       .i_rd        (rd),
       .i_rst       (i_rst),
-      .io_data_bus (data_bus)
+      .io_data_bus (data_bus_per)
     );
 
    Program_Memory #
