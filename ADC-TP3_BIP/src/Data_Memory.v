@@ -11,9 +11,10 @@ module Data_Memory #
     input [clogb2(RAM_DEPTH-1)-1:0] i_addr, // Address bus, width determined from RAM_DEPTH
     input [RAM_WIDTH-1:0]           i_data, // RAM input data
     input                           i_clk, // Clock
-    input                           i_wr,
-    input                           i_rd, // Write/Read enable
-    //    input                           i_enb, // RAM Enable, for additional power savings, disable port when not in use
+//    input                           i_wr,
+//    input                           i_rd, // Write/Read enable
+    input                           i_w_r,  // 0 = Read , 1 = Write
+    input                           i_enb, // RAM Enable, for additional power savings, disable port when not in use
     input                           i_rst // Output reset (does not affect memory contents)
     //input                           regcea, // Output register enable
     );
@@ -21,12 +22,12 @@ module Data_Memory #
    reg [RAM_WIDTH-1:0]              BRAM [RAM_DEPTH-1:0];
    reg [RAM_WIDTH-1:0]              ram_data;
    /*correccoines para ajusta al diagrama del paper*/
-   wire                             i_w_r;
-   wire                             i_enb;
-
-   assign o_data = ram_data;
-   assign i_w_r = i_wr;
-   assign i_enb = i_rd ^ i_wr;
+//  wire                             i_w_r;
+//  wire                             i_enb;
+//
+  assign o_data = ram_data;
+//   assign i_w_r = i_wr;
+//   assign i_enb = i_rd ^ i_wr;
    
   // The following code either initializes the memory values to a specified file or to all zeros to match hardware
   generate
