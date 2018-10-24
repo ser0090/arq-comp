@@ -29,15 +29,11 @@ module Mem_IO #
    assign o_cs_perif = ~en_mem; // saca un cs para decir a los periferico que es para ellos.
 
    wire [RAM_WIDTH-1:0] data_bus;
-   assign io_data_bus = data_bus;
+   assign io_data_bus = ((i_rd ^ i_wr))? i_data : 'bz;;
 
    wire [RAM_WIDTH-1:0] mem_out; // bus de datos de la memoria, salida
-   wire [RAM_WIDTH-1:0] per_out;  // bus de datos de salida de los perifericos
-   assign o_data = (en_mem)? mem_out : per_out;
-   assign data_bus = ((i_rd ^ i_wr))? i_data : {RAM_WIDTH{1'bz}}; // cuando tenga que escribir, monto el valor del dato en el bus. sino, alta impedancia
+   assign o_data = (en_mem)? mem_out : io_data_bus;
  
-
-  //assign per_out = (!(i_rd ^ i_wr))? data_bus : {RAM_WIDTH{1'bz}}; //cuando tiene que leer asigna al valor del bus.
    
    wire [clogb2(RAM_DEPTH+PERIPHERALS_SPACE-1)-2:0] addr;
    assign addr = i_addr[clogb2(RAM_DEPTH+PERIPHERALS_SPACE-1)-2:0];
