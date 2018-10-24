@@ -29,7 +29,9 @@ module Mem_IO #
    assign o_cs_perif = ~en_mem; // saca un cs para decir a los periferico que es para ellos.
 
    wire [RAM_WIDTH-1:0] data_bus;
-   assign io_data_bus = ((i_rd ^ i_wr))? i_data : 'bz;;
+   assign io_data_bus = (i_wr && !en_mem )? i_data : 'bz;
+
+   assign o_r_w = i_wr;
 
    wire [RAM_WIDTH-1:0] mem_out; // bus de datos de la memoria, salida
    assign o_data = (en_mem)? mem_out : io_data_bus;

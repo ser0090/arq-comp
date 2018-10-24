@@ -61,12 +61,12 @@ module BIP #
    
 
      wire [clogb2(INS_MEM_DEPTH-1)-2:0] addr_bus_per;
-     wire [DATA_WIDTH-1:0]              data_bus_per;
+     //wire [DATA_WIDTH-1:0]              data_bus_per;
      wire                               r_w;
      wire                               cs_perif;
      assign o_cs_perif = cs_perif;
      assign o_addr_bus_per = addr_bus_per;
-     assign io_per_data_bus = data_bus_per;
+     //assign io_per_data_bus = data_bus_per;
      assign o_cs_perif = cs_perif;
      assign o_w_r_per = r_w;
 
@@ -86,7 +86,7 @@ module BIP #
       .i_wr        (wr),
       .i_rd        (rd),
       .i_rst       (i_rst),
-      .io_data_bus (data_bus_per)
+      .io_data_bus (io_per_data_bus)
     );
 
    Program_Memory #

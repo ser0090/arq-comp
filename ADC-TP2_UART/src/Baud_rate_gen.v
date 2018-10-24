@@ -3,7 +3,7 @@
 module Baud_rate_gen #
   (
    parameter CLK = 100,
-   parameter BAUD = 19200,
+   parameter BAUD = 250000,
    localparam CYCLES = (CLK*10**6)/(BAUD*16)
    )
    (
