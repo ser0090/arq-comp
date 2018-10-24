@@ -12,6 +12,7 @@ module UART #
    )
   (
   output 						o_tx,
+  output						o_cpu_enable,
   input  						i_rx,
   input  						i_clk,
   input  						i_rst,
@@ -41,6 +42,7 @@ module UART #
 
   	assign tx_data = tx_reg;
   	assign tx_data_ready = tx_data_ready_reg[0];
+  	assign o_cpu_enable = tx_data_ready;
 //  	assign o_rx_data = rx_data;
 //  	assign o_rx_done = rx_done;
 //  	assign o_tx_done = tx_done;
@@ -139,9 +141,6 @@ module UART #
 			end
 		end
 	end
-
-
-
 
 
   	Baud_rate_gen #(

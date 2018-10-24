@@ -45,12 +45,11 @@ module tb_TOP (); /* this is automatically generated */
 			.NB_SIGX(NB_SIGX),
 			.PROGRAM_FILE(PROGRAM_FILE)
 		) inst_TOP (
-			.o_tx  (o_tx),
-			.i_rx  (i_rx),
+			.UART_RXD_OUT  (o_tx),
+			.UART_TXD_IN  (i_rx),
 			.i_clk (i_clk),
-			.i_rst (i_rst)
+			.BTNC (i_rst)
 		);
-
 
 
 endmodule
