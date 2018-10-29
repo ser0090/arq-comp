@@ -42,7 +42,7 @@ module TOP #
       .o_cs_perif      (cs_perif),
       .o_w_r_per       (w_r_per),
       .i_clk           (i_clk),
-      .i_rst           (i_rst | cpu_enable), // esto es para que arranque cuando llega algo a la uart
+      .i_rst           (i_rst),//(i_rst | cpu_enable), // esto es para que arranque cuando llega algo a la uart
       .io_per_data_bus (per_data_bus)
     );
 

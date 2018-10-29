@@ -44,13 +44,17 @@ module Control #
       if (i_rst) begin
          pc <= {clogb2(INS_MEM_DEPTH-1){1'b0}};
       end
-      else if (Wrpc) begin
+      /*else if (Wrpc == ) begin
          pc <= pc + 1;
       end
       else begin
          pc <= pc;
-      end
-   end // always @ (posedge i_clk)
+      end*/
+      case(Wrpc)
+        1'b1: pc <= pc + 1;
+        1'b0: pc <= pc;
+      endcase 
+   end 
    
    /* operando */
    assign o_data_ins = i_instruction[NB_SIGX-1:0];
