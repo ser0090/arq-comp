@@ -9,7 +9,6 @@ module BIP #
    parameter PROGRAM_FILE = ""
    )
    (
-    output [DATA_WIDTH-1:0]              o_acc,           // add por syntesis
     output [clogb2(DAT_MEM_DEPTH-1)-2:0] o_addr_bus_per,  // addr a (i/o & data) mem
     output                               o_cs_perif,      // ?
     output                               o_w_r_per,       // ?
@@ -46,7 +45,6 @@ module BIP #
         (
          .o_addr_ins    (addr_ins),
          .o_addr_data   (addr_data),
-         .o_acc         (o_acc),
          .o_data        (data_cpu_to_memory),
          .o_wr          (wr),
          .o_rd          (rd),

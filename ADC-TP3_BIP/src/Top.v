@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`define FILE "/home/sergio/Documentos/ADC/arq-comp/ADC-TP3_BIP/src/program_memory.txt"
+`define FILE "/home/martin/Documentos/arq-comp/ADC-TP3_BIP/src/program_memory.txt"
 module Top #
   (
    parameter DATA_WIDTH = 16,
@@ -10,7 +10,6 @@ module Top #
    parameter PROGRAM_FILE = `FILE
    )
    (
-    output [DATA_WIDTH-1:0] acc,
     output                  UART_RXD_OUT, //o_tx,
     input                   UART_TXD_IN, //i_rx,
     input                   i_clk,
@@ -21,7 +20,6 @@ module Top #
    wire                               cs_perif;
    wire                               w_r_per;
    wire [DATA_WIDTH-1:0]              per_data_bus;
-   //wire [DATA_WIDTH-1:0]              acc;
    wire                               cpu_enable;
    
    wire                               i_rst;
@@ -42,12 +40,11 @@ module Top #
       )
       inst_BIP 
         (
-         .o_acc           (acc),
          .o_addr_bus_per  (addr_bus_per),
          .o_cs_perif      (cs_perif),
          .o_w_r_per       (w_r_per),
          .i_clk           (i_clk),
-         .i_rst           (i_rst),//(i_rst | cpu_enable), // esto es para que arranque cuando llega algo a la uart
+         .i_rst           (i_rst | ~cpu_enable), // esto es para que arranque cuando llega algo a la uart
          .io_per_data_bus (per_data_bus)
          );
    

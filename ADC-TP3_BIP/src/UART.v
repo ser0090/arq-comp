@@ -47,7 +47,7 @@ module UART #
 
    assign tx_data = tx_reg;
    assign tx_data_ready = tx_data_ready_reg[0];
-   assign o_cpu_enable = tx_data_ready;
+   assign o_cpu_enable = rx_done_reg[0];
    //assign o_rx_data = rx_data;
    //assign o_rx_done = rx_done;
    //assign o_tx_done = tx_done;

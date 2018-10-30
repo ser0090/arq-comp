@@ -7,7 +7,6 @@ module Datapath #
    localparam NB_SIGX = NB_ADDR  	//catidad de bits sin la extension
    )
    (
-    output [NB_BITS-1:0] o_acc, 	//add syntesis
     output [NB_BITS-1:0] o_data,
     input [NB_BITS-1:0]  i_data_mem,
     input [NB_SIGX-1:0]  i_data_ins,
@@ -35,7 +34,7 @@ module Datapath #
    assign sig_extension = {{NB_BITS-NB_SIGX{i_data_ins[NB_SIGX-1]}}, i_data_ins};
    
    assign o_data = acc;
-   assign o_acc = acc;
+
    
    always @ (posedge i_clk) begin
       if (i_rst) begin

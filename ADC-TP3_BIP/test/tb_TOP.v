@@ -26,8 +26,19 @@ module tb_TOP (); /* this is automatically generated */
 		i_clk = 0;
 		i_rst = 1;
 		i_rx = 1;
-		#5
-		i_rst = 0;
+		#5 i_rst = 0;
+		#3 i_rx = 1'b0; //start
+
+		#400 i_rx = 1'b0; // data
+		#400 i_rx = 1'b0;
+		#400 i_rx = 1'b0;
+		#400 i_rx = 1'b1;
+		#400 i_rx = 1'b0;
+		#400 i_rx = 1'b0;
+		#400 i_rx = 1'b1;
+		#400 i_rx = 1'b0;
+
+		#400 i_rx = 1'b1; // stop
 		#5200
 		$finish;
 	end

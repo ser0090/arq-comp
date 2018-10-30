@@ -10,7 +10,6 @@ module CPU #
    (
     output [clogb2(INS_MEM_DEPTH-1)-1:0] o_addr_ins,     // salida de PC a prog mem
     output [clogb2(DTA_MEM_DEPTH-1)-1:0] o_addr_data,    // salida a extesig o data mem
-    output [NB_BITS-1:0]                 o_acc,          // add by syntesis
     output [NB_BITS-1:0]                 o_data,         // dato a data mem
     output                               o_wr,
     output                               o_rd,
@@ -44,7 +43,6 @@ module CPU #
       )
       inst_Datapath
         (
-         .o_acc      (o_acc),
          .o_data     (data),
          .i_data_mem (i_data_mem),
          .i_data_ins (data_ins),
