@@ -4,13 +4,12 @@ module Control #
   (
    parameter NB_BITS = 16,
    parameter INS_MEM_DEPTH = 2048,
-   parameter NB_SIGX = 11, //catidad de bits sin la extension
-   localparam NB_SELA = 2
+   parameter NB_SIGX = 11 //catidad de bits sin la extension
    )
    (
     output [clogb2(INS_MEM_DEPTH-1)-1:0] o_addr_ins,
     output [NB_SIGX-1:0]                 o_data_ins,
-    output [NB_SELA-1:0]                 o_sel_a,
+    output [1:0]                         o_sel_a,
     output                               o_sel_b,
     output                               o_wr_acc,
     output                               o_op_code,
@@ -22,7 +21,7 @@ module Control #
     );
    
    reg [clogb2(INS_MEM_DEPTH-1)-1:0]     pc;
-   reg [NB_SELA-1:0]                     sel_a;
+   reg [1:0]                             sel_a;
    reg                                   sel_b;
    reg                                   Wrpc;
    reg                                   wr_acc;
@@ -36,29 +35,28 @@ module Control #
    assign o_op_code = op_code;
    assign o_wr = wr;
    assign o_rd = rd;
-   
+   // asignacion  PC
    assign o_addr_ins = pc;
+   // operando 
+   assign o_data_ins = i_instruction[NB_SIGX-1:0];
    
+   initial begin
+      pc = 0;
+   end
    /* actualizacion del pc */
    always @(posedge i_clk) begin
       if (i_rst) begin
-         pc <= {clogb2(INS_MEM_DEPTH-1){1'b0}};
+         pc <= 0; //{clogb2(INS_MEM_DEPTH-1){1'b0}};
       end
-      /*else if (Wrpc == ) begin
+      else if (Wrpc == 1'b1) begin
          pc <= pc + 1;
       end
       else begin
          pc <= pc;
-      end*/
-      case(Wrpc)
-        1'b1: pc <= pc + 1;
-        1'b0: pc <= pc;
-      endcase 
-   end 
+      end
+      //end // else: !if(i_rst)
+   end // always @ (posedge i_clk)
    
-   /* operando */
-   assign o_data_ins = i_instruction[NB_SIGX-1:0];
-
    always @(*) begin
       case(i_instruction[NB_BITS-1:NB_SIGX])
         5'b00000:begin //halt
@@ -134,7 +132,7 @@ module Control #
            rd = 1'b0;
         end
         default: begin
-           Wrpc = 1'b0;
+           Wrpc = 1'b1;
            sel_a = 2'b00;
            sel_b = 1'b0;
            wr_acc = 1'b0;
