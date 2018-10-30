@@ -3,16 +3,15 @@
 module Datapath #
   (
    parameter NB_BITS = 16,
-   //parameter NB_ADDR = 11,
-   parameter NB_SIGX = 11, //catidad de bits sin la extension
-   localparam NB_SELA = 2
+   parameter NB_ADDR = 11,
+   localparam NB_SIGX = NB_ADDR  	//catidad de bits sin la extension
    )
    (
-    output [NB_BITS-1:0] o_acc, //add syntesis
+    output [NB_BITS-1:0] o_acc, 	//add syntesis
     output [NB_BITS-1:0] o_data,
     input [NB_BITS-1:0]  i_data_mem,
     input [NB_SIGX-1:0]  i_data_ins,
-    input [NB_SELA-1:0]  i_sel_a,
+    input [1:0]          i_sel_a,
     input                i_sel_b,
     input                i_wr_acc,
     input                i_op_code,
@@ -27,15 +26,14 @@ module Datapath #
    wire [NB_BITS-1:0]    sig_extension;
    
    /*definicion del comportamiento de  mux 2*/
-   assign mux_2 = (i_sel_b)? sig_extension :
-                  i_data_mem;
+   assign mux_2 = (i_sel_b)? sig_extension : i_data_mem;
    
    /*definicion del comportamiento de la ALU simple*/
-   assign result = (i_op_code)? acc + mux_2:
-                   acc - mux_2;
+   assign result = (i_op_code)? acc + mux_2 : acc - mux_2;
   
    /* Signal Extension */
    assign sig_extension = {{NB_BITS-NB_SIGX{i_data_ins[NB_SIGX-1]}}, i_data_ins};
+   
    assign o_data = acc;
    assign o_acc = acc;
    

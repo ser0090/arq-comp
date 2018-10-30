@@ -4,27 +4,27 @@ module CPU #
   (
    parameter NB_BITS = 16,
    parameter INS_MEM_DEPTH = 2048,
-   parameter NB_SIGX = 11, //catidad de bits sin la extension
-   localparam NB_SELA = 2
+   parameter DTA_MEM_DEPTH = 2048,
+   localparam NB_SIGX = clogb2(DTA_MEM_DEPTH-1) //catidad de bits sin la extension
    )
    (
-    output [clogb2(INS_MEM_DEPTH-1)-1:0] o_addr_ins,
-    output [clogb2(INS_MEM_DEPTH-1)-1:0] o_addr_data,
-    output [NB_BITS-1:0]                 o_acc, //add by syntesis
-    output [NB_BITS-1:0]                 o_data,
+    output [clogb2(INS_MEM_DEPTH-1)-1:0] o_addr_ins,     // salida de PC a prog mem
+    output [clogb2(DTA_MEM_DEPTH-1)-1:0] o_addr_data,    // salida a extesig o data mem
+    output [NB_BITS-1:0]                 o_acc,          // add by syntesis
+    output [NB_BITS-1:0]                 o_data,         // dato a data mem
     output                               o_wr,
     output                               o_rd,
-    input [NB_BITS-1:0]                  i_instruction,
-    input [NB_BITS-1:0]                  i_data_mem,
+    input [NB_BITS-1:0]                  i_instruction,  // in instruc de prog mem
+    input [NB_BITS-1:0]                  i_data_mem,     // in datos de data mem
     input                                i_clk,
     input                                i_rst
     );
    
    wire [clogb2(INS_MEM_DEPTH-1)-1:0]    addr_ins;
-   wire [clogb2(INS_MEM_DEPTH-1)-1:0]    addr_data;
+   //wire [clogb2(DTA_MEM_DEPTH-1)-1:0]    addr_data;
    wire [NB_BITS-1:0]                    data;
    wire [NB_SIGX-1:0]                    data_ins;
-   wire [NB_SELA-1:0]                    sel_a;
+   wire [1:0]                            sel_a;
    wire                                  sel_b;
    wire                                  wr_acc;
    wire                                  op_code;
@@ -40,41 +40,42 @@ module CPU #
    Datapath #
      (
       .NB_BITS(NB_BITS),
+      .NB_ADDR(NB_SIGX)
+      )
+      inst_Datapath
+        (
+         .o_acc      (o_acc),
+         .o_data     (data),
+         .i_data_mem (i_data_mem),
+         .i_data_ins (data_ins),
+         .i_sel_a    (sel_a),
+         .i_sel_b    (sel_b),
+         .i_wr_acc   (wr_acc),
+         .i_op_code  (op_code),
+         .i_clk      (i_clk),
+         .i_rst      (i_rst)
+         );
+   
+   Control #
+     (
+      .NB_BITS(NB_BITS),
+      .INS_MEM_DEPTH(INS_MEM_DEPTH),
       .NB_SIGX(NB_SIGX)
       )
-   inst_Datapath
-     (
-      .o_acc      (o_acc),
-      .o_data     (data),
-      .i_data_mem (i_data_mem),
-      .i_data_ins (data_ins),
-      .i_sel_a    (sel_a),
-      .i_sel_b    (sel_b),
-      .i_wr_acc   (wr_acc),
-      .i_op_code  (op_code),
-      .i_clk      (i_clk),
-      .i_rst      (i_rst)
-    );
-   Control #(
-             .NB_BITS(NB_BITS),
-             .INS_MEM_DEPTH(INS_MEM_DEPTH),
-             .NB_SIGX(NB_SIGX)
-    ) 
-   inst_Control 
-     (
-      .o_addr_ins    (addr_ins),
-      .o_data_ins    (data_ins),
-      .o_sel_a       (sel_a),
-      .o_sel_b       (sel_b),
-      .o_wr_acc      (wr_acc),
-      .o_op_code     (op_code),
-      .o_wr          (wr),
-      .o_rd          (rd),
-      .i_instruction (i_instruction),
-      .i_clk         (i_clk),
-      .i_rst         (i_rst)
-      );
-   
+      inst_Control 
+        (
+         .o_addr_ins    (addr_ins),
+         .o_data_ins    (data_ins),
+         .o_sel_a       (sel_a),
+         .o_sel_b       (sel_b),
+         .o_wr_acc      (wr_acc),
+         .o_op_code     (op_code),
+         .o_wr          (wr),
+         .o_rd          (rd),
+         .i_instruction (i_instruction),
+         .i_clk         (i_clk),
+         .i_rst         (i_rst)
+         );
    
    function integer clogb2;
       input integer depth;

@@ -8,7 +8,7 @@ module tb_TOP (); /* this is automatically generated */
 	parameter INS_MEM_DEPTH  = 2048;
 	parameter DATA_MEM_DEPTH = 2048;
 	parameter NB_SIGX        = 11;
-	parameter PROGRAM_FILE   = "/home/martin/Documentos/arq-comp/ADC-TP3_BIP/src/program_memory.txt";
+	//parameter PROGRAM_FILE   = "/home/martin/Documentos/arq-comp/ADC-TP3_BIP/src/program_memory.txt";
 
 	reg i_clk;
 	reg i_rst;
@@ -37,13 +37,13 @@ module tb_TOP (); /* this is automatically generated */
 
 
 
-	TOP #(
+	Top #(
 			.DATA_WIDTH(DATA_WIDTH),
 			.UART_DATA_SIZE(UART_DATA_SIZE),
 			.INS_MEM_DEPTH(INS_MEM_DEPTH),
 			.DATA_MEM_DEPTH(DATA_MEM_DEPTH),
-			.NB_SIGX(NB_SIGX),
-			.PROGRAM_FILE(PROGRAM_FILE)
+			.NB_SIGX(NB_SIGX)
+			//.PROGRAM_FILE(PROGRAM_FILE)
 		) inst_TOP (
 			.UART_RXD_OUT  (o_tx),
 			.UART_TXD_IN  (i_rx),
