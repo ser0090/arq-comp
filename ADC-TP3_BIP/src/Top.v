@@ -26,6 +26,7 @@ module Top #
    wire                               tx;
    wire                               i_rx;
    
+   wire [clogb2(INS_MEM_DEPTH-1)-1:0] pc;
    assign i_rx = UART_TXD_IN;
    assign i_rst = BTNC;
    assign UART_RXD_OUT = tx;
@@ -40,6 +41,7 @@ module Top #
       )
       inst_BIP 
         (
+         .o_pc            (pc),
          .o_addr_bus_per  (addr_bus_per),
          .o_cs_perif      (cs_perif),
          .o_w_r_per       (w_r_per),
@@ -64,7 +66,8 @@ module Top #
          .i_cs        (cs_perif),
          .i_w_r       (w_r_per),
          .i_addr_bus  (addr_bus_per),
-         .io_data_bus (per_data_bus)
+         .io_data_bus (per_data_bus),
+         .i_pc        (pc[UART_DATA_SIZE-1:0])
          );
    
    function integer clogb2;

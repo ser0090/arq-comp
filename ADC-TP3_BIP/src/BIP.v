@@ -9,6 +9,7 @@ module BIP #
    parameter PROGRAM_FILE = ""
    )
    (
+    output [clogb2(INS_MEM_DEPTH-1)-1:0] o_pc, // salida del program counter para poder enviarlo por uart
     output [clogb2(DAT_MEM_DEPTH-1)-2:0] o_addr_bus_per,  // addr a (i/o & data) mem
     output                               o_cs_perif,      // ?
     output                               o_w_r_per,       // ?
@@ -26,6 +27,7 @@ module BIP #
    wire                               rd;
    wire [clogb2(INS_MEM_DEPTH-1)-2:0] addr_bus_per;
    
+   assign o_pc = addr_ins;
    //wire [DATA_WIDTH-1:0]              data_bus_per;
    wire                               r_w;
    wire                               cs_perif;

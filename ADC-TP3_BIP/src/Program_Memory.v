@@ -23,7 +23,7 @@ module Program_Memory #
    generate
       if (INIT_FILE != "") begin: use_init_file
          initial begin
-            $readmemh(INIT_FILE, BRAM, 0, 19);//RAM_DEPTH-1);
+            $readmemh(INIT_FILE, BRAM, 0, 25);//RAM_DEPTH-1);
             //for (ram_index = 20; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
               // BRAM[ram_index] = {RAM_WIDTH{1'b0}};
          end

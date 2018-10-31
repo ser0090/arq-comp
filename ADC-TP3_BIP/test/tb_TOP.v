@@ -29,17 +29,17 @@ module tb_TOP (); /* this is automatically generated */
 		#5 i_rst = 0;
 		#3 i_rx = 1'b0; //start
 
-		#400 i_rx = 1'b0; // data
+		#400 i_rx = 1'b0; // data 0x38
 		#400 i_rx = 1'b0;
 		#400 i_rx = 1'b0;
 		#400 i_rx = 1'b1;
-		#400 i_rx = 1'b0;
-		#400 i_rx = 1'b0;
 		#400 i_rx = 1'b1;
+		#400 i_rx = 1'b1;
+		#400 i_rx = 1'b0;
 		#400 i_rx = 1'b0;
 
 		#400 i_rx = 1'b1; // stop
-		#5200
+		#20000
 		$finish;
 	end
 

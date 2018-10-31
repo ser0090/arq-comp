@@ -21,7 +21,8 @@ module UART #
    input                      i_cs, // chip select to use de bus
    input                      i_w_r,
    input [ADDR_BUS_WIDTH-1:0] i_addr_bus,
-   inout [DATA_BUS_WIDTH-1:0] io_data_bus
+   inout [DATA_BUS_WIDTH-1:0] io_data_bus,
+   input [NB_BITS-1:0]		  i_pc // program counter harcoded para enviarlo a la pc.
   );
    
    reg [DATA_BUS_WIDTH-1:0]   tx_reg; 			// 000
@@ -37,8 +38,9 @@ module UART #
    wire [NB_BITS-1:0]         tx_data;
    wire                       tx_done;
    wire                       tx_data_ready;
-   
-   reg [DATA_BUS_WIDTH-1:0] data_bus;
+   				
+   reg [DATA_BUS_WIDTH-1:0]   data_bus;
+
    assign io_data_bus = ((i_w_r == 0) && 
                          (i_addr_bus >= INIT_ADDR) && 
                          (i_addr_bus <= (INIT_ADDR+3'd4)) && 
@@ -48,22 +50,34 @@ module UART #
    assign tx_data = tx_reg;
    assign tx_data_ready = tx_data_ready_reg[0];
    assign o_cpu_enable = rx_done_reg[0];
-   //assign o_rx_data = rx_data;
-   //assign o_rx_done = rx_done;
-   //assign o_tx_done = tx_done;
-   
+
+   reg [1:0] info_enviado;
+   reg [NB_BITS-1:0] contador_ciclos;
+   reg [NB_BITS-1:0] pc;
+
    // si llego algo, lo paso a los registros de acceso memoria.
-	 always @(posedge i_clk) begin
+	 always @(negedge i_clk) begin
 		  if(i_rst)begin
-			   data_bus <= {DATA_BUS_WIDTH{1'b0}};
-			   tx_reg <= {DATA_BUS_WIDTH{1'b0}}; //000
-  		   tx_done_reg <= {DATA_BUS_WIDTH{1'b0}}; //001
-  			 tx_data_ready_reg<= {DATA_BUS_WIDTH{1'b0}};
-			   rx_reg <= {DATA_BUS_WIDTH{1'b0}};  //011
-  			 rx_done_reg <= {DATA_BUS_WIDTH{1'b0}}; //100
-	    end
+			   	data_bus <= {DATA_BUS_WIDTH{1'b0}};
+			   	tx_reg <= {DATA_BUS_WIDTH{1'b0}}; //0x0
+  		   		tx_done_reg <= {DATA_BUS_WIDTH{1'b0}}; // 0x01
+  			 	tx_data_ready_reg<= {DATA_BUS_WIDTH{1'b0}};// 0x02
+			   	rx_reg <= {DATA_BUS_WIDTH{1'b0}};  // 0x03
+  			 	rx_done_reg <= {DATA_BUS_WIDTH{1'b0}}; // 0x04
+  			 	info_enviado <= 2'b0;
+  			 	contador_ciclos <= {NB_BITS{1'b0}};
+	      end
 		  else begin
-			   if(i_cs) begin
+				if(o_cpu_enable)begin
+					contador_ciclos <= contador_ciclos + 1;
+					pc <= i_pc[NB_BITS-1:0];
+				end
+				else begin
+					contador_ciclos <= contador_ciclos;
+					pc <= pc;
+				end
+
+			    if(i_cs) begin
 				    if(i_w_r == 0) begin // lectura
 					     case(i_addr_bus)
 						     INIT_ADDR: data_bus <= tx_reg;
@@ -78,7 +92,7 @@ module UART #
 					     case(i_addr_bus)
 						     INIT_ADDR:begin
 									  tx_reg <= io_data_bus;
-									  tx_done_reg <=tx_done_reg;
+									  tx_done_reg <= tx_done_reg;
 									  tx_data_ready_reg <= tx_data_ready_reg;
 									  rx_reg <= rx_reg;
 									  rx_done_reg <= rx_done_reg;
@@ -132,7 +146,26 @@ module UART #
 				    end
 				    if(tx_done == 1'b1)begin
 				       tx_done_reg <= {{(DATA_BUS_WIDTH-1){1'b0}},1'b1};
-				       tx_data_ready_reg <= {DATA_BUS_WIDTH{1'b0}};
+				       //tx_data_ready_reg <= {DATA_BUS_WIDTH{1'b0}};
+				       case(info_enviado)
+				       		2'b00:begin
+				       				tx_reg <= pc;
+				       				tx_data_ready_reg <= {DATA_BUS_WIDTH{1'b1}}; 
+				       				info_enviado <= info_enviado+1;
+				       			end
+				       		2'b01:begin
+				       				tx_reg <= contador_ciclos;
+				       				tx_data_ready_reg <= {DATA_BUS_WIDTH{1'b1}}; 
+				       				info_enviado <= info_enviado+1;
+				       			end
+				       		default: begin
+				       				tx_reg <= tx_reg;
+				       				tx_data_ready_reg <= {DATA_BUS_WIDTH{1'b0}};
+				       				info_enviado <= 2'b00;
+				       			end
+				       	endcase
+				       
+				 
 				    end
 				    else begin
 				       tx_done_reg <= tx_done_reg;
