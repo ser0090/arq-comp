@@ -13,18 +13,18 @@ module Alu #
     input [NB_OPE-1:0]   i_ope_sel
     );
    
-   localparam SLL = 4'b1000; // shift lefth logical
-   localparam SRL = 4'b1001; // shift rigth logical
-   localparam SRA = 4'b1010; // shift right arithmetic
-   localparam ADD = 4'b0010; // add unsigned word
-   localparam SUB = 4'b0110; // subtract unsigned word
-   localparam AND = 4'b0000;
-   localparam OR  = 4'b0001;
-   localparam XOR = 4'b0011;
-   localparam NOR = 4'b1100;
-   localparam SLT = 4'b0111; // set on less than
-   localparam JAL = 4'b1101; // jump and link
-   localparam LUI = 4'b1110;
+   localparam SLL = 4'b1000; // 8 shift lefth logical
+   localparam SRL = 4'b1001; // 9 shift rigth logical
+   localparam SRA = 4'b1010; // 10 shift right arithmetic
+   localparam ADD = 4'b0010; // 2 add unsigned word
+   localparam SUB = 4'b0110; // 6 subtract unsigned word
+   localparam AND = 4'b0000; // 0
+   localparam OR  = 4'b0001; // 1
+   localparam XOR = 4'b0011; // 3
+   localparam NOR = 4'b1100; // 12
+   localparam SLT = 4'b0111; // 7 set on less than
+   localparam JAL = 4'b1101; // 13 jump and link
+   localparam LUI = 4'b1110; // 14 
    //localparam JARL = 4'b1110; // jump and link register
    
    reg [NB_BITS-1:0] alu;
@@ -45,8 +45,9 @@ module Alu #
          OR : alu = i_data_a | i_data_b;
          XOR: alu = i_data_a ^ i_data_b;
          NOR: alu = ~(i_data_a | i_data_b);
+         SLT: alu = (i_data_a < i_data_b)? 1 : 0;
          JAL: alu = i_data_a + 4;         // PC + 8
-         LUI: alu = i_data_b << 4'hf;     // immediate || 0_16
+         LUI: alu = i_data_b << 5'd16;     // immediate || 0_16
          default: alu = 0; /* default */
        endcase // case (i_ope_sel)
     end // always @ (*)
