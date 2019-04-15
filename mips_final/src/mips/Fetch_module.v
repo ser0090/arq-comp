@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+
 module Fetch_module #
   (
    parameter NB_BITS = 32,

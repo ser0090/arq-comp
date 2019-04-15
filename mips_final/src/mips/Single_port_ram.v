@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 
 //  Xilinx Single Port Write First RAM
 //  This code implements a parameterizable single-port write-first memory where when data
