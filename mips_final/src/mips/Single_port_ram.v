@@ -9,19 +9,20 @@
 
 module Single_port_ram #
   (
-   parameter RAM_WIDTH = 32,                       // Specify RAM data width
-   parameter RAM_DEPTH = 32,                     // Specify RAM depth (number of entries)
-   parameter RAM_PERFORMANCE = "LOW_LATENCY", // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
-   parameter INIT_FILE = ""                        // Specify name/location of RAM initialization file if using one (leave blank if not)
+   parameter RAM_WIDTH       = 32,            // Specify RAM data width
+   parameter NB_DEPTH        = 10,            // Specify RAM depth (number of entries)
+   parameter RAM_PERFORMANCE = "LOW_LATENCY", // Select "HIGH_PERFORMANCE" or "LOW_LATENCY"
+   parameter INIT_FILE       = "",            // Specify name/location of RAM initialization file if using one (leave blank if not)
+   localparam RAM_DEPTH      = 2**NB_DEPTH
    )
    (
-    output [RAM_WIDTH-1:0] o_data, // RAM output data
-    input [RAM_DEPTH-1:0]  i_addr, // Address bus, width determined from RAM_DEPTH
-    input [RAM_WIDTH-1:0]  i_data, // RAM input data
-    input                  i_clk, // Clock
-    input                  i_wea, // Write enable
-    input                  i_ena, // RAM Enable, for additional power savings, disable port when not in use
-    input                  i_rst, // Output reset (does not affect memory contents)
+    output [RAM_WIDTH-1:0] o_data,  // RAM output data
+    input [NB_DEPTH-1:0]   i_addr,  // Address bus, width determined from RAM_DEPTH
+    input [RAM_WIDTH-1:0]  i_data,  // RAM input data
+    input                  i_clk,   // Clock
+    input                  i_wea,   // Write enable
+    input                  i_ena,   // RAM Enable, for additional power savings, disable port when not in use
+    input                  i_rst,   // Output reset (does not affect memory contents)
     input                  i_regcea // Output register enable
     );
    
@@ -37,12 +38,12 @@ module Single_port_ram #
       else begin: init_bram_to_zero
          integer ram_index;
          initial
-           for (ram_index = 0; ram_index < RAM_DEPTH; ram_index = ram_index + 4)
-             BRAM[ram_index] = ram_index >> 2; // {RAM_WIDTH{1'b0}};
+           for (ram_index = 0; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
+             BRAM[ram_index] = ram_index; //{RAM_WIDTH{1'b0}};
       end
    endgenerate
 
-   always @(negedge i_clk) begin
+   always @(posedge i_clk) begin
       if (i_ena) begin
          if (i_wea) begin
             BRAM[i_addr]  <= i_data;

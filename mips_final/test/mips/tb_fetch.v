@@ -17,8 +17,8 @@ module tb_fetch();
    reg                i_rst;
    
    initial begin
-      i_brq_addr  = 16<<4;
-      i_jmp_addr  = 100<<4;
+      i_brq_addr  = 40;
+      i_jmp_addr  = 100;
       i_ctr_beq   = 1'b0;
       i_ctr_jmp   = 1'b0;
       i_ctr_flush = 1'b0;
@@ -37,7 +37,8 @@ module tb_fetch();
       #20 i_ctr_jmp   = 1'b1;
       i_ctr_flush     = 1'b1;
       #10 i_ctr_beq   = 1'b1;
-      #5 i_ctr_beq    = 1'b1;
+      #5 i_ctr_beq    = 1'b0;
+      #5 i_ctr_jmp    = 1'b0;
       i_ctr_flush     = 1'b0;
       // we
       #30 i_pc_we     = 1'b0;
@@ -47,7 +48,7 @@ module tb_fetch();
       #5 i_ctr_flush  = 1'b0;
       
       #5 i_pc_we      = 1'b1;
-      #5 i_pc_we      = 1'b1;
+      #5 i_if_id_we   = 1'b1;
       #10 $finish;
       
    end
