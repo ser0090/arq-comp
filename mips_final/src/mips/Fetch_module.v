@@ -32,8 +32,8 @@ module Fetch_module #
    initial
      pc =  {NB_BITS{1'b0}};
    //Muxes
-   assign mux_beq = (i_ctr_beq)? {if_id_pc[NB_BITS-1:NB_JMP], i_brq_addr}, : pc + 4;
-   assign mux_jmp = (i_ctr_jmp)? i_jmp_addr : mux_beq;
+   assign mux_beq = (i_ctr_beq)? i_brq_addr : pc + 4;
+   assign mux_jmp = (i_ctr_jmp)? {if_id_pc[NB_BITS-1:NB_JMP], i_jmp_addr} : mux_beq;
 
    //Outputs
    assign o_if_id_pc    = if_id_pc;
