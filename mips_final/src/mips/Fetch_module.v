@@ -2,14 +2,15 @@
 
 module Fetch_module #
   (
-   parameter NB_BITS = 32,
+   parameter NB_BITS   = 32,
+   parameter NB_JMP    = 27,
    parameter RAM_DEPTH = 10
    )
    (
     output [NB_BITS-1:0] o_if_id_pc,
     output [NB_BITS-1:0] o_if_id_instr,
     input [NB_BITS-1:0]  i_brq_addr,
-    input [NB_BITS-1:0]  i_jmp_addr,
+    input [NB_JMP-1:0]   i_jmp_addr,
     input                i_ctr_beq,
     input                i_ctr_jmp,
     input                i_ctr_flush,
@@ -31,7 +32,7 @@ module Fetch_module #
    initial
      pc =  {NB_BITS{1'b0}};
    //Muxes
-   assign mux_beq = (i_ctr_beq)? i_brq_addr : pc + 4;
+   assign mux_beq = (i_ctr_beq)? {if_id_pc[NB_BITS-1:NB_JMP], i_brq_addr}, : pc + 4;
    assign mux_jmp = (i_ctr_jmp)? i_jmp_addr : mux_beq;
 
    //Outputs
