@@ -8,19 +8,20 @@ module tb_execution();
    localparam NB_FUNCTION = 6;
 
    reg        i_clk;
-   
+   reg        i_rst;
+
    reg [1:0]   i_mux_a_hz; 
    reg [1:0]   i_mux_b_hz;
    reg [NB_BITS-1:0]  i_ex_mem_reg_hz; 
    reg [NB_BITS-1:0]  i_mem_wb_reg_hz; 
    
-   reg [NB_ALU_OP_CTL:0]  i_alu_op_ctl; 
+   reg [NB_ALU_OP_CTL-1:0]  i_alu_op_ctl; 
    reg [1:0]              i_mux_rs_ctl; 
    reg                    i_mux_rt_ctl ;
-   reg                    i_mux_dest_ctl; 
+   reg [1:0]              i_mux_dest_ctl; 
    
-   reg [4:0]              i_rt           ; 
-   reg [4:0]              i_rd            ;
+   reg [4:0]              i_rt          ; 
+   reg [4:0]              i_rd          ;
    reg [NB_BITS-1:0]      i_sign_ext ;
    reg [NB_BITS-1:0]      i_rt_reg ;
    reg [NB_BITS-1:0]      i_rs_reg ;
@@ -53,6 +54,7 @@ module tb_execution();
    //opcines para elegir registro destino
    localparam DEST_FROM_RD = 1'b0;
    localparam DEST_FROM_RT = 1'b1;
+   localparam DEST_TO_RETURN = 2'b10;
 
    //posibles funciones en la instruccion
    localparam FUNC_SLL  = 6'b000000; // 
@@ -80,21 +82,22 @@ module tb_execution();
    localparam OP_XORI = 4'b0110;//
    localparam OP_LUI  = 4'b0111;//
    localparam OP_NONE = 4'b1000;//
-   localparam OP_SLTI = 4'b1000;//
+   localparam OP_SLTI = 4'b0011;//
    localparam OP_JAL  = 4'b1001;//
 
    //valores harcoded para test
-   localparam RS_DATA  = 32'd7;
-   localparam RT_DATA  = 32'd15;
+   localparam RS_DATA  = 32'd15;
+   localparam RT_DATA  = 32'd7;
    localparam SIGN_EXT = 32'd5;
    localparam PC_4       = 32'd55;
-   localparam RT       = 5'd0;
-   localparam RD       = 5'd31;
+   localparam RT       = 5'd4;
+   localparam RD       = 5'd9;
 
 
 
    initial begin
       i_clk = 1'b0;
+      i_rst = 1'b1;
       //valores de registro destino precargados
       i_wb_ctl  = DEF_WB_MEM_CTL;
       i_mem_ctl = DEF_WB_MEM_CTL;
@@ -119,38 +122,50 @@ module tb_execution();
       i_pc_4     = PC_4;
       i_function = 6'd0;
 
-      // test de tods las funciones en la instruccion
-     
+      #2
+      i_rst =1'b0;
+     /*
+      *     TEST DE OPERACIONES NO INMEDIATAS
+      * 
+      * las instrucciones probadas 
+      */
+      $display("\n\n\n");
+      $display("******************************************************************************");
+      $display("*********  TESTS DE INSTRUCCIONES CON ARGUMENTO EN FUNCION (R-type)***********");
+      $display("******************************************************************************");
+
       #10
       i_function = FUNC_SLL;
       i_mux_rs_ctl = SEXT_TO_A;
       i_mux_rt_ctl = RT_TO_B;  
-      #1
-      if(o_alu_out == (RT_DATA<<SIGN_EXT))
-         $display("Test SLL OK");
-      else
-         $display("Test Fail");
-
+      #10
+      if(o_alu_out == (RT_DATA<<SIGN_EXT)) begin
+         $display("SLL Test OK");
+         end
+      else begin
+         $display("SLL Test fail\n    expected:  %b\n    out:%b",RT_DATA<<SIGN_EXT,o_alu_out);
+       end
+      
       #10
       i_function = FUNC_SRL;
       i_mux_rs_ctl = SEXT_TO_A;
       i_mux_rt_ctl = RT_TO_B;  
-      #1
+      #10
       if(o_alu_out == (RT_DATA>>SIGN_EXT))
-         $display("Test SRL OK");
+         $display("SRL Test OK");
       else
-         $display("Test Fail");
+         $display("SRL Test fail\n    expected:  %b\n    out:%b",(RT_DATA>>SIGN_EXT),o_alu_out);
 
 
       #10
       i_function = FUNC_SRA;
       i_mux_rs_ctl = SEXT_TO_A;
       i_mux_rt_ctl = RT_TO_B;  
-      #1
+      #10
       if(o_alu_out == (RT_DATA>>>SIGN_EXT))
-         $display("Test SRA OK");
+         $display("SRA Test OK");
       else
-         $display("Test Fail");
+         $display("SRA Test fail\n    expected:  %b\n    out:%b",(RT_DATA>>>SIGN_EXT),o_alu_out);
 
 
 
@@ -158,11 +173,11 @@ module tb_execution();
       i_function = FUNC_SLLV;
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == (RT_DATA<<RS_DATA))
-         $display("Test SLLV OK");
+         $display("SLLV Test OK");
       else
-         $display("Test Fail");
+         $display("SLLV Test fail\n    expected:  %b\n    out:%b",(RT_DATA<<RS_DATA),o_alu_out);
 
 
 
@@ -170,11 +185,11 @@ module tb_execution();
       i_function = FUNC_SRLV;
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == (RT_DATA>>RS_DATA))
-         $display("Test SRLV OK");
+         $display("SLRV Test OK");
       else
-         $display("Test Fail");
+         $display("SLRV Test fail\n    expected:  %b\n    out:%b",(RT_DATA>>RS_DATA),o_alu_out);
 
 
 
@@ -182,11 +197,11 @@ module tb_execution();
       i_function = FUNC_SRAV;
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == (RT_DATA>>>RS_DATA))
-         $display("Test SRAV OK");
+         $display("SRAV Test OK");
       else
-         $display("Test Fail");
+         $display("SRAV Test fail\n    expected:  %b\n    out:%b",RT_DATA>>RS_DATA,o_alu_out);
 
 
 
@@ -194,11 +209,11 @@ module tb_execution();
       i_function = FUNC_JR; 
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == (31'b0))
-         $display("Test JR OK");
+         $display("JR Test OK");
       else
-         $display("Test Fail");
+         $display("JR Test fail\n    expected:  %b\n    out:%b",(31'b0),o_alu_out);
 
 
 
@@ -206,11 +221,11 @@ module tb_execution();
       i_function = FUNC_JALR;
       i_mux_rs_ctl = PC_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == (PC_4+4))
-         $display("Test JALR OK");
+         $display("JALR Test OK");
       else
-         $display("Test Fail");
+         $display("JALR Test fail\n    expected:  %b\n    out:%b",PC_4+4,o_alu_out);
 
 
 
@@ -218,11 +233,11 @@ module tb_execution();
       i_function = FUNC_ADDU;
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == (RS_DATA+RT_DATA))
-         $display("Test ADDU OK");
+         $display("ADDU Test OK");
       else
-         $display("Test Fail");
+         $display("ADDU Test fail\n    expected:  %b\n    out:%b",(RS_DATA+RT_DATA),o_alu_out);
 
 
 
@@ -230,11 +245,11 @@ module tb_execution();
       i_function = FUNC_SUBU;
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == (RS_DATA-RT_DATA))
-         $display("Test SUBU OK");
+         $display("SUBU Test OK");
       else
-         $display("Test Fail");
+         $display("SUBU Test fail\n    expected:  %b\n    out:%b",(RS_DATA-RT_DATA),o_alu_out);
 
 
 
@@ -242,11 +257,11 @@ module tb_execution();
       i_function = FUNC_AND;
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == (RS_DATA&RT_DATA))
-         $display("Test AND OK");
+         $display("AND Test OK");
       else
-         $display("Test Fail");
+         $display("AND Test fail\n    expected:  %b\n    out:%b",(RS_DATA&RT_DATA),o_alu_out);
 
 
 
@@ -254,11 +269,11 @@ module tb_execution();
       i_function = FUNC_OR ;
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == (RS_DATA|RT_DATA))
-         $display("Test OR OK");
+         $display("OR Test OK");
       else
-         $display("Test Fail");
+         $display("OR Test fail\n    expected:  %b\n    out:%b",RT_DATA<<SIGN_EXT,o_alu_out);
 
 
 
@@ -266,11 +281,11 @@ module tb_execution();
       i_function = FUNC_XOR;
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == (RS_DATA^RT_DATA))
-         $display("Test XOR OK");
+         $display("XOR Test OK");
       else
-         $display("Test Fail");
+         $display("XOR Test fail\n    expected:  %b\n    out:%b",RS_DATA|RT_DATA,o_alu_out);
 
 
 
@@ -278,11 +293,11 @@ module tb_execution();
       i_function = FUNC_NOR;
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B;
-      #1
+      #10
       if(o_alu_out == ~(RS_DATA|RT_DATA))
-         $display("Test NOR OK");
+         $display("NOR Test OK");
       else
-         $display("Test Fail");
+         $display("NOR Test fail\n    expected:  %b\n    out:%b",~(RS_DATA|RT_DATA),o_alu_out);
 
 
 
@@ -290,11 +305,135 @@ module tb_execution();
       i_function = FUNC_SLT;
       i_mux_rs_ctl = RS_TO_A;
       i_mux_rt_ctl = RT_TO_B; 
-      #1
+      i_rs_reg   = 32'd256;
+      i_rt_reg   = 32'd10029;
+      #10
       if(o_alu_out == (1))
-         $display("Test STL OK");
+         $display("SLT true Test OK");
       else
-         $display("Test Fail");
+         $display("SLT true Test fail\n    expected:  %b\n    out:%b",(1),o_alu_out);
+
+      #10
+      i_function = FUNC_SLT;
+      i_mux_rs_ctl = RS_TO_A;
+      i_mux_rt_ctl = RT_TO_B; 
+      i_rs_reg   = 32'd256;
+      i_rt_reg   = 32'd17;
+      #10
+      if(o_alu_out == (0))
+         $display("SLT false Test OK");
+      else
+         $display("SLT false Test fail\n    expected:  %b\n    out:%b",(0),o_alu_out);
+
+      #1   
+      i_rt_reg   = RT_DATA;
+      i_rs_reg   = RS_DATA;
+
+
+
+      /*
+      *     TEST DE OPERACIONES CON ARGUMENTO INMEDIATO
+      * 
+      * Las instrucciones utilizan un solo argumento de
+      * los registros y el otro operando viene en la instruccion
+      */
+
+      $display("\n");
+      $display("******************************************************************************");
+      $display("***************  TESTS DE INSTRUCCIONES INMEDIATAS (I-type)  *****************");
+      $display("******************************************************************************");
+
+      /* parametros comunes a los inmediatos */
+      i_mux_dest_ctl = DEST_FROM_RD;
+      i_mux_rs_ctl   = RS_TO_A;
+      i_mux_rt_ctl   = SEXT_TO_B;
+
+      #10
+      i_alu_op_ctl   = OP_ADD  ;//ADDI
+      #10
+      if(o_alu_out == ($signed(RS_DATA)+ $signed(SIGN_EXT)))
+         $display("ADDI Test OK");
+      else
+         $display("ADDI Test fail\n    expected:  %b\n    out:%b",($signed(RS_DATA)+ $signed(SIGN_EXT)),o_alu_out);
+
+
+       i_alu_op_ctl = OP_ANDI ;//
+       #10
+      if(o_alu_out == (RS_DATA&SIGN_EXT))
+         $display("ANDI Test OK");
+      else
+         $display("ANDI Test fail\n    expected:  %b\n    out:%b",(RS_DATA&SIGN_EXT),o_alu_out);
+
+
+       i_alu_op_ctl = OP_ORI  ;//
+       #10
+      if(o_alu_out == (RS_DATA|SIGN_EXT))
+         $display("ORI Test OK");
+      else
+         $display("ORI Test fail\n    expected:  %b\n    out:%b",(RS_DATA|SIGN_EXT),o_alu_out);
+
+
+       i_alu_op_ctl = OP_XORI ;//
+       #10
+      if(o_alu_out == (RS_DATA^SIGN_EXT))
+         $display("XORI Test OK");
+      else
+         $display("XORI Test fail\n    expected:  %b\n    out:%b",(RS_DATA^SIGN_EXT),o_alu_out);
+
+
+       i_alu_op_ctl = OP_LUI  ;//
+       #10
+      if(o_alu_out == (SIGN_EXT<<16))
+         $display("LUI Test OK");
+      else
+         $display("LUI Test fail\n    expected:  %b\n    out:%b",(SIGN_EXT<<16),o_alu_out);
+
+
+       i_alu_op_ctl = OP_NONE ;//
+       #10
+      if(o_alu_out == (0))
+         $display("NONE Test OK");
+      else
+         $display("NONE Test fail\n    expected:  %b\n    out:%b",(0),o_alu_out);
+
+
+      i_alu_op_ctl = OP_SLTI ;//
+      i_sign_ext = 32'd455;
+      i_rs_reg   = 32'd400;
+       #10
+      if(o_alu_out == (1))
+         $display("SLTI true Test OK");
+      else
+         $display("SLTI true Test fail\n    expected:  %b\n    out:%b",(1),o_alu_out);
+
+      i_alu_op_ctl = OP_SLTI ;//
+      i_sign_ext = 32'd455;
+      i_rs_reg   = 32'd500;
+       #10
+      if(o_alu_out == (0))
+         $display("SLTI false Test OK");
+      else
+         $display("SLTI false Test fail\n    expected:  %b\n    out:%b",(0),o_alu_out);
+
+      i_sign_ext = SIGN_EXT;
+      i_rs_reg   = RS_DATA;
+
+
+
+
+      i_alu_op_ctl = OP_JAL  ;//
+      i_mux_rs_ctl= PC_TO_A;
+      i_mux_dest_ctl = DEST_TO_RETURN;
+      #10
+      if(o_alu_out == (PC_4+4))
+         $display("JAL Test OK");
+      else
+         $display("JAL Test fail\n    expected:  %b\n    out:%b",(PC_4+4),o_alu_out);
+
+      /* la operacion op_sub no se prueva xq no tiene plicacion real
+       *segun la arquitectura se utiliza un comparador en la etapa anterior
+       para los beq/bne
+       */
 
 
       #10 $finish;
@@ -312,6 +451,7 @@ module tb_execution();
          .o_reg_dst       (o_reg_dst),
          .o_wb_ctl        (o_wb_ctl),
          .o_mem_ctl       (o_mem_ctl),
+
          .i_mux_a_hz      (i_mux_a_hz),
          .i_mux_b_hz      (i_mux_b_hz),
          .i_ex_mem_reg_hz (i_ex_mem_reg_hz),

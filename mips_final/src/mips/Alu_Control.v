@@ -16,7 +16,7 @@ module Alu_Control #
    localparam ALU_SLL = 5'b01000; // 8 shift lefth logical
    localparam ALU_SRL = 5'b01001; // 9 shift rigth logical
    localparam ALU_SRA = 5'b01010; // 10 shift right arithmetic
-   localparam ALU_ADD = 5'b00010; // 2 add unsigned word
+   localparam ALU_ADDU = 5'b00010; // 2 add unsigned word
    localparam ALU_SUB = 5'b00110; // 6 subtract unsigned word
    localparam ALU_AND = 5'b00000; // 0
    localparam ALU_OR  = 5'b00001; // 1
@@ -25,8 +25,8 @@ module Alu_Control #
    localparam ALU_SLT = 5'b00111; // 7 set on less than
    localparam ALU_JAL = 5'b01101; // 13 jump and link
    localparam ALU_LUI = 5'b01110; // 14 
-   localparam ALU_NONE = 5'b01110; // 15 
-   //localparam ALU_ADDU = 5'b10000; // 16 
+   localparam ALU_NONE = 5'b01111; // 15 
+   localparam ALU_ADDS = 5'b10000; // 16 
    //localparam ALU_SUBU = 5'b10001; // 17 
 
    localparam FUNC_SLL = 6'b000000; // 
@@ -53,7 +53,7 @@ module Alu_Control #
    localparam OP_XORI = 4'b0110;//
    localparam OP_LUI =  4'b0111;//
    localparam OP_NONE = 4'b1000;//
-   localparam OP_SLTI = 4'b1000;//
+   localparam OP_SLTI = 4'b0011;//
    localparam OP_JAL =  4'b1001;//
 
    //localparam JALR = 4'b1110; // jump and link register
@@ -66,7 +66,7 @@ module Alu_Control #
     * asignacion de la salida sintax switch case = MUX */
     always @(*) begin
        case (i_alu_op_ctl)
-          OP_ADD : alu = ALU_ADD ;
+          OP_ADD : alu = ALU_ADDS ;
           OP_SUB : alu = ALU_SUB ;
           OP_ANDI: alu = ALU_AND ;
           OP_ORI : alu = ALU_OR ;
@@ -78,8 +78,10 @@ module Alu_Control #
           OP_FUNC: alu = func;
          default : alu = ALU_NONE; /* default */
        endcase // case (i_ope_sel)
+    end // always @ (*)
 
-       case(i_function)
+    always @(*) begin
+      case(i_function)
         FUNC_SLL : func = ALU_SLL;
         FUNC_SRL : func = ALU_SRL;
         FUNC_SRA : func = ALU_SRA;
@@ -88,7 +90,7 @@ module Alu_Control #
         FUNC_SRAV: func = ALU_SRA;
         FUNC_JR  : func = ALU_NONE;
         FUNC_JALR: func = ALU_JAL;
-        FUNC_ADDU: func = ALU_ADD;
+        FUNC_ADDU: func = ALU_ADDU;
         FUNC_SUBU: func = ALU_SUB;
         FUNC_AND : func = ALU_AND;
         FUNC_OR  : func = ALU_OR;
@@ -97,6 +99,6 @@ module Alu_Control #
         FUNC_SLT : func = ALU_SLT;
         default  : func = ALU_NONE;
        endcase
-    end // always @ (*)
+    end
 endmodule // Alu
 

@@ -22,7 +22,7 @@ module Execution_module#
     input [NB_ALU_OP_CTL-1:0]          i_alu_op_ctl,
     input [1:0]          i_mux_rs_ctl,
     input                i_mux_rt_ctl,
-    input                i_mux_dest_ctl,
+    input [1:0]          i_mux_dest_ctl,
     //desde ID/EX
     input [4:0]          i_rt, // lo q esta en la instruccion
     input [4:0]          i_rd,
@@ -52,9 +52,13 @@ module Execution_module#
    localparam FROM_EX_MEM = 2'b01;
    localparam FROM_MEM_WB = 2'b10;
 
+  localparam DEST_FROM_RD   = 2'b0;
+  localparam DEST_FROM_RT   = 2'b1;
+  localparam DEST_TO_RETURN = 2'b10;
 
-   wire operation;
-   wire alu_out;
+
+   wire [4:0] operation;
+   wire [NB_BITS-1:0] alu_out;
    wire alu_zero;
    reg [NB_BITS-1:0] dato_a;
    reg [NB_BITS-1:0] dato_b;
@@ -94,6 +98,9 @@ module Execution_module#
         MEM_WB_TO_A : dato_aux_a = i_sign_ext;
         default :     dato_aux_a = 0;
       endcase
+    end
+
+     always @(*) begin
       /* selector de la fuente del segundo argumento 
        * de la alu
        */
@@ -102,7 +109,9 @@ module Execution_module#
         SEXT_TO_B: dato_aux_b = i_sign_ext;
        // default  : dato_aux_b = 0;
       endcase
+    end
 
+     always @(*) begin
       /* selector para incorporar el hazzard unit
        */
       case(i_mux_a_hz)
@@ -111,7 +120,9 @@ module Execution_module#
         FROM_MEM_WB: dato_a = i_mem_wb_reg_hz;
         default    : dato_a = dato_aux_a;
       endcase
+    end
 
+     always @(*) begin
       /* selector para incorporar el hazzard unit
        */
       case(i_mux_b_hz)
@@ -120,13 +131,17 @@ module Execution_module#
         FROM_MEM_WB: dato_b = i_mem_wb_reg_hz;
         default    : dato_b = dato_aux_b;
       endcase
+    end
 
+    always @(*) begin
       /* selector del registro de destino, 
        * depende si esta codificado en rt o rd
        */
       case(i_mux_dest_ctl)
-        1'b0: reg_dst =  i_rd;
-        1'b1: reg_dst = i_rt;
+        DEST_FROM_RD:   reg_dst = i_rd;
+        DEST_FROM_RT:   reg_dst = i_rt;
+        DEST_TO_RETURN: reg_dst = 5'b11111;
+        default:        reg_dst = i_rd; 
       endcase
    end
 
