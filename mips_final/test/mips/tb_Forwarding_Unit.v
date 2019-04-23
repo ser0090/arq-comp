@@ -150,9 +150,9 @@ module tb_Forwarding_Unit (); /* this is automatically generated */
 	i_ex_mem_wr_en = DISABLE; 
 	#2
 	if(o_mux_a_hz == FROM_ID_EX && o_mux_b_hz == FROM_ID_EX)
-         $display("Forward from ex/mem(9) Test OK");
+         $display("Forward from ex/mem(11) Test OK");
       else
-         $display("Forward from ex/mem(1)\n    expected:  %b\n    out_a:%b\n    out_b:%b",FROM_ID_EX,o_mux_a_hz,o_mux_b_hz);
+         $display("Forward from ex/mem(11)\n    expected:  %b\n    out_a:%b\n    out_b:%b",FROM_ID_EX,o_mux_a_hz,o_mux_b_hz);
 
     #1
 
