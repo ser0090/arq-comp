@@ -63,7 +63,10 @@ module Decode_module #
    localparam SW   = 6'b101011;
 
    localparam SPECIAL = 6'd0;
-   
+   //##################### SPECIAL JUMP ########################
+   localparam JR   = 6'b001000;
+   localparam JALR = 6'b001001;
+
    //###########################################################
    //###################### ALU CODE ###########################
    //###########################################################
@@ -130,9 +133,8 @@ module Decode_module #
    assign o_id_ex_rt_num = rt_num;
    assign o_id_ex_rd_num = rd_num;
    assign o_id_ex_exec   = ctr_exec;
-
    /* --- BRANCH AND JAMP signals --- */
-   assign o_jmp_addr = (jal_addr)? rs[NB_JMP-1:0] << 2 : sign_extend[NB_JMP-1:0] << 2;
+   assign o_jmp_addr = (jal_addr)? rfile_rs[NB_JMP-1:0] << 2 : sign_extend[NB_JMP-1:0] << 2;
    assign o_brh_addr = $signed(sign_extend << 2) + $signed(i_pc);
    assign o_pc_beq   = (beq & rfile_zero) | (ben & ~rfile_zero);
    assign o_pc_src   = pc_src;
@@ -168,8 +170,10 @@ module Decode_module #
         SPC_EXT: sign_extend = {{NB_BITS-SA+1{1'b0}}, i_instr[NB_REG+SA-1:SA]};
       endcase // case (se_case)
    end
-
-   // ##### CONTROL ######
+   
+   /* ##################################################
+      ###################### CONTROL ###################
+      ################################################## */
    always @ (*) begin
       case(i_instr[31:26])
         J: begin
@@ -349,10 +353,10 @@ module Decode_module #
            rs_alu   = 2'd2; // sa inmt
            rt_alu   = 1'b0; // rt
            rd_sel   = RD;
-           // mux salto
-           jal_addr = 1'b0;
-           pc_src   = 1'b0;
-           flush    = 1'b0;
+           // mux salto Special Jump
+           jal_addr = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
+           pc_src   = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
+           flush    = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
         end // case: SPECIAL
