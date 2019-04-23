@@ -9,7 +9,8 @@ module Register_file #
    )
    (
     output [NB_BITS-1:0] o_rs,          // registro rs de salid
-    output [NB_BITS-1:0] o_rd,          // registro rt de salida
+    output [NB_BITS-1:0] o_rt,          // registro rt de salida
+    output               o_zero,
     input [NB_BITS-1:0]  i_data,        // data write
     input [NB_DEPTH-1:0] i_read_addr_1, // read register rs selector 1
     input [NB_DEPTH-1:0] i_read_addr_2, // read register rt selector 2
@@ -20,11 +21,12 @@ module Register_file #
    );
 
    reg [NB_BITS-1:0]     reg_file [RF_DEPTH-1:0];
-   reg [NB_BITS-1:0]     rs, rd;
+   reg [NB_BITS-1:0]     rs, rt;
    integer               rf_index;
 
    assign o_rs = rs;
-   assign o_rd = rd;
+   assign o_rt = rt;
+   assign o_zero = (rt == rs)? 1'b1 : 1'b0;
 
    always @ (posedge i_clk) begin
       if (i_rst)
@@ -39,7 +41,7 @@ module Register_file #
 
    always @(*) begin
       rs = reg_file[i_read_addr_1];
-      rd = reg_file[i_read_addr_2];
+      rt = reg_file[i_read_addr_2];
    end
 endmodule // Register_file
 
