@@ -12,6 +12,7 @@ module Single_port_ram #
   (
    parameter RAM_WIDTH       = 32,            // Specify RAM data width
    parameter NB_DEPTH        = 10,            // Specify RAM depth (number of entries)
+   parameter FILE_DEPTH      = 31,            // Specify RAM data width
    parameter RAM_PERFORMANCE = "LOW_LATENCY", // Select "HIGH_PERFORMANCE" or "LOW_LATENCY"
    parameter INIT_FILE       = "",            // Specify name/location of RAM initialization file if using one (leave blank if not)
    localparam RAM_DEPTH      = 2**NB_DEPTH
@@ -33,14 +34,18 @@ module Single_port_ram #
    // The following code either initializes the memory values to a specified file or to all zeros to match hardware
    generate
       if (INIT_FILE != "") begin: use_init_file
-         initial
-           $readmemh(INIT_FILE, BRAM, 0, RAM_DEPTH-1);
+         integer ram_index;
+         initial begin
+            $readmemb(INIT_FILE, BRAM, 0, FILE_DEPTH-1);
+            for (ram_index = FILE_DEPTH; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
+              BRAM[ram_index] = {RAM_WIDTH{1'b0}};
+         end
       end
       else begin: init_bram_to_zero
          integer ram_index;
          initial
            for (ram_index = 0; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
-             BRAM[ram_index] = ram_index; //{RAM_WIDTH{1'b0}};
+             BRAM[ram_index] = {RAM_WIDTH{1'b0}};
       end
    endgenerate
 

@@ -8,10 +8,12 @@
 
 module Fetch_module #
   (
-   parameter NB_BITS   = `NB_BITS,
-   parameter NB_JMP    = `NB_JUMP,
-   parameter RAM_DEPTH = `RAM_FETCH_DEPTH,
-   localparam SSL      = `NOP_OPERATION // NOP operation sll $0 $0 0
+   parameter NB_BITS    = `NB_BITS,
+   parameter NB_JMP     = `NB_JUMP,
+   parameter RAM_DEPTH  = `RAM_FETCH_DEPTH,
+   parameter FILE_DEPTH = 31,
+   parameter INIT_FILE  = "",
+   localparam SSL       = `NOP_OPERATION // NOP operation sll $0 $0 0
    )
    (
     output [NB_BITS-1:0] o_if_id_pc,
@@ -68,16 +70,17 @@ module Fetch_module #
      (
       .RAM_WIDTH       (NB_BITS),  // Specify RAM data width
       .NB_DEPTH        (RAM_DEPTH),
-      .INIT_FILE       ("")
+      .FILE_DEPTH      (FILE_DEPTH),
+      .INIT_FILE       (INIT_FILE)
       )
    inst_ram_instruction
-        (
-         .o_data (data_mem),             // RAM output data, width determined from RAM_WIDTH
-         .i_addr (pc[RAM_DEPTH-1:0]>>2), // Address bus, width determined from RAM_DEPTH
-         //.i_data (i_du_data),            // RAM input data, width determined from RAM_WIDTH
-         .i_clk  (i_clk),                // Clock
-         .i_wea  (1'b0),                 // Write enable
-         .i_ena  (i_if_id_we)            // RAM Enable
-         );
+     (
+      .o_data (data_mem),             // RAM output data, width determined from RAM_WIDTH
+      .i_addr (pc[RAM_DEPTH-1:0]>>2), // Address bus, width determined from RAM_DEPTH
+      //.i_data (i_du_data),            // RAM input data, width determined from RAM_WIDTH
+      .i_clk  (i_clk),                // Clock
+      .i_wea  (1'b0),                 // Write enable
+      .i_ena  (i_if_id_we)            // RAM Enable
+      );
 endmodule // Fetch_module
 

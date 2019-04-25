@@ -54,20 +54,24 @@ module tb_fetch();
    end
    always #2.5 i_clk = ~i_clk;
    
-   Fetch_module
-     u_fetch
-       (
-        .o_if_id_pc    (o_if_id_pc),
-        .o_if_id_instr (o_if_id_instr) ,
-        .i_brq_addr    (i_brq_addr),
-        .i_jmp_addr    (i_jmp_addr),
-        .i_ctr_beq     (i_ctr_beq),
-        .i_ctr_jmp     (i_ctr_jmp),
-        .i_ctr_flush   (i_ctr_flush),
-        .i_pc_we       (i_pc_we),
-        .i_if_id_we    (i_if_id_we),
-        .i_clk         (i_clk),
-        .i_rst         (i_rst)
-        );
+   Fetch_module # 
+     (
+      .FILE_DEPTH (31),
+      .INIT_FILE  ("/home/ssulca/arq-comp/mips_final/include/mem_instr.txt") //Comentar
+      )
+   u_fetch
+     (
+      .o_if_id_pc    (o_if_id_pc),
+      .o_if_id_instr (o_if_id_instr) ,
+      .i_brq_addr    (i_brq_addr),
+      .i_jmp_addr    (i_jmp_addr),
+      .i_ctr_beq     (i_ctr_beq),
+      .i_ctr_jmp     (i_ctr_jmp),
+      .i_ctr_flush   (i_ctr_flush),
+      .i_pc_we       (i_pc_we),
+      .i_if_id_we    (i_if_id_we),
+      .i_clk         (i_clk),
+      .i_rst         (i_rst)
+      );
 
 endmodule
