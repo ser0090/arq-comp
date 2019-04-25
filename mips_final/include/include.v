@@ -47,6 +47,7 @@
 `define OP_INSTR_SH        6'b101001
 `define OP_INSTR_SW        6'b101011
 `define OP_INSTR_SPECIAL   6'd0
+`define OP_INSTR_HALT      6'b101111
 ///////////////////////////////////////////
 /////  SPECIAL FUNC  
 ///////////////////////////////////////////
