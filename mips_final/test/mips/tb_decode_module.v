@@ -15,9 +15,9 @@ module tb_decode_module();
    localparam BEN  = 32'b000101_00001_00011_0000000000110000;
    localparam ADDI = 32'b001000_00001_00100_0000000000000111;
    localparam SLTI = 32'b001010_00001_00101_0000000000000100;
-   localparam ANDI = 32'b001100_00001_00110_0000000000000001;
+   localparam ANDI = 32'b001100_00010_00110_0000000000000001;
    localparam ORI  = 32'b001101_00001_00111_1110000000000000;
-   localparam XORI = 32'b001110_00001_01000_0000000000001111;
+   localparam XORI = 32'b001110_00010_01000_0000000000001111;
    localparam LUI  = 32'b001111_00000_01001_0000000000000111;
    //localparam LB   = 32'b100000;
    //localparam LH   = 32'b100001;
@@ -100,6 +100,17 @@ module tb_decode_module();
       #5 i_instr      = 0;
       #5 i_instr      = BEN;
       #5 i_instr      = 0;
+      #5 i_instr      = JR;
+      #5 i_instr      = 0;
+      #5 i_instr      = JALR;
+      #5 i_instr      = 0;
+      #5 i_instr      = ADDI;
+      #5 i_instr      = SLTI;
+      #5 i_instr      = ANDI;
+      #5 i_instr      = ORI;
+      #5 i_instr      = XORI;
+      #5 i_instr      = LUI;
+      
       
       #10 $finish;
    end
