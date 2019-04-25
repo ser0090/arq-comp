@@ -1,10 +1,17 @@
 `timescale 1ns / 1ps
 
+///  SER0090
+`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+
+/// IOTINCHO
+//`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
+
 module Fetch_module #
   (
-   parameter NB_BITS   = 32,
-   parameter NB_JMP    = 27,
-   parameter RAM_DEPTH = 10
+   parameter NB_BITS   = `NB_BITS,
+   parameter NB_JMP    = `NB_JUMP,
+   parameter RAM_DEPTH = `RAM_FETCH_DEPTH,
+   localparam SSL      = `NOP_OPERATION // NOP operation sll $0 $0 0
    )
    (
     output [NB_BITS-1:0] o_if_id_pc,
@@ -20,12 +27,10 @@ module Fetch_module #
     input                i_rst
     );
 
-   localparam SSL = 32'd0; // NOP operation sll $0 $0 0
-   
    reg [NB_BITS-1:0]     if_id_pc;
    reg [NB_BITS-1:0]     if_id_instr;
    reg [NB_BITS-1:0]     pc;
-   
+
    wire [NB_BITS-1:0]    data_mem;
    wire [NB_BITS-1:0]    mux_beq, mux_jmp;
    //wire                  wea, ena;
@@ -38,7 +43,7 @@ module Fetch_module #
    //Outputs
    assign o_if_id_pc    = if_id_pc;
    assign o_if_id_instr = if_id_instr;
-   
+
    always @(posedge i_clk) begin
       if(i_rst) begin
          pc       <= {NB_BITS{1'b0}};
@@ -49,7 +54,7 @@ module Fetch_module #
          if_id_pc <= (i_if_id_we)? pc + 4: if_id_pc;
       end // else: !if(i_rst)
    end // always @ (posedge i_clk)
-   
+
    always @ (*) begin
       case({i_ctr_flush, i_if_id_we})
         2'b01:   if_id_instr = data_mem;
@@ -58,12 +63,12 @@ module Fetch_module #
         default: if_id_instr = data_mem;
       endcase // case ({i_ctr_flush, i_if_id_we}
    end
-   
+
    Single_port_ram #
      (
       .RAM_WIDTH       (NB_BITS),  // Specify RAM data width
       .NB_DEPTH        (RAM_DEPTH),
-      .INIT_FILE       ("")        // Specify name/location of RAM initialization file if using one (leave blank if not)
+      .INIT_FILE       ("")
       )
    inst_ram_instruction
         (
@@ -72,7 +77,7 @@ module Fetch_module #
          //.i_data (i_du_data),            // RAM input data, width determined from RAM_WIDTH
          .i_clk  (i_clk),                // Clock
          .i_wea  (1'b0),                 // Write enable
-         .i_ena  (i_if_id_we)            // RAM Enable, for additional power savings, disable port when not in use
+         .i_ena  (i_if_id_we)            // RAM Enable
          );
 endmodule // Fetch_module
 

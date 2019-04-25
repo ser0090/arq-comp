@@ -1,13 +1,64 @@
 `timescale 1ns / 1ps
 
+///  SER0090
+`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+
+///  IOTINCHO
+//`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
+
 module Decode_module #
   (
-   parameter NB_BITS = 32, /* asigancion de parametro local */
-   parameter NB_REG  = 5,
-   parameter NB_JMP  = 28,
-   parameter NB_EXEC = 9,
-   parameter NB_MEM  = 3,
-   parameter NB_WB   = 2
+   parameter NB_BITS   = `NB_BITS, /* asigancion de parametro local */
+   parameter NB_REG    = `NB_REG,
+   parameter NB_JMP    = `NB_JUMP,
+   parameter NB_EXEC   = `NB_CTR_EXEC,
+   parameter NB_MEM    = `NB_CTR_MEM,
+   parameter NB_WB     = `NB_CTR_WB,
+   //###### OPERATIOS #######
+   localparam J        = `OP_INSTR_J, // jump
+   localparam JAL      = `OP_INSTR_JAL, // jump and link
+   localparam BEQ      = `OP_INSTR_BEQ,
+   localparam BEN      = `OP_INSTR_BEN,
+   localparam ADDI     = `OP_INSTR_ADDI, // add inmediate word
+   localparam SLTI     = `OP_INSTR_SLTI, // set on less than
+   localparam ANDI     = `OP_INSTR_ANDI,
+   localparam ORI      = `OP_INSTR_ORI,
+   localparam XORI     = `OP_INSTR_XORI,
+   localparam LUI      = `OP_INSTR_LUI,
+   localparam LB       = `OP_INSTR_LB,
+   localparam LH       = `OP_INSTR_LH,
+   localparam LW       = `OP_INSTR_LW,
+   localparam LBU      = `OP_INSTR_LBU,
+   localparam LHU      = `OP_INSTR_LHU,
+   localparam LWU      = `OP_INSTR_LWU,
+   localparam SB       = `OP_INSTR_SB,
+   localparam SH       = `OP_INSTR_SH,
+   localparam SW       = `OP_INSTR_SW,
+   localparam SPECIAL  = `OP_INSTR_SPECIAL,
+   //###### SPECIAL JUMP #######
+   localparam JR       = `FUNC_JR,
+   localparam JALR     = `FUNC_JALR,
+   //######## ALU CODE ##########
+   localparam ALU_J    = `OP_ALU_NONE,
+   localparam ALU_JAL  = `OP_ALU_JAL,
+   localparam ALU_BRQ  = `OP_ALU_NONE, // OP_ALU_SUB,
+   localparam ALU_ADDI = `OP_ALU_ADD,
+   localparam ALU_SLTI = `OP_ALU_SLTI,
+   localparam ALU_ANDI = `OP_ALU_ANDI,
+   localparam ALU_ORI  = `OP_ALU_ORI,
+   localparam ALU_XORI = `OP_ALU_XORI,
+   localparam ALU_LUI  = `OP_ALU_LUI,
+   localparam ALU_LOAD = `OP_ALU_ADD,
+   localparam ALU_SCP  = `OP_ALU_FUNC,
+   //###### SIGN EXTEND #######
+   localparam JMP_EXT  = `JMP_EXT,
+   localparam SGN_EXT  = `SGN_EXT,
+   localparam ZRO_EXT  = `ZRO_EXT,
+   localparam SPC_EXT  = `SPC_EXT,
+   //###### MUX DEST ##########
+   localparam RD       = `DEST_FROM_RD,
+   localparam RT       = `DEST_FROM_RT,
+   localparam R31      = `DEST_TO_RETURN
    )
    (
     output [NB_BITS-1:0] o_id_ex_pc,
@@ -34,65 +85,10 @@ module Decode_module #
     input                i_rst
     );
 
-
    localparam NB_INM = 16;
    localparam NB_IDX = 26;
    localparam SA     = 6;
-   //#############################################################
-   //#####################  OPS CODES  ###########################
-   //#############################################################
-   localparam J    = 6'b000010; // jump
-   localparam JAL  = 6'b000011; // jump and link
-   localparam BEQ  = 6'b000100;
-   localparam BEN  = 6'b000101;
-   localparam ADDI = 6'b001000; // add inmediate word
-   localparam SLTI = 6'b001010; // set on less than
-   localparam ANDI = 6'b001100;
-   localparam ORI  = 6'b001101;
-   localparam XORI = 6'b001110;
-   localparam LUI  = 6'b001111;
 
-   localparam LB   = 6'b100000;
-   localparam LH   = 6'b100001;
-   localparam LW   = 6'b100011;
-   localparam LBU  = 6'b100100;
-   localparam LHU  = 6'b100101;
-   localparam LWU  = 6'b100111;
-   localparam SB   = 6'b101000;
-   localparam SH   = 6'b101001;
-   localparam SW   = 6'b101011;
-
-   localparam SPECIAL = 6'd0;
-   //##################### SPECIAL JUMP ########################
-   localparam JR   = 6'b001000;
-   localparam JALR = 6'b001001;
-
-   //###########################################################
-   //###################### ALU CODE ###########################
-   //###########################################################
-   localparam ALU_J    = 4'b1000;
-   localparam ALU_JAL  = 4'b1001;
-   localparam ALU_BRQ  = 4'b0001;
-   localparam ALU_ADDI = 4'b0000;
-   localparam ALU_SLTI = 4'b0011;
-   localparam ALU_ANDI = 4'b0100;
-   localparam ALU_ORI  = 4'b0101;
-   localparam ALU_XORI = 4'b0110;
-   localparam ALU_LUI  = 4'b0111;
-   localparam ALU_LOAD = 4'b0000;
-   localparam ALU_SCP  = 4'b0010;
-
-   //###### SIGN EXTEND #######
-   localparam JMP_EXT = 2'd0;
-   localparam SGN_EXT = 2'd1;
-   localparam ZRO_EXT = 2'd2;
-   localparam SPC_EXT = 2'd3;
-   
-   //###### MUX DEST ##########
-   localparam RD  = 2'd0;
-   localparam RT  = 2'd1;
-   localparam R31 = 2'd2;
-  
    /* ##### SECUENCIAL ###### */
    reg [NB_BITS-1:0]     pc;
    reg [NB_BITS-1:0]     rs;
@@ -101,7 +97,7 @@ module Decode_module #
    reg [NB_REG-1:0]      rt_num;
    reg [NB_REG-1:0]      rd_num;
    reg [NB_EXEC-1:0]     ctr_exec;
-   
+
    /* ##### COMBINACIONAL ###### */
    // --- SIGN EXTEND ---
    reg [NB_BITS-1:0]     sign_extend;
@@ -123,7 +119,9 @@ module Decode_module #
    wire [NB_BITS-1:0]    rfile_rs;
    wire [NB_BITS-1:0]    rfile_rt;
    wire                  rfile_zero;
+   wire                  pc_beq_s;
 
+   assign pc_beq_s = (beq & rfile_zero) | (ben & ~rfile_zero);
    /* ########## SALIDAS ############ */
    /* --- ID/EX latch --- */
    assign o_id_ex_pc     = pc;
@@ -136,7 +134,7 @@ module Decode_module #
    /* --- BRANCH AND JAMP signals --- */
    assign o_jmp_addr = (jal_addr)? rfile_rs[NB_JMP-1:0] << 2 : sign_extend[NB_JMP-1:0] << 2;
    assign o_brh_addr = $signed(sign_extend << 2) + $signed(i_pc);
-   assign o_pc_beq   = (beq & rfile_zero) | (ben & ~rfile_zero);
+   assign o_pc_beq   = pc_beq_s; //(beq & rfile_zero) | (ben & ~rfile_zero);
    assign o_pc_src   = pc_src;
    assign o_flush    = flush;
 
@@ -170,7 +168,7 @@ module Decode_module #
         SPC_EXT: sign_extend = {{NB_BITS-SA+1{1'b0}}, i_instr[NB_REG+SA-1:SA]};
       endcase // case (se_case)
    end
-   
+
    /* ##################################################
       ###################### CONTROL ###################
       ################################################## */
@@ -216,7 +214,7 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           flush    = 1'b1;  //nop
+           flush    = pc_beq_s;  //nop
            //branch signals
            beq      = 1'b1;  // beq case
            ben      = 1'b0;
@@ -231,7 +229,7 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           flush    = 1'b1;  // nop
+           flush    = pc_beq_s;  // nop
            //branch signals
            beq      = 1'b0;
            ben      = 1'b1;  //ben case
