@@ -35,6 +35,7 @@ module Decode_module #
    localparam SH       = `OP_INSTR_SH,
    localparam SW       = `OP_INSTR_SW,
    localparam SPECIAL  = `OP_INSTR_SPECIAL,
+   localparam HALT     = `OP_INSTR_HALT,
    //###### SPECIAL JUMP #######
    localparam JR       = `FUNC_JR,
    localparam JALR     = `FUNC_JALR,
