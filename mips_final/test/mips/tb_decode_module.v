@@ -91,7 +91,7 @@ module tb_decode_module();
       #5 i_instr      = SW_R1;
       #5 i_instr      = SW_R2;
       #5 i_instr      = SW_R10;
-      
+
       #5 i_instr      = J;
       #5 i_instr      = 0;
       #5 i_instr      = JAL;
@@ -110,8 +110,6 @@ module tb_decode_module();
       #5 i_instr      = ORI;
       #5 i_instr      = XORI;
       #5 i_instr      = LUI;
-      
-      
       #10 $finish;
    end
 
