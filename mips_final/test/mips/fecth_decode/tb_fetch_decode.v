@@ -53,14 +53,18 @@ module tb_fetch_decode();
       i_wb_data       = 2;
       i_reg_dst       = 2;
       #5 i_wb_rf_webn = 0;
-      #5 i_wb_rf_webn = 1; // load r10
-      i_wb_data       = 8;
-      i_reg_dst       = 10;
+      #5 i_wb_rf_webn = 1; // load r21
+      i_wb_data       = 48;
+      i_reg_dst       = 21;
+      #5 i_wb_rf_webn = 0;
+      #5 i_wb_rf_webn = 1; // load r20
+      i_wb_data       = 58;
+      i_reg_dst       = 20;
       #5 i_wb_rf_webn = 0;
       i_wb_data       = 0;
       i_reg_dst       = 29;
       
-      #150 $finish;
+      #180 $finish;
    end
    always #2.5 i_clk = ~i_clk;
 
