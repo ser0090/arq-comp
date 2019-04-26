@@ -60,13 +60,13 @@ module tb_fetch_decode();
       i_wb_data       = 0;
       i_reg_dst       = 29;
       
-      #140 $finish;
+      #150 $finish;
    end
    always #2.5 i_clk = ~i_clk;
 
    Fetch_module #
      (
-      .FILE_DEPTH(55),
+      .FILE_DEPTH(60),
       .INIT_FILE  ("/home/ssulca/arq-comp/mips_final/include/mem_instr.txt") //Comentar
 		  )
    inst_Fetch_module

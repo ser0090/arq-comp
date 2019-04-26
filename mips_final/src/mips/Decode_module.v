@@ -120,7 +120,7 @@ module Decode_module #
    reg                   beq;
    reg                   ben;
    reg                   pc_src;
-   reg                   pc_beq;
+   //reg                   pc_beq;
    reg                   flush;
    reg                   jal_addr;
 
@@ -195,7 +195,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b1;
            //pc_beq   = 1'b0;
-           flush    = 1'b1; // nop
+           flush    = 1'b0; // nop
            //branch signals
            beq      = 1'b0;
            ben      = 1'b0;
@@ -211,7 +211,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b1;
            //pc_beq   = 1'b0;
-           flush    = 1'b1; // nop
+           flush    = 1'b0; // nop
            //branch signals
            beq      = 1'b0;
            ben      = 1'b0;
@@ -378,7 +378,7 @@ module Decode_module #
            jal_addr = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            pc_src   = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            //pc_beq   = 1'b0;
-           flush    = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
+           flush    = 1'b0; //(i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
         end // case: SPECIAL
