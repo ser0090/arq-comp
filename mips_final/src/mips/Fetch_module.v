@@ -34,13 +34,13 @@ module Fetch_module #
    reg [NB_BITS-1:0]     pc;
 
    wire [NB_BITS-1:0]    data_mem;
-   wire [NB_BITS-1:0]    mux_beq, mux_jmp;
+   //wire [NB_BITS-1:0]    mux_beq, mux_jmp;
    //wire                  wea, ena;
    initial
      pc =  {NB_BITS{1'b0}};
    //Muxes
-   assign mux_beq = (i_ctr_beq)? i_brq_addr : pc + 4;
-   assign mux_jmp = (i_ctr_jmp)? {if_id_pc[NB_BITS-1:NB_JMP], i_jmp_addr} : mux_beq;
+   //assign mux_beq = (i_ctr_beq)? i_brq_addr : pc + 4;
+   //assign mux_jmp = (i_ctr_jmp)? {if_id_pc[NB_BITS-1:NB_JMP], i_jmp_addr} : mux_beq;
 
    //Outputs
    assign o_if_id_pc    = if_id_pc;
@@ -52,7 +52,12 @@ module Fetch_module #
          if_id_pc <= {NB_BITS{1'b0}};
       end
       else begin
-         pc       <= (i_pc_we)? mux_jmp : pc;
+         case({i_pc_we, i_ctr_beq, i_ctr_jmp})
+           3'b100:  pc <= pc + 4;
+           3'b110:  pc <= i_brq_addr;
+           3'b101:  pc <= {if_id_pc[NB_BITS-1:NB_JMP], i_jmp_addr};
+           default: pc <= pc;
+         endcase // case ({i_pc_we, i_ctr_beq, i_ctr_jmp})
          if_id_pc <= (i_if_id_we)? pc + 4: if_id_pc;
       end // else: !if(i_rst)
    end // always @ (posedge i_clk)

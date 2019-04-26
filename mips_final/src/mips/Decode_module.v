@@ -120,6 +120,7 @@ module Decode_module #
    reg                   beq;
    reg                   ben;
    reg                   pc_src;
+   reg                   pc_beq;
    reg                   flush;
    reg                   jal_addr;
 
@@ -128,9 +129,9 @@ module Decode_module #
    wire [NB_BITS-1:0]    rfile_rs;
    wire [NB_BITS-1:0]    rfile_rt;
    wire                  rfile_zero;
-   wire                  pc_beq_s;
+   //wire                  pc_beq_s;
 
-   assign pc_beq_s = (beq & rfile_zero) | (ben & ~rfile_zero);
+   //assign pc_beq_s = (beq & rfile_zero) | (ben & ~rfile_zero);
    /* ########## SALIDAS ############ */
    /* --- ID/EX latch --- */
    assign o_id_ex_pc     = pc;
@@ -143,7 +144,7 @@ module Decode_module #
    /* --- BRANCH AND JAMP signals --- */
    assign o_jmp_addr = (jal_addr)? rfile_rs[NB_JMP-1:0] << 2 : sign_extend[NB_JMP-1:0] << 2;
    assign o_brh_addr = $signed(sign_extend << 2) + $signed(i_pc);
-   assign o_pc_beq   = pc_beq_s; //(beq & rfile_zero) | (ben & ~rfile_zero);
+   assign o_pc_beq   = (beq & rfile_zero) | (ben & ~rfile_zero);
    assign o_pc_src   = pc_src;
    assign o_flush    = flush;
 
@@ -193,6 +194,7 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b1;
+           //pc_beq   = 1'b0;
            flush    = 1'b1; // nop
            //branch signals
            beq      = 1'b0;
@@ -208,6 +210,7 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b1;
+           //pc_beq   = 1'b0;
            flush    = 1'b1; // nop
            //branch signals
            beq      = 1'b0;
@@ -223,7 +226,8 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           flush    = pc_beq_s;  //nop
+           //pc_beq   = rfile_zero;
+           flush    = 1'b0;  //nop
            //branch signals
            beq      = 1'b1;  // beq case
            ben      = 1'b0;
@@ -238,7 +242,8 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           flush    = pc_beq_s;  // nop
+           //pc_beq   = 1'b1;
+           flush    = 1'b0;  // nop
            //branch signals
            beq      = 1'b0;
            ben      = 1'b1;  //ben case
@@ -253,6 +258,7 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
@@ -267,6 +273,7 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
@@ -281,6 +288,7 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
@@ -295,6 +303,7 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
@@ -309,6 +318,7 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
@@ -322,6 +332,7 @@ module Decode_module #
            rd_sel   = RT;
            jal_addr = 1'b0;
            pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
@@ -336,6 +347,7 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
@@ -350,6 +362,7 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
@@ -364,6 +377,7 @@ module Decode_module #
            // mux salto Special Jump
            jal_addr = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            pc_src   = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
+           //pc_beq   = 1'b0;
            flush    = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
@@ -376,6 +390,7 @@ module Decode_module #
            rd_sel   = RD;
            jal_addr = 1'b0;
            pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
