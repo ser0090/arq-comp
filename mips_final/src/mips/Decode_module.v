@@ -56,6 +56,14 @@ module Decode_module #
    localparam SGN_EXT  = `SGN_EXT,
    localparam ZRO_EXT  = `ZRO_EXT,
    localparam SPC_EXT  = `SPC_EXT,
+   //###### MUX R1 ALU ##########
+   localparam PC_TO_A  = `PC_TO_A,
+   localparam RS_TO_A  = `EX_MEM_TO_A,
+   localparam SE_TO_A  = `MEM_WB_TO_A,
+   localparam DEF_TO_A = 2'b11,
+   //###### MUX R2 ALU ##########
+   localparam RT_TO_B  = `RT_TO_B,
+   localparam SE_TO_B  = `SEXT_TO_B,
    //###### MUX DEST ##########
    localparam RD       = `DEST_FROM_RD,
    localparam RT       = `DEST_FROM_RT,
@@ -179,8 +187,8 @@ module Decode_module #
            se_case  = JMP_EXT;
            // exec signals
            alu_op   = ALU_J;
-           rs_alu   = 2'd0;
-           rt_alu   = 1'b0;
+           rs_alu   = DEF_TO_A;
+           rt_alu   = SE_TO_B;
            rd_sel   = RD;
            // muxs de saltos
            jal_addr = 1'b0;
@@ -194,8 +202,8 @@ module Decode_module #
            se_case  = JMP_EXT;
            // exec signals
            alu_op   = ALU_JAL;
-           rs_alu   = 2'd0;  // pc
-           rt_alu   = 1'b0;
+           rs_alu   = PC_TO_A;  // pc
+           rt_alu   = SE_TO_B;
            rd_sel   = R31;  // reg 31
            // muxs de saltos
            jal_addr = 1'b0;
@@ -209,8 +217,8 @@ module Decode_module #
            se_case  = SGN_EXT;
            // exec signals
            alu_op   = ALU_BRQ;   //TODO: con un NOP es lo mismo
-           rs_alu   = 2'd0;
-           rt_alu   = 1'b0;
+           rs_alu   = DEF_TO_A;
+           rt_alu   = SE_TO_B;
            rd_sel   = RD;
            // muxs de saltos
            jal_addr = 1'b0;
@@ -224,8 +232,8 @@ module Decode_module #
            se_case  = SGN_EXT;
            // exec signals
            alu_op   = ALU_BRQ;   //TODO: con un NOP es lo mismo
-           rs_alu   = 2'd0;
-           rt_alu   = 1'b0;
+           rs_alu   = DEF_TO_A;
+           rt_alu   = SE_TO_B;
            rd_sel   = RD;
            // muxs de saltos
            jal_addr = 1'b0;
@@ -239,8 +247,8 @@ module Decode_module #
            se_case  = SGN_EXT;
            // exec signals
            alu_op   = ALU_ADDI;
-           rs_alu   = 2'd1; // rs
-           rt_alu   = 1'b1; // inm
+           rs_alu   = RS_TO_A; // rs
+           rt_alu   = SE_TO_B; // inm
            rd_sel   = RT;
            // muxs de saltos
            jal_addr = 1'b0;
@@ -253,8 +261,8 @@ module Decode_module #
            se_case  = SGN_EXT;
            // exec signals
            alu_op   = ALU_SLTI;
-           rs_alu   = 2'd1; // rs
-           rt_alu   = 1'b1; // inm
+           rs_alu   = RS_TO_A; // rs
+           rt_alu   = SE_TO_B; // inm
            rd_sel   = RT;
            // muxs de saltos
            jal_addr = 1'b0;
@@ -267,8 +275,8 @@ module Decode_module #
            se_case  = ZRO_EXT;
            // exec signals
            alu_op   = ALU_ANDI;
-           rs_alu   = 2'd1; // rs
-           rt_alu   = 1'b1; // in
+           rs_alu   = RS_TO_A; // rs
+           rt_alu   = SE_TO_B; // inm
            rd_sel   = RT;
            // muxs de saltos
            jal_addr = 1'b0;
@@ -281,8 +289,8 @@ module Decode_module #
            se_case  = ZRO_EXT;
            // exec signals
            alu_op   = ALU_ORI;
-           rs_alu   = 2'd1; // rs
-           rt_alu   = 1'b1; // in
+           rs_alu   = RS_TO_A; // rs
+           rt_alu   = SE_TO_B; // inm
            rd_sel   = RT;
            // muxs de saltos
            jal_addr = 1'b0;
@@ -295,9 +303,10 @@ module Decode_module #
            se_case  = ZRO_EXT;
            // exec signals
            alu_op   = ALU_XORI;
-           rs_alu   = 2'd1; // rs
-           rt_alu   = 1'b1; // in
+           rs_alu   = RS_TO_A; // rs
+           rt_alu   = SE_TO_B; // inm
            rd_sel   = RT;
+           // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            flush    = 1'b0;
@@ -308,8 +317,8 @@ module Decode_module #
            se_case  = ZRO_EXT;
            // exec signals
            alu_op   = ALU_LUI;
-           rs_alu   = 2'd0;
-           rt_alu   = 1'b1; // in
+           rs_alu   = DEF_TO_A; // rs
+           rt_alu   = SE_TO_B; // inm
            rd_sel   = RT;
            jal_addr = 1'b0;
            pc_src   = 1'b0;
@@ -321,8 +330,8 @@ module Decode_module #
            se_case  = SGN_EXT;
            // exec signals
            alu_op   = ALU_LOAD;
-           rs_alu   = 2'd1; // rs base
-           rt_alu   = 1'b1; // in
+           rs_alu   = RS_TO_A; // rs base
+           rt_alu   = SE_TO_B; // in
            rd_sel   = RT;
            // mux salto
            jal_addr = 1'b0;
@@ -335,8 +344,8 @@ module Decode_module #
            se_case  = SGN_EXT;
            // exec signals
            alu_op   = ALU_LOAD;
-           rs_alu   = 2'd1; // rs base
-           rt_alu   = 1'b1; // in
+           rs_alu   = RS_TO_A; // rs base
+           rt_alu   = SE_TO_B; // in
            rd_sel   = RT;
            // mux salto
            jal_addr = 1'b0;
@@ -349,8 +358,8 @@ module Decode_module #
            se_case  = SPC_EXT;
            // exec signals
            alu_op   = ALU_SCP;
-           rs_alu   = 2'd2; // sa inmt
-           rt_alu   = 1'b0; // rt
+           rs_alu   = SE_TO_A; // sa inmt
+           rt_alu   = RT_TO_B; // rt
            rd_sel   = RD;
            // mux salto Special Jump
            jal_addr = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
@@ -362,8 +371,8 @@ module Decode_module #
         default: begin
            se_case  = SGN_EXT;
            alu_op   = ALU_J;
-           rs_alu   = 2'd0;
-           rt_alu   = 1'b0;
+           rs_alu   = DEF_TO_A;
+           rt_alu   = SE_TO_B;
            rd_sel   = RD;
            jal_addr = 1'b0;
            pc_src   = 1'b0;
