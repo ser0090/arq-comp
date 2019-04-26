@@ -6,7 +6,7 @@ module tb_reg_file();
    parameter NB_DEPTH  = 5;
    
    wire [NB_BITS-1:0] o_rs;
-   wire [NB_BITS-1:0] o_rd;
+   wire [NB_BITS-1:0] o_rt;
    reg [NB_BITS-1:0]  i_data;
    reg [NB_DEPTH-1:0] i_read_addr_1;
    reg [NB_DEPTH-1:0] i_read_addr_2;
@@ -47,7 +47,7 @@ module tb_reg_file();
      u_reg_file
        (
         .o_rs          (o_rs), // registro rs de salid
-        .o_rd          (o_rd), // registro rt de salida
+        .o_rt          (o_rt), // registro rt de salida
         .i_data        (i_data), // data write
         .i_read_addr_1 (i_read_addr_1), // read register rs selector 1
         .i_read_addr_2 (i_read_addr_2), // read register rt selector 2
