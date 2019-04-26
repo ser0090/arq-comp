@@ -75,7 +75,16 @@
 `define DEST_FROM_RD    2'b0
 `define DEST_FROM_RT    2'b1
 `define DEST_TO_RETURN  2'b10
-
+// MUX R1
+`define PC_TO_A         2'b00
+`define EX_MEM_TO_A     2'b01
+`define MEM_WB_TO_A     2'b10
+//MUX R2 ALU
+`define RT_TO_B         1'b0
+`define SEXT_TO_B       1'b1
+//MUX R1 ALU
+`define RT_TO_B         1'b0
+`define SEXT_TO_B       1'b1
 ///////////////////////////////////////////
 ///// ALU  
 ///////////////////////////////////////////
