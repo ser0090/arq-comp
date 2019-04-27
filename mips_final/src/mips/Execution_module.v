@@ -1,10 +1,33 @@
 `timescale 1ns / 1ps
 
+///  SER0090
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+
+///  IOTINCHO
+`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
 module Execution_module#
   (
    parameter NB_BITS = 32, /* asigancion de parametro local */
    parameter NB_ALU_OP_CTL = 4,
-   parameter NB_FUNCTION = 6
+   parameter NB_FUNCTION = 6,
+
+   localparam NB_OPE = 5,
+
+   localparam PC_TO_A     = `PC_TO_A    ,
+   localparam RS_TO_A     = `RS_TO_A    ,
+   localparam SEXT_TO_A   = `SEXT_TO_A  ,
+
+   localparam RT_TO_B     = `RT_TO_B  ,  
+   localparam SEXT_TO_B   = `SEXT_TO_B,  
+
+   localparam FROM_ID_EX  = `FROM_ID_EX ,
+   localparam FROM_EX_MEM = `FROM_EX_MEM,
+   localparam FROM_MEM_WB = `FROM_MEM_WB,
+
+   localparam DEST_FROM_RD   = `DEST_FROM_RD  ,
+   localparam DEST_FROM_RT   = `DEST_FROM_RT  ,
+   localparam DEST_TO_RETURN = `DEST_TO_RETURN
+
    )
    (
     output [NB_BITS-1:0] o_alu_out,
@@ -39,22 +62,7 @@ module Execution_module#
 
     );
 
-   localparam NB_OPE = 5;
 
-   localparam PC_TO_A     = 2'b00;
-   localparam EX_MEM_TO_A = 2'b01;
-   localparam MEM_WB_TO_A = 2'b10;
-
-   localparam RT_TO_B     = 1'b0;
-   localparam SEXT_TO_B   = 1'b1;
-
-   localparam FROM_ID_EX  = 2'b00;
-   localparam FROM_EX_MEM = 2'b01;
-   localparam FROM_MEM_WB = 2'b10;
-
-  localparam DEST_FROM_RD   = 2'b0;
-  localparam DEST_FROM_RT   = 2'b1;
-  localparam DEST_TO_RETURN = 2'b10;
 
 
    wire [4:0] operation;
@@ -94,8 +102,8 @@ module Execution_module#
       */
      case (i_mux_rs_ctl)
         PC_TO_A :     dato_aux_a = i_pc_4;
-        EX_MEM_TO_A : dato_aux_a = i_rs_reg;
-        MEM_WB_TO_A : dato_aux_a = i_sign_ext;
+        RS_TO_A : dato_aux_a = i_rs_reg;
+        SEXT_TO_A : dato_aux_a = i_sign_ext;
         default :     dato_aux_a = 0;
       endcase
     end

@@ -77,14 +77,19 @@
 `define DEST_TO_RETURN  2'b10
 // MUX R1
 `define PC_TO_A         2'b00
-`define EX_MEM_TO_A     2'b01
-`define MEM_WB_TO_A     2'b10
+`define RS_TO_A         2'b01
+`define SEXT_TO_A       2'b10
 //MUX R2 ALU
 `define RT_TO_B         1'b0
 `define SEXT_TO_B       1'b1
 //MUX R1 ALU
 `define RT_TO_B         1'b0
 `define SEXT_TO_B       1'b1
+
+// FORWARDING UNIT DEFINITIONS
+ `define FROM_ID_EX   2'b00
+ `define FROM_EX_MEM  2'b01
+ `define FROM_MEM_WB  2'b10
 ///////////////////////////////////////////
 ///// ALU  
 ///////////////////////////////////////////
@@ -107,3 +112,5 @@
 ///////////////////////////////////////////
 // WRITE BACk
 ///////////////////////////////////////////
+`define DATA_FROM_MEM   1'b0
+`define DATA_FROM_ALU   1'b1

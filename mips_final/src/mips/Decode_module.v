@@ -58,8 +58,8 @@ module Decode_module #
    localparam SPC_EXT  = `SPC_EXT,
    //###### MUX R1 ALU ##########
    localparam PC_TO_A  = `PC_TO_A,
-   localparam RS_TO_A  = `EX_MEM_TO_A,
-   localparam SE_TO_A  = `MEM_WB_TO_A,
+   localparam RS_TO_A  = `RS_TO_A,
+   localparam SE_TO_A  = `SEXT_TO_A,
    localparam DEF_TO_A = 2'b11,
    //###### MUX R2 ALU ##########
    localparam RT_TO_B  = `RT_TO_B,

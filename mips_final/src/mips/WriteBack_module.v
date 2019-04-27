@@ -1,7 +1,16 @@
 `timescale 1ns/1ps
 
+///  SER0090
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+
+///  IOTINCHO
+`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
+
 module WriteBack_module #
-  (parameter NB_BITS = 32)
+  (parameter NB_BITS = 32,
+  localparam DATA_FROM_MEM = `DATA_FROM_MEM,
+  localparam DATA_FROM_ALU = `DATA_FROM_ALU
+  )
   (
     output [NB_BITS-1:0] o_data,
 
@@ -13,8 +22,6 @@ module WriteBack_module #
   reg [NB_BITS-1:0] mux_out;
   assign o_data = mux_out;
 
-  localparam DATA_FROM_MEM = 1'b0;
-  localparam DATA_FROM_ALU = 1'b1;
 
 
   always @(*) begin
