@@ -11,7 +11,6 @@
 module Data_Memory #(
     parameter RAM_WIDTH       = 32,            // Specify RAM data width
     parameter NB_DEPTH        = 10,            // Specify RAM depth (number of entries)
-    parameter FILE_DEPTH      = 31,            // Specify RAM data width
     localparam RAM_DEPTH      = 2**NB_DEPTH,
 
     localparam READ_DISABLE   = `READ_DISABLE , 

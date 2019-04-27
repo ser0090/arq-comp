@@ -129,7 +129,6 @@ module tb_Data_Memory (); /* this is automatically generated */
 	Data_Memory #(
 			.RAM_WIDTH(RAM_WIDTH),
 			.NB_DEPTH(NB_DEPTH),
-			.FILE_DEPTH(FILE_DEPTH)
 			
 		) inst_Data_Memory (
 			.o_data         (o_data),
