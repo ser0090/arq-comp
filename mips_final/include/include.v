@@ -109,6 +109,19 @@
 // MEM
 ///////////////////////////////////////////
 
+`define  READ_DISABLE   2'b00
+`define  READ_BYTE      2'b01
+`define  READ_HALFWORD  2'b10
+`define  READ_WORD      2'b11 
+
+`define WRITE_DISABLE   2'b00
+`define WRITE_BYTE      2'b01
+`define WRITE_HALFWORD  2'b10
+`define WRITE_WORD      2'b11 
+
+`define HALFWORD   16
+`define BYTE       8
+`define WORD       32
 ///////////////////////////////////////////
 // WRITE BACk
 ///////////////////////////////////////////
