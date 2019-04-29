@@ -82,7 +82,7 @@ module Execution_module#
    assign o_reg_dst  = EX_MEM[84:80];
 
 
-   always @(posedge i_clk or posedge i_rst) begin
+   always @(posedge i_clk) begin
       if (i_rst) begin
          EX_MEM[95:0]  <= 96'd0;
       end
