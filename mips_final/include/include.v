@@ -13,6 +13,7 @@
 ///////////////////////////////////////////
 `define NB_JUMP         28
 `define NOP_OPERATION   0
+`define NB_FUN          6
 `define NB_REG          5
 // CONTROL
 `define NB_CTR_EXEC     9
