@@ -80,6 +80,7 @@ module Decode_module #
     //output [NB_REG-1:0] o_if_id_rs_num,
     output [NB_REG-1:0]  o_id_ex_rt_num,
     output [NB_REG-1:0]  o_id_ex_rd_num,
+    output [5:0]         o_id_ex_func,
     //output [NB_MEM-1:0]  o_id_ex_mem,
     //output [NB_WB-1:0]   o_id_ex_wrback,
     output               o_pc_beq,
@@ -103,6 +104,7 @@ module Decode_module #
    reg [NB_BITS-1:0]     rs;
    reg [NB_BITS-1:0]     rt;
    reg [NB_BITS-1:0]     sg_ext;
+   reg [5:0]             funct;
    reg [NB_REG-1:0]      rt_num;
    reg [NB_REG-1:0]      rd_num;
    reg [NB_EXEC-1:0]     ctr_exec;
@@ -138,6 +140,7 @@ module Decode_module #
    assign o_id_ex_rs     = rs;
    assign o_id_ex_rt     = rt;
    assign o_id_ex_sgext  = sg_ext;
+   assign o_id_ex_func   = funct;
    assign o_id_ex_rt_num = rt_num;
    assign o_id_ex_rd_num = rd_num;
    assign o_id_ex_exec   = ctr_exec;
@@ -154,6 +157,7 @@ module Decode_module #
          rs       <= {NB_BITS{1'b0}};
          rt       <= {NB_BITS{1'b0}};
          sg_ext   <= {NB_BITS{1'b0}};
+         funct    <= {6{1'b0}};
          rt_num   <= {NB_REG{1'b0}};
          rd_num   <= {NB_REG{1'b0}};
          ctr_exec <= {NB_EXEC{1'b0}};
@@ -163,6 +167,7 @@ module Decode_module #
          rs       <= rfile_rs;
          rt       <= rfile_rt;
          sg_ext   <= sign_extend;
+         funct    <= i_instr[5:0];
          rt_num   <= i_instr[20:16];
          rd_num   <= i_instr[15:11];
          ctr_exec <= {alu_op, rs_alu, rt_alu, rd_sel};
@@ -371,7 +376,7 @@ module Decode_module #
            se_case  = SPC_EXT;
            // exec signals
            alu_op   = ALU_SCP;
-           rs_alu   = SE_TO_A; // sa inmt
+           rs_alu   = (i_instr[25:21]==5'b0)? SE_TO_A : RS_TO_A; // sa inmt
            rt_alu   = RT_TO_B; // rt
            rd_sel   = RD;
            // mux salto Special Jump
