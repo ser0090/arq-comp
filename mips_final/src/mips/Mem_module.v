@@ -4,7 +4,8 @@
 //`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
-`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
+`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 
 module Mem_module #(
@@ -34,9 +35,10 @@ module Mem_module #(
 
 
     assign o_wb_ctl   = latched_out[7:0]   ;
-    assign o_mem_data = latched_out[39:8]  ;
+    assign o_mem_data = mem_out;//latched_out[39:8]  ;
     assign o_alu_data = latched_out[71:40] ;
     assign o_reg_dst  = latched_out[76:72] ;
+
 
 
     always @(posedge i_clk) begin
@@ -53,7 +55,28 @@ module Mem_module #(
      end 
 
 
+    Single_port_ram #(
+            .RAM_WIDTH(NB_BITS),
+            .NB_DEPTH(8)
+        ) inst_Single_port_ram (
+            .o_data   (mem_out),
+            .i_addr   (i_addr[9:2]),
+            .i_data   (i_data),
+            .i_clk    (i_clk),
+            .i_wea    (i_write_ctl[0] | i_write_ctl[1]),
+            .i_ena    (i_write_ctl[0] | 
+                       i_write_ctl[1] | 
+                       i_read_ctl[0]  |
+                       i_read_ctl[1]    ),
+            .i_rst    (i_rst)
+//            .i_regcea (i_regcea)
+        );
 
+
+
+
+
+/*
     Data_Memory #(
             .RAM_WIDTH(NB_BITS),
             .NB_DEPTH(NB_DEPTH)
@@ -65,6 +88,6 @@ module Mem_module #(
             .i_read_enable  (i_read_ctl),
             .i_clk          (i_clk)
         );
-
+*/
 
 endmodule
