@@ -4,13 +4,16 @@
 //`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
-`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
+`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 module tb_Data_Memory (); /* this is automatically generated */
 
 	localparam RAM_WIDTH      = 32;
 	localparam NB_DEPTH       = 10;
 	localparam FILE_DEPTH     = 31;
+    localparam COL_WIDTH       = 8;
+    localparam NB_COL         = 4;
 	
 	reg        i_clk;
     reg        i_rst;
@@ -21,10 +24,10 @@ module tb_Data_Memory (); /* this is automatically generated */
 	reg           [1:0] i_write_enable;
 	reg           [1:0] i_read_enable;
 	
-	localparam ADDR_BASE  = 10'h3F0;
+	localparam ADDR_BASE  = 10'd1016;
 	localparam DATA_BYTE  = 32'hFFFFFF33;
 	localparam DATA_HALF  = 32'hFFFF5555;
-  localparam DATA_WORD  = 32'h77777777;
+    localparam DATA_WORD  = 32'h77777777;
 
 	initial begin
 		i_clk = 1'b0;
@@ -127,9 +130,9 @@ module tb_Data_Memory (); /* this is automatically generated */
 
 	always #2.5 i_clk = ~i_clk;
 	Data_Memory #(
-			.RAM_WIDTH(RAM_WIDTH),
 			.NB_DEPTH(NB_DEPTH),
-			
+			.NB_COL(NB_COL),
+            .COL_WIDTH(COL_WIDTH)
 		) inst_Data_Memory (
 			.o_data         (o_data),
 			.i_addr         (i_addr),
@@ -138,6 +141,5 @@ module tb_Data_Memory (); /* this is automatically generated */
 			.i_read_enable  (i_read_enable),
 			.i_clk          (i_clk)
 		);
-
 
 endmodule

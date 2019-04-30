@@ -29,6 +29,9 @@ module Mem_module #(
     input i_rst
     );
 
+    localparam COL_WIDTH       = 8;
+    localparam NB_COL         = 4;
+    
     reg [80-1:0] latched_out;
 
     wire [NB_BITS-1:0] mem_out;
@@ -53,7 +56,7 @@ module Mem_module #(
             latched_out [79:77] <= 3'd0;
          end
      end 
-
+/*
 
     Single_port_ram #(
             .RAM_WIDTH(NB_BITS),
@@ -71,8 +74,19 @@ module Mem_module #(
             .i_rst    (i_rst)
 //            .i_regcea (i_regcea)
         );
-
-
+*/
+    Data_Memory #(
+            .NB_DEPTH(NB_DEPTH),
+            .NB_COL(NB_COL),
+            .COL_WIDTH(COL_WIDTH)
+        ) inst_Data_Memory (
+            .o_data         (mem_out),
+            .i_addr         (i_addr[9:2]),
+            .i_data         (i_data),
+            .i_write_enable (i_write_enable),
+            .i_read_enable  (i_read_enable),
+            .i_clk          (i_clk)
+        );
 
 
 
