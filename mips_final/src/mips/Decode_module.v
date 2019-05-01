@@ -1,7 +1,8 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
@@ -39,6 +40,19 @@ module Decode_module #
    //###### SPECIAL JUMP #######
    localparam JR       = `FUNC_JR,
    localparam JALR     = `FUNC_JALR,
+   localparam SSL      = `FUNC_SLL,
+   localparam SRL      = `FUNC_SRL,
+   localparam SRA      = `FUNC_SRA,
+   localparam SLLV     = `FUNC_SLLV,
+   localparam SRLV     = `FUNC_SRLV,
+   localparam SRAV     = `FUNC_SRAV,
+   localparam ADDU     = `FUNC_ADDU,
+   localparam SUBU     = `FUNC_SUBU,
+   localparam AND      = `FUNC_AND,
+   localparam OR       = `FUNC_OR,
+   localparam XOR      = `FUNC_XOR,
+   localparam NOR      = `FUNC_NOR,
+   localparam SLT      = `FUNC_SLT,
    //######## ALU CODE ##########
    localparam ALU_J    = `OP_ALU_NONE,
    localparam ALU_JAL  = `OP_ALU_JAL,
@@ -376,7 +390,14 @@ module Decode_module #
            se_case  = SPC_EXT;
            // exec signals
            alu_op   = ALU_SCP;
-           rs_alu   = (i_instr[25:21]==5'b0)? SE_TO_A : RS_TO_A; // sa inmt
+           case(i_instr[5:0])
+             JALR:    rs_alu = PC_TO_A;
+             SSL:     rs_alu = SE_TO_A;
+             SRL:     rs_alu = SE_TO_A;
+             SRA:     rs_alu = SE_TO_A;
+             default: rs_alu = RS_TO_A;
+           endcase // case (i_instr[5:0])
+           //rs_alu   = (i_instr[25:21]==5'b0)? SE_TO_A : RS_TO_A; // sa inmt
            rt_alu   = RT_TO_B; // rt
            rd_sel   = RD;
            // mux salto Special Jump
