@@ -7,33 +7,27 @@
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
 
-module Mpis #
-  (
-   parameter NB_BITS   = `NB_BITS, /* asigancion de parametro local */
-   parameter NB_REG    = `NB_REG,
-   parameter NB_JMP    = `NB_JUMP,
-   parameter NB_EXEC   = `NB_CTR_EXEC,
-   parameter NB_MEM    = `NB_CTR_MEM,
-   parameter NB_WB     = `NB_CTR_WB,
-   localparam NB_FUN   = `NB_FUN
-   )
-   (
-    output [NB_BITS-1:0] o_alu_out,
-    output [NB_BITS-1:0] o_data_reg,
-    output [NB_REG-1:0]  o_reg_dst,
-    output [7:0]         o_wb_ctl,
-    output [7:0]         o_mem_ctl,
-    input [NB_BITS-1:0]  i_wb_data,
-    input [NB_REG-1:0]   i_reg_dst,
-    input                i_wb_rf_webn,
-    input                i_clk,
-    input                i_rst
-    );
-
-   /* ##### SECUENCIAL ###### */
-
-   /* ##### COMBINACIONAL ###### */
-
+module tb_fdexec();
+   parameter NB_BITS   = `NB_BITS;
+   parameter NB_REG    = `NB_REG;
+   parameter NB_JMP    = `NB_JUMP;
+   parameter NB_EXEC   = `NB_CTR_EXEC;
+   parameter NB_MEM    = `NB_CTR_MEM;
+   parameter NB_WB     = `NB_CTR_WB;
+   localparam NB_FUN   = `NB_FUN;
+   
+   wire [NB_BITS-1:0] o_alu_out;
+   wire [NB_BITS-1:0] o_data_reg;
+   wire [NB_REG-1:0]  o_reg_dst;
+   wire [7:0]         o_wb_ctl;
+   wire [7:0]         o_mem_ctl;
+   
+   reg [NB_BITS-1:0]  i_wb_data;
+   reg [NB_REG-1:0]   i_reg_dst;
+   reg                i_wb_rf_webn;
+   reg                i_clk;
+   reg                i_rst;
+   
    /* #### WIRES #####*/
    // --- Wire Connectios FET/DEC ---
    wire [NB_BITS-1:0]    fet_2_dec_pc;
@@ -52,9 +46,42 @@ module Mpis #
    wire [NB_FUN-1:0]     dec_2_ex_func;
    wire [NB_REG-1:0]     dec_2_ex_rt_num;
    wire [NB_REG-1:0]     dec_2_ex_rd_num;
+   
+   wire [5:0]            operacion = fet_2_dec_instr[31:26];
+   wire [5:0]            functi0n  = fet_2_dec_instr[5:0];
    /* ########## SALIDAS ############ */
    /* --- EX/MEM latch --- */
-   
+   initial begin
+      i_clk = 1'b1;
+      i_rst = 1'b1;
+      i_wb_data = 0;
+      i_reg_dst = 0;
+      i_wb_rf_webn = 0;
+      
+      #4.9 i_rst = 1'b0;
+      
+      #5 i_wb_rf_webn = 1; // load r1
+      i_wb_data       = 1;
+      i_reg_dst       = 1;
+      #5 i_wb_rf_webn = 0;
+      #5 i_wb_rf_webn = 1; // load r2
+      i_wb_data       = 2;
+      i_reg_dst       = 2;
+      #5 i_wb_rf_webn = 0;
+      #5 i_wb_rf_webn = 1; // load r21
+      i_wb_data       = 48;
+      i_reg_dst       = 21;
+      #5 i_wb_rf_webn = 0;
+      #5 i_wb_rf_webn = 1; // load r20
+      i_wb_data       = 58;
+      i_reg_dst       = 20;
+      #5 i_wb_rf_webn = 0;
+      i_wb_data       = 0;
+      i_reg_dst       = 29;
+      
+      #280 $finish;
+   end // initial begin
+   always #2.5 i_clk = ~i_clk;
 
    Fetch_module #
      (
@@ -76,7 +103,7 @@ module Mpis #
 			.i_clk         (i_clk),
 			.i_rst         (i_rst)
 		  );
-
+   
    Decode_module #()
    inst_Decode_module
      (
@@ -131,6 +158,4 @@ module Mpis #
 			.i_rst           (i_rst)
 		  );
 
-endmodule // Mpis
-
-
+endmodule // tb_fdexec
