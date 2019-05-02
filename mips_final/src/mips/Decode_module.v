@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
-`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
@@ -43,16 +43,6 @@ module Decode_module #
    localparam SSL      = `FUNC_SLL,
    localparam SRL      = `FUNC_SRL,
    localparam SRA      = `FUNC_SRA,
-   localparam SLLV     = `FUNC_SLLV,
-   localparam SRLV     = `FUNC_SRLV,
-   localparam SRAV     = `FUNC_SRAV,
-   localparam ADDU     = `FUNC_ADDU,
-   localparam SUBU     = `FUNC_SUBU,
-   localparam AND      = `FUNC_AND,
-   localparam OR       = `FUNC_OR,
-   localparam XOR      = `FUNC_XOR,
-   localparam NOR      = `FUNC_NOR,
-   localparam SLT      = `FUNC_SLT,
    //######## ALU CODE ##########
    localparam ALU_J    = `OP_ALU_NONE,
    localparam ALU_JAL  = `OP_ALU_JAL,
@@ -95,7 +85,7 @@ module Decode_module #
     output [NB_REG-1:0]  o_id_ex_rt_num,
     output [NB_REG-1:0]  o_id_ex_rd_num,
     output [5:0]         o_id_ex_func,
-    //output [NB_MEM-1:0]  o_id_ex_mem,
+    output [NB_MEM-1:0]  o_id_ex_mem,
     //output [NB_WB-1:0]   o_id_ex_wrback,
     output               o_pc_beq,
     output               o_pc_src,
@@ -122,6 +112,7 @@ module Decode_module #
    reg [NB_REG-1:0]      rt_num;
    reg [NB_REG-1:0]      rd_num;
    reg [NB_EXEC-1:0]     ctr_exec;
+   reg [NB_MEM-1:0]      ctr_mem;
 
    /* ##### COMBINACIONAL ###### */
    // --- SIGN EXTEND ---
@@ -139,7 +130,10 @@ module Decode_module #
    //reg                   pc_beq;
    reg                   flush;
    reg                   jal_addr;
-
+   // --- MEM ctrl Signals ---
+   reg [1:0]             mem_wr;
+   reg [1:0]             mem_rd;
+   
    /* #### WIRES #####*/
    // --- Register file Signals ---
    wire [NB_BITS-1:0]    rfile_rs;
@@ -158,6 +152,7 @@ module Decode_module #
    assign o_id_ex_rt_num = rt_num;
    assign o_id_ex_rd_num = rd_num;
    assign o_id_ex_exec   = ctr_exec;
+   assign o_id_ex_mem    = ctr_mem;
    /* --- BRANCH AND JAMP signals --- */
    
    assign o_jmp_addr = (jal_addr)? rfile_rs :
@@ -177,6 +172,7 @@ module Decode_module #
          rt_num   <= {NB_REG{1'b0}};
          rd_num   <= {NB_REG{1'b0}};
          ctr_exec <= {NB_EXEC{1'b0}};
+         ctr_mem  <= {NB_MEM{1'b0}};
       end
       else begin
          pc       <= i_pc;
@@ -187,6 +183,8 @@ module Decode_module #
          rt_num   <= i_instr[20:16];
          rd_num   <= i_instr[15:11];
          ctr_exec <= {alu_op, rs_alu, rt_alu, rd_sel};
+         ctr_exec <= {alu_op, rs_alu, rt_alu, rd_sel};
+         ctr_mem  <= {mem_rd, mem_wr};
       end // else: !if(i_rst)
    end // always @ (posedge i_clk)
 
@@ -220,6 +218,9 @@ module Decode_module #
            //branch signals
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: J
         JAL: begin
            se_case  = JMP_EXT;
@@ -236,6 +237,9 @@ module Decode_module #
            //branch signals
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: JAL
         BEQ: begin
            se_case  = SGN_EXT;
@@ -252,6 +256,9 @@ module Decode_module #
            //branch signals
            beq      = 1'b1;  // beq case
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: BEQ
         BEN: begin
            se_case  = SGN_EXT;
@@ -268,6 +275,9 @@ module Decode_module #
            //branch signals
            beq      = 1'b0;
            ben      = 1'b1;  //ben case
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: BEN
         ADDI: begin
            se_case  = SGN_EXT;
@@ -283,6 +293,9 @@ module Decode_module #
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: ADDI
         SLTI: begin
            se_case  = SGN_EXT;
@@ -298,6 +311,9 @@ module Decode_module #
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: SLTI
         ANDI: begin
            se_case  = ZRO_EXT;
@@ -313,6 +329,9 @@ module Decode_module #
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: ANDI
         ORI: begin
            se_case  = ZRO_EXT;
@@ -328,6 +347,9 @@ module Decode_module #
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: ORI
         XORI: begin
            se_case  = ZRO_EXT;
@@ -343,6 +365,9 @@ module Decode_module #
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: XOIR
         LUI: begin
            se_case  = ZRO_EXT;
@@ -357,7 +382,46 @@ module Decode_module #
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: LUI
+        LB: begin
+           se_case  = SGN_EXT;
+           // exec signals
+           alu_op   = ALU_LOAD;
+           rs_alu   = RS_TO_A; // rs base
+           rt_alu   = SE_TO_B; // in
+           rd_sel   = RT;
+           // mux salto
+           jal_addr = 1'b0;
+           pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
+           flush    = 1'b0;
+           beq      = 1'b0;
+           ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_BYTE;
+           mem_wr   = `WRITE_DISABLE;
+        end // case: LB
+        LH: begin
+           se_case  = SGN_EXT;
+           // exec signals
+           alu_op   = ALU_LOAD;
+           rs_alu   = RS_TO_A; // rs base
+           rt_alu   = SE_TO_B; // in
+           rd_sel   = RT;
+           // mux salto
+           jal_addr = 1'b0;
+           pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
+           flush    = 1'b0;
+           beq      = 1'b0;
+           ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_HALFWORD;
+           mem_wr   = `WRITE_DISABLE;
+        end // case: LH
         LW: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -372,7 +436,46 @@ module Decode_module #
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
-        end // case: LB
+           //mem signals
+           mem_rd   = `READ_WORD;
+           mem_wr   = `WRITE_DISABLE;
+        end // case: LW
+        SB: begin
+           se_case  = SGN_EXT;
+           // exec signals
+           alu_op   = ALU_LOAD;
+           rs_alu   = RS_TO_A; // rs base
+           rt_alu   = SE_TO_B; // in
+           rd_sel   = RT;
+           // mux salto
+           jal_addr = 1'b0;
+           pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
+           flush    = 1'b0;
+           beq      = 1'b0;
+           ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_BYTE;
+        end // case: SB
+        SH: begin
+           se_case  = SGN_EXT;
+           // exec signals
+           alu_op   = ALU_LOAD;
+           rs_alu   = RS_TO_A; // rs base
+           rt_alu   = SE_TO_B; // in
+           rd_sel   = RT;
+           // mux salto
+           jal_addr = 1'b0;
+           pc_src   = 1'b0;
+           //pc_beq   = 1'b0;
+           flush    = 1'b0;
+           beq      = 1'b0;
+           ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_HALFWORD;
+        end // case: SH
         SW: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -387,6 +490,9 @@ module Decode_module #
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_WORD;
         end // case: SW
         SPECIAL: begin
            se_case  = SPC_EXT;
@@ -409,6 +515,9 @@ module Decode_module #
            flush    = 1'b0; //(i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: SPECIAL
         default: begin
            se_case  = SGN_EXT;
@@ -422,6 +531,9 @@ module Decode_module #
            flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
+           //mem signals
+           mem_rd   = `READ_DISABLE;
+           mem_wr   = `WRITE_DISABLE;
         end // case: default
       endcase // case (i_instr[31:26])
    end // always @ (*)
