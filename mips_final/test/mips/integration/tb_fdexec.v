@@ -33,7 +33,7 @@ module tb_fdexec();
    wire [NB_BITS-1:0]    fet_2_dec_pc;
    wire [NB_BITS-1:0]    fet_2_dec_instr;
    wire [NB_BITS-1:0]    dec_2_fet_brh_addr;
-   wire [NB_JMP-1:0]     dec_2_fet_jmp_addr;
+   wire [NB_BITS-1:0]    dec_2_fet_jmp_addr;
    wire                  dec_2_fet_pc_beq;
    wire                  dec_2_fet_pc_src;
    wire                  dec_2_fet_flush;
@@ -69,11 +69,11 @@ module tb_fdexec();
       i_reg_dst       = 2;
       #5 i_wb_rf_webn = 0;
       #5 i_wb_rf_webn = 1; // load r21
-      i_wb_data       = 48;
+      i_wb_data       = 48<<2;
       i_reg_dst       = 21;
       #5 i_wb_rf_webn = 0;
       #5 i_wb_rf_webn = 1; // load r20
-      i_wb_data       = 58;
+      i_wb_data       = 58<<2;
       i_reg_dst       = 20;
       #5 i_wb_rf_webn = 0;
       i_wb_data       = 0;
