@@ -126,5 +126,8 @@
 ///////////////////////////////////////////
 // WRITE BACk
 ///////////////////////////////////////////
-`define DATA_FROM_MEM      1'b0
-`define DATA_FROM_ALU      1'b1
+`define DATA_FROM_MEM      2'b00
+`define DATA_FROM_ALU      2'b01
+`define DATA_SIGN_BYT      2'b10
+`define DATA_SIGN_HAL      2'b11
+
