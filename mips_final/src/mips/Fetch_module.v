@@ -20,7 +20,7 @@ module Fetch_module #
     output [NB_BITS-1:0] o_if_id_pc,
     output [NB_BITS-1:0] o_if_id_instr,
     input [NB_BITS-1:0]  i_brq_addr,
-    input [NB_JMP-1:0]   i_jmp_addr,
+    input [NB_BITS-1:0]  i_jmp_addr,
     input                i_ctr_beq,
     input                i_ctr_jmp,
     input                i_ctr_flush,
@@ -56,7 +56,7 @@ module Fetch_module #
          case({i_pc_we, i_ctr_beq, i_ctr_jmp})
            3'b100:  pc <= pc + 4;
            3'b110:  pc <= i_brq_addr;
-           3'b101:  pc <= {if_id_pc[NB_BITS-1:NB_JMP], i_jmp_addr};
+           3'b101:  pc <= i_jmp_addr;
            default: pc <= pc;
          endcase // case ({i_pc_we, i_ctr_beq, i_ctr_jmp})
          if_id_pc <= (i_if_id_we)? pc + 4: if_id_pc;

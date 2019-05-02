@@ -90,7 +90,7 @@ module Decode_module #
     output [NB_BITS-1:0] o_id_ex_sgext,
     output [NB_EXEC-1:0] o_id_ex_exec,
     output [NB_BITS-1:0] o_brh_addr,
-    output [NB_JMP-1:0]  o_jmp_addr,
+    output [NB_BITS-1:0] o_jmp_addr,
     //output [NB_REG-1:0] o_if_id_rs_num,
     output [NB_REG-1:0]  o_id_ex_rt_num,
     output [NB_REG-1:0]  o_id_ex_rd_num,
@@ -146,7 +146,7 @@ module Decode_module #
    wire [NB_BITS-1:0]    rfile_rt;
    wire                  rfile_zero;
    //wire                  pc_beq_s;
-
+   
    //assign pc_beq_s = (beq & rfile_zero) | (ben & ~rfile_zero);
    /* ########## SALIDAS ############ */
    /* --- ID/EX latch --- */
@@ -159,7 +159,9 @@ module Decode_module #
    assign o_id_ex_rd_num = rd_num;
    assign o_id_ex_exec   = ctr_exec;
    /* --- BRANCH AND JAMP signals --- */
-   assign o_jmp_addr = (jal_addr)? rfile_rs[NB_JMP-1:0] << 2 : sign_extend[NB_JMP-1:0] << 2;
+   
+   assign o_jmp_addr = (jal_addr)? rfile_rs :
+                       {i_pc[NB_BITS-1:NB_JMP], sign_extend[NB_JMP-1:0] << 2};
    assign o_brh_addr = $signed(sign_extend << 2) + $signed(i_pc);
    assign o_pc_beq   = (beq & rfile_zero) | (ben & ~rfile_zero);
    assign o_pc_src   = pc_src;

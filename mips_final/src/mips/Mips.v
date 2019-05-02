@@ -7,7 +7,7 @@
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
 
-module Mpis #
+module Mips #
   (
    parameter NB_BITS   = `NB_BITS, /* asigancion de parametro local */
    parameter NB_REG    = `NB_REG,
@@ -39,7 +39,7 @@ module Mpis #
    wire [NB_BITS-1:0]    fet_2_dec_pc;
    wire [NB_BITS-1:0]    fet_2_dec_instr;
    wire [NB_BITS-1:0]    dec_2_fet_brh_addr;
-   wire [NB_JMP-1:0]     dec_2_fet_jmp_addr;
+   wire [NB_BITS-1:0]    dec_2_fet_jmp_addr;
    wire                  dec_2_fet_pc_beq;
    wire                  dec_2_fet_pc_src;
    wire                  dec_2_fet_flush;
