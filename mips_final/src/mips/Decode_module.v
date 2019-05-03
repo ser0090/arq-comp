@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
-`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
+ `include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
@@ -187,8 +187,7 @@ module Decode_module #
          funct    <= i_instr[NB_FUN-1:0];
          rt_num   <= i_instr[20:16];
          rd_num   <= i_instr[15:11];
-         ctr_exec <= {alu_op, rs_alu, rt_alu, rd_sel};
-         ctr_exec <= {alu_op, rs_alu, rt_alu, rd_sel};
+         ctr_exec <= {alu_op, rs_alu, rd_sel, rt_alu};
          ctr_mem  <= {mem_rd, mem_wr};
          ctr_wrbk <= {wrt_enb, wrt_back};
       end // else: !if(i_rst)
@@ -637,7 +636,7 @@ module Decode_module #
            mem_wr   = `WRITE_DISABLE;
            //write back signals
            wrt_back = `DATA_FROM_ALU;
-           wrt_enb  = (i_instr[5:0]==JR )? 1'b0 : 1'b1;
+           wrt_enb  = (i_instr[5:0]==JR || i_instr[5:0]==6'd0)? 1'b0 : 1'b1;
         end // case: SPECIAL
         default: begin
            se_case  = SGN_EXT;
