@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
-`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
@@ -19,6 +19,8 @@ module Mips #
    )
    (
     output [NB_BITS-1:0] o_data,
+    output [5:0]         o_operation,
+    output [5:0]         o_function,
     //output [NB_BITS-1:0] o_alu_data,
     //output [`NB_REG-1:0] o_reg_dst,
     //output [7:0]         o_wb_ctl,
@@ -75,12 +77,14 @@ module Mips #
    wire [NB_REG-1:0]     wb_reg_dst;
 
    assign o_data = wb_2_reg_data;
-   
+   assign o_operation =  fet_2_dec_instr[31:26];
+   assign o_function =  fet_2_dec_instr[5:0];
+
    Fetch_module #
      (
       .FILE_DEPTH(80),
-      //.INIT_FILE  ("/home/ssulca/arq-comp/mips_final/include/mem_instr.txt") //Comentar
-      .INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
+      .INIT_FILE  ("/home/ssulca/arq-comp/mips_final/include/mem_instr.txt") //Comentar
+      //.INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
       //.INIT_FILE  ("/home/tincho/Documentos/ADC/mips_final/include/mem_instr.txt") //Comentar
 		  )
    inst_Fetch_module

@@ -2,7 +2,7 @@
 
 ///  SER0090
 //`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
-`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 ///  IOTINCHO
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
 
