@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
-//`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
@@ -18,13 +18,13 @@ module Mips #
    localparam NB_FUN   = `NB_FUN
    )
    (
-    output [NB_BITS-1:0] o_mem_data,
-    output [NB_BITS-1:0] o_alu_data,
-    output [`NB_REG-1:0] o_reg_dst,
+    output [NB_BITS-1:0] o_data,
+    //output [NB_BITS-1:0] o_alu_data,
+    //output [`NB_REG-1:0] o_reg_dst,
     //output [7:0]         o_wb_ctl,
-    input [NB_BITS-1:0]  i_wb_data,
-    input [NB_REG-1:0]   i_reg_dst,
-    input                i_wb_rf_webn,
+    //input [NB_BITS-1:0]  i_wb_data,
+    //input [NB_REG-1:0]   i_reg_dst,
+    //input                i_wb_rf_webn,
     input                i_clk,
     input                i_rst
     );
@@ -50,6 +50,7 @@ module Mips #
    wire [NB_EXEC-1:0]    dec_2_ex_exec;
    wire [NB_FUN-1:0]     dec_2_ex_func;
    wire [NB_MEM-1:0]     dec_2_ex_mem;
+   wire [NB_WB-1:0]      dec_2_ex_wrback;
    wire [NB_REG-1:0]     dec_2_ex_rt_num;
    wire [NB_REG-1:0]     dec_2_ex_rd_num;
    /* ########## SALIDAS ############ */
@@ -57,16 +58,29 @@ module Mips #
    wire [NB_BITS-1:0]    exe_2_mem_addr;
    wire [NB_BITS-1:0]    exe_2_mem_data;
    wire [7:0]            exe_2_mem_ctl;
+   wire [7:0]            exe_2_mem_wb_ctl;
    //wire [1:0]            exe_2_mem_write_ctl;
    //wire [1:0]            exe_2_mem_read_ctl;
    wire [`NB_REG-1:0]    exe_2_mem_reg_dst;
    //wire [`NB_CTR_WB-1:0] exe_2_mem_wb_ctl;
 
+   /* --- MEM/WRITE BACK latch --- */
+   wire [NB_BITS-1:0]    mem_2_wb_data;
+	 wire [NB_BITS-1:0]    mem_2_wb_alu_data;
+	 wire [NB_WB-2:0]      mem_2_wb_ctl;
+
+   /* --- WRITE BACK signals --- */
+   wire [NB_BITS-1:0]    wb_2_reg_data;
+   wire                  wb_reg_enb;
+   wire [NB_REG-1:0]     wb_reg_dst;
+
+   assign o_data = wb_2_reg_data;
+   
    Fetch_module #
      (
       .FILE_DEPTH(80),
-      .INIT_FILE  ("/home/ssulca/arq-comp/mips_final/include/mem_instr.txt") //Comentar
-      //.INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
+      //.INIT_FILE  ("/home/ssulca/arq-comp/mips_final/include/mem_instr.txt") //Comentar
+      .INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
       //.INIT_FILE  ("/home/tincho/Documentos/ADC/mips_final/include/mem_instr.txt") //Comentar
 		  )
    inst_Fetch_module
@@ -98,14 +112,15 @@ module Mips #
 			.o_id_ex_rd_num (dec_2_ex_rd_num),
       .o_id_ex_func   (dec_2_ex_func),
       .o_id_ex_mem    (dec_2_ex_mem),
+      .o_id_ex_wrback (dec_2_ex_wrback),
 			.o_pc_beq       (dec_2_fet_pc_beq),
 			.o_pc_src       (dec_2_fet_pc_src),
 			.o_flush        (dec_2_fet_flush),
 			.i_pc           (fet_2_dec_pc),
 			.i_instr        (fet_2_dec_instr),
-			.i_wb_data      (i_wb_data),
-			.i_reg_dst      (i_reg_dst),
-			.i_wb_rf_webn   (i_wb_rf_webn),
+			.i_wb_data      (wb_2_reg_data),
+			.i_reg_dst      (wb_reg_dst),
+			.i_wb_rf_webn   (wb_reg_enb),
 			.i_clk          (i_clk),
 			.i_rst          (i_rst)
 		  );
@@ -116,7 +131,7 @@ module Mips #
 			.o_alu_out       (exe_2_mem_addr),
 			.o_data_reg      (exe_2_mem_data),
 			.o_reg_dst       (exe_2_mem_reg_dst),
-			//.o_wb_ctl        (exe_2_mem_wb_ctl),
+			.o_wb_ctl        (exe_2_mem_wb_ctl),
 			.o_mem_ctl       (exe_2_mem_ctl),
 			.i_mux_a_hz      (0),
 			.i_mux_b_hz      (0),
@@ -133,26 +148,35 @@ module Mips #
 			.i_rs_reg        (dec_2_ex_rs),
 			.i_pc_4          (dec_2_ex_pc),
 			.i_function      (dec_2_ex_func),
-			.i_wb_ctl        (0),
+			.i_wb_ctl        ({5'd0,dec_2_ex_wrback}),
 			.i_mem_ctl       ({4'd0, dec_2_ex_mem}),
 			.i_clk           (i_clk),
 			.i_rst           (i_rst)
 		  );
 	 Mem_module #()
    inst_Mem_module
-     ( 
-			.o_mem_data  (o_mem_data),
-			.o_alu_data  (o_alu_data),
-			//.o_wb_ctl    (o_wb_ctl),
-			.o_reg_dst   (o_reg_dst),
+     (
+			.o_mem_data  (mem_2_wb_data),
+			.o_alu_data  (mem_2_wb_alu_data),
+			.o_wb_ctl    ({wb_reg_enb, mem_2_wb_ctl}),
+			.o_reg_dst   (wb_reg_dst),
 			.i_addr      (exe_2_mem_addr),
 			.i_data      (exe_2_mem_data),
 			.i_write_ctl (exe_2_mem_ctl[1:0]),
 			.i_read_ctl  (exe_2_mem_ctl[3:2]),
 			.i_reg_dst   (exe_2_mem_reg_dst),
-			.i_wb_ctl    (0),
+			.i_wb_ctl    (exe_2_mem_wb_ctl[2:0]),
 			.i_clk       (i_clk),
 			.i_rst       (i_rst)
+		  );
+	 
+   WriteBack_module #()
+   inst_WriteBack_module
+     (
+			.o_data           (wb_2_reg_data),
+			.i_mem_data       (mem_2_wb_data),
+			.i_alu_data       (mem_2_wb_alu_data),
+			.i_mux_mem_to_reg (mem_2_wb_ctl)
 		  );
 
 endmodule // Mpis

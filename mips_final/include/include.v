@@ -18,7 +18,7 @@
 // CONTROL
 `define NB_CTR_EXEC        9
 `define NB_CTR_MEM         4
-`define NB_CTR_WB          2
+`define NB_CTR_WB          3
 // SIGN EXTEND
 `define JMP_EXT            2'd0
 `define SGN_EXT            2'd1
