@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
- `include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
@@ -82,7 +82,7 @@ module Decode_module #
     output [NB_EXEC-1:0] o_id_ex_exec,
     output [NB_BITS-1:0] o_brh_addr,
     output [NB_BITS-1:0] o_jmp_addr,
-    //output [NB_REG-1:0] o_if_id_rs_num,
+    output [NB_REG-1:0]  o_id_ex_rs_num,
     output [NB_REG-1:0]  o_id_ex_rt_num,
     output [NB_REG-1:0]  o_id_ex_rd_num,
     output [NB_FUN-1:0]  o_id_ex_func,
@@ -111,6 +111,7 @@ module Decode_module #
    reg [NB_BITS-1:0]     sg_ext;
    reg [NB_FUN-1:0]      funct;
    reg [NB_REG-1:0]      rt_num;
+   reg [NB_REG-1:0]      rs_num;
    reg [NB_REG-1:0]      rd_num;
    reg [NB_EXEC-1:0]     ctr_exec;
    reg [NB_MEM-1:0]      ctr_mem;
@@ -153,6 +154,7 @@ module Decode_module #
    assign o_id_ex_sgext  = sg_ext;
    assign o_id_ex_func   = funct;
    assign o_id_ex_rt_num = rt_num;
+   assign o_id_ex_rs_num = rs_num;
    assign o_id_ex_rd_num = rd_num;
    assign o_id_ex_exec   = ctr_exec;
    assign o_id_ex_mem    = ctr_mem;
@@ -174,6 +176,7 @@ module Decode_module #
          sg_ext   <= {NB_BITS{1'b0}};
          funct    <= {NB_FUN{1'b0}};
          rt_num   <= {NB_REG{1'b0}};
+         rs_num   <= {NB_REG{1'b0}};
          rd_num   <= {NB_REG{1'b0}};
          ctr_exec <= {NB_EXEC{1'b0}};
          ctr_mem  <= {NB_MEM{1'b0}};
@@ -186,6 +189,7 @@ module Decode_module #
          sg_ext   <= sign_extend;
          funct    <= i_instr[NB_FUN-1:0];
          rt_num   <= i_instr[20:16];
+         rs_num   <= i_instr[25:21];
          rd_num   <= i_instr[15:11];
          ctr_exec <= {alu_op, rs_alu, rd_sel, rt_alu};
          ctr_mem  <= {mem_rd, mem_wr};
