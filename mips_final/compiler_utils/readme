@@ -1,0 +1,18 @@
+
+STEPS PARA AGREGAR INSTRUCCIONES
+
+1) agregar el opcode de la funcion en "compiler_funcs/__init__.py"
+
+2) 
+	-crear la funcion que crea el string binario de la instruccion. puede tomarse alguna implementacion como prototipo.
+
+	-las funciones 
+		*three_args:parser
+		*two_args_parser
+		*mem_args_parser
+	ayudaran a parsear la linea segun el formato de la instruccion
+
+3) agrear la instruccion al diccionario de instrucciones en ./__init__.py
+	
+	- el diccionario mapea el nombre de la instruccion en minusculas con el puntero a la funcion que la ensambla
+			instruction['<instruccion>'] = puntero_a_funcion

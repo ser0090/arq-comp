@@ -1,3 +1,15 @@
+
+import re
+
+def three_args_parser(strg):
+	return re.search(r'(.*),(.*),(.*)',strg)
+
+def two_args_parser(strg):
+	return re.search(r'(.*),(.*)',strg)
+
+
+
+
 opcode = {}
 opcode['special'] = '000000'
 opcode['addi']    = '001000'
@@ -6,6 +18,27 @@ opcode['andi']    = '001100'
 opcode['ori']     = '001101'
 opcode['xori']    = '001110'
 opcode['lui']     = '001111'
+opcode['lb']      = '100000'
+opcode['lh']      = '100001'
+opcode['lw']      = '100011'
+opcode['lbu']     = '100100'
+opcode['lhu']     = '100101'
+opcode['lwu']     = '100111'
+opcode['sb']      = '101000'
+opcode['sh']      = '101001'
+opcode['sw']      = '101011'
+opcode['beq']     = '000100'
+opcode['bne']     = '000101'
+opcode['j']       = '000010'
+opcode['jal']     = '000011'
+opcode['jr']      = '000000'
+opcode['jalr']      = '000000'
+
+
+
+
+
+
 
 
 

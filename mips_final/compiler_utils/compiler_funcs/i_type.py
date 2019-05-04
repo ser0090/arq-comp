@@ -1,5 +1,8 @@
 from . import opcode
 from . import reg_file
+from . import three_args_parser
+from . import two_args_parser
+import re
 
 def to_16_bit_str(value):
 	value_aux = int(value)
@@ -18,71 +21,184 @@ def complementar(binary_string):
 		complemented = complemented + binary_string[i]
 		if binary_string[i] is '1':
 			break;
-
 	for i in range(len(complemented),len(binary_string)):
 		complemented = (complemented + '0') if binary_string[i] is '0' else (complemented + '1')
-
 	return complemented[::-1]
 
 
-def addi(parsed_params):
-	rt = parsed_params.group(2).strip()
-	rs = parsed_params.group(3).strip()
-	inmediate = parsed_params.group(4).strip()	
+def mem_args_parser(strg):
+	return re.search(r'(.*),(.*)\((.*)\)',strg)
+
+
+def addi(params):
+	params = three_args_parser(params)
+	rt = params.group(1).strip()
+	rs = params.group(2).strip()
+	inmediate = params.group(3).strip()	
 	return(opcode['addi']+
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  to_16_bit_str(inmediate))
 
-def slti(parsed_params):
-	rt = parsed_params.group(2).strip()
-	rs = parsed_params.group(3).strip()
-	inmediate = parsed_params.group(4).strip()	
+def slti(params):
+	params = three_args_parser(params)
+	rt = params.group(1).strip()
+	rs = params.group(2).strip()
+	inmediate = params.group(3).strip()	
 	return(opcode['slti']+
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  to_16_bit_str(inmediate))
 
-def andi(parsed_params):
-	rt = parsed_params.group(2).strip()
-	rs = parsed_params.group(3).strip()
-	inmediate = parsed_params.group(4).strip()	
+def andi(params):
+	params = three_args_parser(params)
+	rt = params.group(1).strip()
+	rs = params.group(2).strip()
+	inmediate = params.group(3).strip()	
 	return(opcode['andi']+
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  to_16_bit_str(inmediate)) 
 
-def ori(parsed_params):
-	rt = parsed_params.group(2).strip()
-	rs = parsed_params.group(3).strip()
-	inmediate = parsed_params.group(4).strip()	
+def ori(params):
+	params = three_args_parser(params)
+	rt = params.group(1).strip()
+	rs = params.group(2).strip()
+	inmediate = params.group(3).strip()	
 	return(opcode['ori']+
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  to_16_bit_str(inmediate))
-def xori(parsed_params):
-	rt = parsed_params.group(2).strip()
-	rs = parsed_params.group(3).strip()
-	inmediate = parsed_params.group(4).strip()	
+def xori(params):
+	params = three_args_parser(params)
+	rt = params.group(1).strip()
+	rs = params.group(2).strip()
+	inmediate = params.group(3).strip()	
 	return(opcode['xori']+
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  to_16_bit_str(inmediate))
 
-def lui(parsed_params):
+def lui(params):
+	params = two_args_parser(params)
 	rs = '$0'
-	rt = parsed_params.group(2).strip()
-	inmediate = parsed_params.group(3).strip()	
+	rt = params.group(1).strip()
+	inmediate = params.group(2).strip()	
 	return(opcode['lui']+
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  to_16_bit_str(inmediate))
 
+def lb(params):
+	params = mem_args_parser(params)
+	rs = params.group(3).strip() #base
+	rt = params.group(1).strip()
+	inmediate = params.group(2).strip()	#offset
+	return(opcode['lb']+ 
+		  reg_file[rs]+ 
+		  reg_file[rt]+ 
+		  to_16_bit_str(inmediate))
+
+def lh(params):
+	params = mem_args_parser(params)
+	rs = params.group(3).strip() #base
+	rt = params.group(1).strip()
+	inmediate = params.group(2).strip()	#offset
+	return(opcode['lh']+
+		  reg_file[rs]+
+		  reg_file[rt]+
+		  to_16_bit_str(inmediate))
+
+def lw(params):
+	params = mem_args_parser(params)
+	rs = params.group(3).strip() #base
+	rt = params.group(1).strip()
+	inmediate = params.group(2).strip()	#offset
+	return(opcode['lw']+
+		  reg_file[rs]+
+		  reg_file[rt]+
+		  to_16_bit_str(inmediate))
+
+def lbu(params):
+	params = mem_args_parser(params)
+	rs = params.group(3).strip() #base
+	rt = params.group(1).strip()
+	inmediate = params.group(2).strip()	#offset
+	return(opcode['lbu']+
+		  reg_file[rs]+
+		  reg_file[rt]+
+		  to_16_bit_str(inmediate))
+
+def lhu(params):
+	params = mem_args_parser(params)
+	rs = params.group(3).strip() #base
+	rt = params.group(1).strip()
+	inmediate = params.group(2).strip()	#offset
+	return(opcode['lhu']+
+		  reg_file[rs]+
+		  reg_file[rt]+
+		  to_16_bit_str(inmediate))
+
+def lwu(params):
+	params = mem_args_parser(params)
+	rs = params.group(3).strip() #base
+	rt = params.group(1).strip()
+	inmediate = params.group(2).strip()	#offset
+	return(opcode['lwu']+
+		  reg_file[rs]+
+		  reg_file[rt]+
+		  to_16_bit_str(inmediate))
+
+def sb(params):
+	params = mem_args_parser(params)
+	rs = params.group(3).strip() #base
+	rt = params.group(1).strip()
+	inmediate = params.group(2).strip()	#offset
+	return(opcode['sb']+
+		  reg_file[rs]+
+		  reg_file[rt]+
+		  to_16_bit_str(inmediate))
+
+def sh(params):
+	params = mem_args_parser(params)
+	rs = params.group(3).strip() #base
+	rt = params.group(1).strip()
+	inmediate = params.group(2).strip()	#offset
+	return(opcode['sh']+
+		  reg_file[rs]+
+		  reg_file[rt]+
+		  to_16_bit_str(inmediate))
+
+def sw(params):
+	params = mem_args_parser(params)
+	rs = params.group(3).strip() #base
+	rt = params.group(1).strip()
+	inmediate = params.group(2).strip()	#offset
+	return(opcode['sw']+
+		  reg_file[rs]+
+		  reg_file[rt]+
+		  to_16_bit_str(inmediate))
 
 
+def beq(params):
+	params = three_args_parser(params)
+	rs = params.group(1).strip()
+	rt = params.group(2).strip()
+	inmediate = params.group(3).strip()	
+	return(opcode['beq']+
+		  reg_file[rs]+
+		  reg_file[rt]+
+		  to_16_bit_str(inmediate))
 
-
-
+def bne(params):
+	params = three_args_parser(params)
+	rs = params.group(1).strip()
+	rt = params.group(2).strip()
+	inmediate = params.group(3).strip()	
+	return(opcode['bne']+
+		  reg_file[rs]+
+		  reg_file[rt]+
+		  to_16_bit_str(inmediate))
 
 
 

@@ -28,17 +28,13 @@ while(True):
 	   line is "\n": break
 
 
-	so = re.search(r'(\w*) (.*),(.*),(.*)',line)
+	so = re.search(r'(\w*) (.*)',line)
 
-	try:
-		print("group :", so.group())
-	except:
-		so = re.search(r'(\w*) (.*),(.*)',line) # si no se pudo parsear como antes, hay q parsearlo de otro modo
-		print("group :", so.group())
-
-	print("group1 :", so.group(1).strip())
+	print(so.group())
+	
+	#print("group1 :", so.group(1).strip())
 	func = instruction[so.group(1).strip().lower()]
-	inst = func(so)
+	inst = func(so.group(2))
 	out_file.write(inst+'\n')
 
 
