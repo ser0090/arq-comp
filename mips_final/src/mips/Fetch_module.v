@@ -13,8 +13,7 @@ module Fetch_module #
    parameter NB_JMP     = `NB_JUMP,
    parameter RAM_DEPTH  = `RAM_FETCH_DEPTH,
    parameter FILE_DEPTH = 31,
-   parameter INIT_FILE  = "",
-   localparam SSL       = `NOP_OPERATION // NOP operation sll $0 $0 0
+   parameter INIT_FILE  = ""
    )
    (
     output [NB_BITS-1:0] o_if_id_pc,
@@ -31,10 +30,10 @@ module Fetch_module #
     );
 
    reg [NB_BITS-1:0]     if_id_pc;
-   reg [NB_BITS-1:0]     if_id_instr;
+   //reg [NB_BITS-1:0]     if_id_instr;
    reg [NB_BITS-1:0]     pc;
 
-   wire [NB_BITS-1:0]    data_mem;
+   //wire [NB_BITS-1:0]    data_mem;
    //wire [NB_BITS-1:0]    mux_beq, mux_jmp;
    //wire                  wea, ena;
    initial
@@ -45,7 +44,7 @@ module Fetch_module #
 
    //Outputs
    assign o_if_id_pc    = if_id_pc;
-   assign o_if_id_instr = if_id_instr;
+   //assign o_if_id_instr = data_mem;
 
    always @(posedge i_clk) begin
       if(i_rst) begin
@@ -63,30 +62,33 @@ module Fetch_module #
       end // else: !if(i_rst)
    end // always @ (posedge i_clk)
 
-   always @ (*) begin
+   /*always @ (*) begin
       case({i_ctr_flush, i_if_id_we})
         2'b01:   if_id_instr = data_mem;
         2'b10:   if_id_instr = SSL;
         2'b11:   if_id_instr = SSL;
         default: if_id_instr = data_mem;
       endcase // case ({i_ctr_flush, i_if_id_we}
-   end
+   end */
 
    Single_port_ram #
      (
-      .RAM_WIDTH       (NB_BITS),  // Specify RAM data width
+      .RAM_WIDTH       (NB_BITS),        // Specify RAM data width
       .NB_DEPTH        (RAM_DEPTH),
       .FILE_DEPTH      (FILE_DEPTH),
+      .SSL             (`NOP_OPERATION), // NOP operation sll $0 $0 0
       .INIT_FILE       (INIT_FILE)
       )
    inst_ram_instruction
      (
-      .o_data (data_mem),             // RAM output data, width determined from RAM_WIDTH
-      .i_addr (pc[RAM_DEPTH-1:0]>>2), // Address bus, width determined from RAM_DEPTH
-      //.i_data (i_du_data),            // RAM input data, width determined from RAM_WIDTH
-      .i_clk  (i_clk),                // Clock
-      .i_wea  (1'b0),                 // Write enable
-      .i_ena  (i_if_id_we)            // RAM Enable
+      .o_data      (o_if_id_instr),     // RAM output data,  RAM_WIDTH
+      .i_addr      (pc[RAM_DEPTH+1:2]), // Address bus, width determined from RAM_DEPTH
+      .i_data      (0),                 // RAM input data, width determined from RAM_WIDTH
+      .i_clk       (i_clk),             // Clock
+      .i_wea       (1'b0),              // Write enable
+      //.i_ena     (i_if_id_we)         // RAM Enable
+      .i_ctr_flush (i_ctr_flush),
+      .i_if_id_we  (i_if_id_we)
       );
 endmodule // Fetch_module
 

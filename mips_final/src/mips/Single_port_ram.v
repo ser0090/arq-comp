@@ -14,20 +14,23 @@ module Single_port_ram #
    parameter NB_DEPTH        = 10,            // Specify RAM depth (number of entries)
    parameter FILE_DEPTH      = 31,            // Specify RAM data width
    parameter RAM_PERFORMANCE = "LOW_LATENCY", // Select "HIGH_PERFORMANCE" or "LOW_LATENCY"
-   parameter INIT_FILE       = "",            // Specify name/location of RAM initialization file if using one (leave blank if not)
+   parameter INIT_FILE       = "",            // Specify name/location
+   parameter SSL             = 0,     // NOP operation sll $0 $0 0
    localparam RAM_DEPTH      = 2**NB_DEPTH
    )
    (
-    output [RAM_WIDTH-1:0] o_data,  // RAM output data
-    input [NB_DEPTH-1:0]   i_addr,  // Address bus, width determined from RAM_DEPTH
-    input [RAM_WIDTH-1:0]  i_data,  // RAM input data
-    input                  i_clk,   // Clock
-    input                  i_wea,   // Write enable
-    input                  i_ena,   // RAM Enable, for additional power savings, disable port when not in use
-    input                  i_rst,   // Output reset (does not affect memory contents)
+    output [RAM_WIDTH-1:0] o_data, // RAM output data
+    input [NB_DEPTH-1:0]   i_addr, // Address bus, width determined from RAM_DEPTH
+    input [RAM_WIDTH-1:0]  i_data, // RAM input data
+    input                  i_clk, // Clock
+    input                  i_wea, // Write enable
+    input                  i_ctr_flush,
+    input                  i_if_id_we,
+    //input                  i_ena,   // RAM Enable, for additional power savings
+    input                  i_rst, // Output reset (does not affect memory contents)
     input                  i_regcea // Output register enable
     );
-   
+
    reg [RAM_WIDTH-1:0]     BRAM [RAM_DEPTH-1:0];
    reg [RAM_WIDTH-1:0]     ram_data = {RAM_WIDTH{1'b0}};
    
@@ -50,19 +53,23 @@ module Single_port_ram #
    endgenerate
 
    always @(posedge i_clk) begin
-      if (i_ena) begin
-         if (i_wea) begin
-            BRAM[i_addr]  <= i_data;
-            ram_data      <= i_data;
-         end
-         else
-           ram_data <= BRAM[i_addr];
+      if (i_wea) begin
+         BRAM[i_addr]  <= i_data;
+         ram_data      <= i_data;
       end
-   end
-   //  The following code generates HIGH_PERFORMANCE (use output register) or LOW_LATENCY (no output register)
+      else begin
+         case({i_ctr_flush, i_if_id_we})
+           2'b01:   ram_data <= BRAM[i_addr];
+           2'b10:   ram_data <= SSL;
+           2'b11:   ram_data <= SSL;
+           default: ram_data <= BRAM[i_addr];
+         endcase // case ({i_ctr_flush, i_if_id_we}
+         //ram_data <= BRAM[i_addr];
+      end // else: !if(i_wea)
+   end // always @ (posedge i_clk)
+
    generate
       if (RAM_PERFORMANCE == "LOW_LATENCY") begin: no_output_register
-         // The following is a 1 clock cycle read latency at the cost of a longer clock-to-out timing
          assign o_data = ram_data;
       end
       else begin: output_register
