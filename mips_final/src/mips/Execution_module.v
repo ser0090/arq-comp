@@ -6,6 +6,8 @@
 
 ///  IOTINCHO
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
+`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
+
 module Execution_module#
   (
    parameter NB_BITS         = 32, /* asigancion de parametro local */

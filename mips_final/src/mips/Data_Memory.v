@@ -7,11 +7,11 @@
 
 ///  IOTINCHO
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
-//`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
+`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 module Data_Memory #
   (
-   parameter NB_DEPTH        = 10, // Specify RAM depth (number of entries)
+   parameter NB_DEPTH        = 8, // Specify RAM depth (number of entries)
    parameter NB_COL          = 4,  // Specify number of columns (number of bytes)
    parameter COL_WIDTH       = 8,  // Specify column width (byte width, typically 8 or 9)
    parameter INIT_FILE       = "", // Specify name/location

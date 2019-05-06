@@ -6,6 +6,7 @@
 
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
+`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 module Decode_module #
   (
