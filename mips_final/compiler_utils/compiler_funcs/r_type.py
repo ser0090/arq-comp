@@ -20,10 +20,17 @@ function['xor']  = "100110"
 function['nor']  = "100111"
 function['slt']  = "101010"
 
+def to_5_bit_str(value):
+	value_aux = int(value)
+	string = ''
+	for i in range (0,5):
+		res = '1' if (value_aux % 2) else '0'
+		value_aux = value_aux // 2
+		string = string+res
+	return string[::-1] #reverse string
 
 def sll(params):
 	params = three_args_parser(params)
-	params = t
 	rs = '$0'
 	rd = params.group(1).strip()
 	rt = params.group(2).strip()
@@ -32,7 +39,7 @@ def sll(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['sll'])
 
 
@@ -46,7 +53,7 @@ def srl(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['srl'])
 	
 def sra(params):
@@ -59,7 +66,7 @@ def sra(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['sra'])
 
 def sllv(params):
@@ -72,7 +79,7 @@ def sllv(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['sllv'])
 
 def srlv(params):
@@ -85,7 +92,7 @@ def srlv(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['srlv'])
 
 def srav(params):
@@ -98,7 +105,7 @@ def srav(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['srav'])
 
 def addu(params):
@@ -111,7 +118,7 @@ def addu(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['addu'])
 
 def subu(params):
@@ -124,7 +131,7 @@ def subu(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['subu'])
 
 def and_f(params):
@@ -137,7 +144,7 @@ def and_f(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['and'])
 
 def or_f(params):
@@ -150,7 +157,7 @@ def or_f(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['or'])
 
 def xor(params):
@@ -163,7 +170,7 @@ def xor(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['xor'])
 
 def nor(params):
@@ -176,7 +183,7 @@ def nor(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['nor'])
 
 def slt(params):
@@ -189,6 +196,6 @@ def slt(params):
 		  reg_file[rs]+
 		  reg_file[rt]+
 		  reg_file[rd]+
-		  sa+
+		  to_5_bit_str(sa) +
 		  function['slt'])
 
