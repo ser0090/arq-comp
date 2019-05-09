@@ -60,9 +60,9 @@ module Single_port_ram #
       else begin
          case({i_ctr_flush, i_if_id_we})
            2'b01:   ram_data <= BRAM[i_addr];
-           2'b10:   ram_data <= SSL;
+           2'b10:   ram_data <= ram_data;
            2'b11:   ram_data <= SSL;
-           default: ram_data <= BRAM[i_addr];
+           default: ram_data <= ram_data;
          endcase // case ({i_ctr_flush, i_if_id_we}
          //ram_data <= BRAM[i_addr];
       end // else: !if(i_wea)

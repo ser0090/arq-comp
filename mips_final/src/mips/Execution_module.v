@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
-`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 module Execution_module#
   (
@@ -15,7 +15,7 @@ module Execution_module#
    parameter NB_FUNCTION     = 6,
 
    localparam NB_OPE         = 5,
-
+   localparam NB_REG         = `NB_REG,
    localparam PC_TO_A        = `PC_TO_A    ,
    localparam RS_TO_A        = `RS_TO_A    ,
    localparam SEXT_TO_A      = `SEXT_TO_A  ,
@@ -35,7 +35,8 @@ module Execution_module#
    (
     output [NB_BITS-1:0]      o_alu_out,
     output [NB_BITS-1:0]      o_data_reg,
-    output [4:0]              o_reg_dst,
+    output [NB_REG-1:0]       o_reg_dst,
+    output [NB_REG-1:0]       o_num_rd, // singal for bubble Unit
     output [7:0]              o_wb_ctl,
     output [7:0]              o_mem_ctl,
 
@@ -83,7 +84,7 @@ module Execution_module#
    assign o_alu_out  = EX_MEM[47:16];
    assign o_data_reg = EX_MEM[79:48];
    assign o_reg_dst  = EX_MEM[84:80];
-
+   assign o_num_rd   = reg_dst;
 
    always @(posedge i_clk) begin
       if (i_rst) begin

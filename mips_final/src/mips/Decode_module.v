@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
-`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 module Decode_module #
   (
@@ -92,11 +92,14 @@ module Decode_module #
     output               o_pc_beq,
     output               o_pc_src,
     output               o_flush,
+    output               o_bmb_brch, //signal brach instr
+    output               o_bmb_rjmp, //signal jump register instr
     input [NB_BITS-1:0]  i_pc,
     input [NB_BITS-1:0]  i_instr,
     input [NB_BITS-1:0]  i_wb_data,
     input [NB_REG-1:0]   i_reg_dst,
     input                i_wb_rf_webn,
+    input                i_bubble, // bubble case
     input                i_clk,
     input                i_rst
     );
@@ -131,7 +134,6 @@ module Decode_module #
    reg                   ben;
    reg                   pc_src;
    //reg                   pc_beq;
-   reg                   flush;
    reg                   jal_addr;
    // ------  MEM ctrl Signals ------
    reg [1:0]             mem_wr;
@@ -167,7 +169,9 @@ module Decode_module #
    assign o_brh_addr = $signed(sign_extend << 2) + $signed(i_pc);
    assign o_pc_beq   = (beq & rfile_zero) | (ben & ~rfile_zero);
    assign o_pc_src   = pc_src;
-   assign o_flush    = flush;
+   assign o_flush    = ((beq & rfile_zero) | (ben & ~rfile_zero)) | pc_src;
+   assign o_bmb_brch = beq | ben;
+   assign o_bmb_rjmp = jal_addr;
 
    always @ (posedge i_clk) begin
       if(i_rst) begin
@@ -192,9 +196,9 @@ module Decode_module #
          rt_num   <= i_instr[20:16];
          rs_num   <= i_instr[25:21];
          rd_num   <= i_instr[15:11];
-         ctr_exec <= {alu_op, rs_alu, rd_sel, rt_alu};
-         ctr_mem  <= {mem_rd, mem_wr};
-         ctr_wrbk <= {wrt_enb, wrt_back};
+         ctr_exec <= (i_bubble)? {NB_EXEC{1'b0}} : {alu_op, rs_alu, rd_sel, rt_alu};
+         ctr_mem  <= (i_bubble)? {NB_MEM{1'b0}} : {mem_rd, mem_wr};
+         ctr_wrbk <= (i_bubble)? {NB_WB{1'b0}} : {wrt_enb, wrt_back};
       end // else: !if(i_rst)
    end // always @ (posedge i_clk)
 
@@ -224,7 +228,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b1;
            //pc_beq   = 1'b0;
-           flush    = 1'b0; // nop
+           //flush    = 1'b1; // nop
            //branch signals
            beq      = 1'b0;
            ben      = 1'b0;
@@ -246,7 +250,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b1;
            //pc_beq   = 1'b0;
-           flush    = 1'b0; // nop
+           //flush    = 1'b1; // nop
            //branch signals
            beq      = 1'b0;
            ben      = 1'b0;
@@ -268,7 +272,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = rfile_zero;
-           flush    = 1'b0;  //nop
+           //flush    = 1'b0;  //nop
            //branch signals
            beq      = 1'b1;  // beq case
            ben      = 1'b0;
@@ -290,7 +294,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b1;
-           flush    = 1'b0;  // nop
+           //flush    = 1'b0;  // nop
            //branch signals
            beq      = 1'b0;
            ben      = 1'b1;  //ben case
@@ -312,7 +316,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -333,7 +337,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -354,7 +358,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -375,7 +379,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -396,7 +400,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -416,7 +420,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -437,7 +441,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -458,7 +462,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -479,7 +483,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -500,7 +504,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -521,7 +525,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -542,7 +546,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -563,7 +567,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -584,7 +588,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -605,7 +609,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -633,7 +637,7 @@ module Decode_module #
            jal_addr = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            pc_src   = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0; //(i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
+           //flush    = 1'b0; //(i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -652,7 +656,7 @@ module Decode_module #
            jal_addr = 1'b0;
            pc_src   = 1'b0;
            //pc_beq   = 1'b0;
-           flush    = 1'b0;
+           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals

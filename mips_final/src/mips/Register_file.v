@@ -28,7 +28,7 @@ module Register_file #
    assign o_rt = rt;
    assign o_zero = (rt == rs)? 1'b1 : 1'b0;
 
-   always @ (posedge i_clk) begin
+   always @ (negedge i_clk) begin
       if (i_rst)
         for(rf_index = 0; rf_index < RF_DEPTH; rf_index = rf_index + 1)
           reg_file[rf_index] <= {NB_BITS{1'b0}};

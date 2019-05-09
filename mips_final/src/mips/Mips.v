@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
-`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 module Mips #
   (
@@ -82,18 +82,25 @@ module Mips #
    /* --- FORWARFING UNITS signals --- */
    wire [NB_MUX_FW-1:0]  fw_2_exe_mux_a_hz;
    wire [NB_MUX_FW-1:0]  fw_2_exe_mux_b_hz;
-   
+   /* --- BUBBLE UNITS signals --- */
+   wire [NB_REG-1:0]     dec_2_bub_rd;
+   wire                  bub_2_dec_bubble;
+   wire                  bub_2_fet_latch_we;
+	 wire                  bub_2_fet_pc_we;
+   wire                  dec_2_bmb_branch;
+   wire                  dec_2_bmb_rjump;
+
    assign o_data = wb_2_reg_data;
    assign o_operation =  fet_2_dec_instr[31:26];
    assign o_function =  fet_2_dec_instr[5:0];
 
    Fetch_module #
      (
-      .FILE_DEPTH(16),
-      //.INIT_FILE  ("/home/ssulca/arq-comp/mips_final/include/mem_instr.txt") //Comentar
+      .FILE_DEPTH(26),
+      .INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
       //.INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
       //.INIT_FILE  ("/home/tincho/Documentos/ADC/mips_final/include/mem_instr.txt") //Comentar
-      .INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
+      //.INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
 		  
       )
    inst_Fetch_module
@@ -105,8 +112,8 @@ module Mips #
 			.i_ctr_beq     (dec_2_fet_pc_beq),
 			.i_ctr_jmp     (dec_2_fet_pc_src),
 			.i_ctr_flush   (dec_2_fet_flush),
-			.i_pc_we       (1'b1),
-			.i_if_id_we    (1'b1),
+			.i_pc_we       (bub_2_fet_pc_we),
+			.i_if_id_we    (bub_2_fet_latch_we),
 			.i_clk         (i_clk),
 			.i_rst         (i_rst)
 		  );
@@ -130,11 +137,14 @@ module Mips #
 			.o_pc_beq       (dec_2_fet_pc_beq),
 			.o_pc_src       (dec_2_fet_pc_src),
 			.o_flush        (dec_2_fet_flush),
+      .o_bmb_brch     (dec_2_bmb_branch),   //signal brach instr
+      .o_bmb_rjmp     (dec_2_bmb_rjump),   //signal r jump instr
 			.i_pc           (fet_2_dec_pc),
 			.i_instr        (fet_2_dec_instr),
 			.i_wb_data      (wb_2_reg_data),
 			.i_reg_dst      (wb_reg_dst),
 			.i_wb_rf_webn   (wb_reg_enb),
+			.i_bubble       (bub_2_dec_bubble),
 			.i_clk          (i_clk),
 			.i_rst          (i_rst)
 		  );
@@ -147,6 +157,7 @@ module Mips #
 			.o_reg_dst       (exe_2_mem_reg_dst),
 			.o_wb_ctl        (exe_2_mem_wb_ctl),
 			.o_mem_ctl       (exe_2_mem_ctl),
+      .o_num_rd        (dec_2_bub_rd),
 			.i_mux_a_hz      (fw_2_exe_mux_a_hz),
 			.i_mux_b_hz      (fw_2_exe_mux_b_hz),
 			.i_ex_mem_reg_hz (exe_2_mem_addr),
@@ -205,7 +216,27 @@ module Mips #
 			.i_ex_mem_wr_en (exe_2_mem_wb_ctl[2]),
 			.i_mem_wb_wr_en (wb_reg_enb)
 		  );
-   
+
+   Bubble_unit #()
+   inst_Bubble_unit
+     (
+			.o_if_id_we (bub_2_fet_latch_we),
+			.o_pc_we    (bub_2_fet_pc_we),
+			.o_bubble   (bub_2_dec_bubble),
+			.i_if_rs    (fet_2_dec_instr[25:21]), // rs
+			.i_if_rt    (fet_2_dec_instr[20:16]), // rt
+ 			.i_idc_rd   (dec_2_bub_rd),           // rd from DEC
+			.i_exe_rd   (exe_2_mem_reg_dst),      // rd from EXE
+			.i_mem_rd   (wb_reg_dst),             // rd from MEM
+			.i_read_mem (|dec_2_ex_mem[3:2]),     // read mem from DEC (or reduction 2 signals)
+			.i_branch   (dec_2_bmb_branch),
+			.i_jump     (dec_2_bmb_rjump),
+			.i_write_fr (dec_2_ex_wrback[2] | exe_2_mem_wb_ctl[2] | wb_reg_enb) // write back enabl fr
+			//.i_idc_wfr  (dec_2_ex_wrback[2]),     // write back enable from DEC
+			//.i_exe_wfr  (exe_2_mem_wb_ctl[2]),    // write back enable from EXE
+			//.i_mem_wfr  (wb_reg_enb)              // write back enable from MEM
+		  );
+
 endmodule // Mpis
 
 
