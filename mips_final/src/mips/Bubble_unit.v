@@ -15,44 +15,51 @@ module Bubble_unit#
   (
    output             o_if_id_we,
    output             o_pc_we,
-   output             o_flush,
 
-   input [NB_REG-1:0] i_if_id_rs, //
-   input [NB_REG-1:0] i_if_id_rt, //
-   input [NB_REG-1:0] i_id_ex_rt,
-   input [NB_REG-1:0] i_id_ex_rd, //TODO: revisar
-   input              i_id_ex_mem_rd, // si es una instruccion de lectura de mem
-   input              i_id_branch
+   input [NB_REG-1:0] i_if_rs, //
+   input [NB_REG-1:0] i_if_rt, //
+   input [NB_REG-1:0] i_idc_rd, // signal flrom ID/EXE latch
+   input [NB_REG-1:0] i_exe_rd, // singals from EXE/MEM latch
+   input [NB_REG-1:0] i_mem_rd, // singals from MEM/WB latch
+   input              i_read_mem, // si es una instruccion de lectura de mem
+   input              i_branch, // sin es una instruccion de salto taken
+   input              i_jump,
+   input              i_idc_wfr,
+   input              i_exe_wfr,
+   input              i_mem_wfr // TODO: revisar por si se puede ahorrar una burbuja
   );
 
    reg                if_id_we;
    reg                pc_we;
-   reg                flush;
 
    assign o_if_id_we = if_id_we;
    assign o_pc_we    = pc_we;
-   assign o_flush    = flush;
 
    always @(*) begin
       //Hazard unit Bubble unit
-      if(i_id_ex_mem_rd && // load case
-         (i_if_id_rt == i_id_ex_rt || i_if_id_rs == i_id_ex_rt)) begin
+      if(i_read_mem &&
+        (i_if_rt == i_idc_rd || i_if_rs == i_idc_rd)) begin // load case
          if_id_we = 1'b0;
          pc_we    = 1'b0;
-         flush    = 1'b1;
       end
-      else if(i_id_branch &&  //brach case , TODO: revisar
-              (i_if_id_rs == i_id_ex_rt || i_if_id_rs == i_id_ex_rd ||
-               i_if_id_rt == i_id_ex_rt || i_if_id_rt == i_id_ex_rd)) begin
+      else if(!i_read_mem && i_branch &&
+              (i_idc_wfr || i_exe_wfr || i_mem_wfr) &&
+              (i_if_rs == i_idc_rd || i_if_rt == i_idc_rd ||
+               i_if_rs == i_exe_rd || i_if_rt == i_exe_rd ||
+               i_if_rs == i_mem_rd || i_if_rt == i_mem_rd)) begin // branch case
          if_id_we = 1'b0;
          pc_we    = 1'b0;
-         flush    = 1'b1;
+      end
+      else if(!i_read_mem && i_jump && // JUMP Case
+              (i_idc_wfr || i_exe_wfr || i_mem_wfr) &&
+              (i_if_rs == i_idc_rd || i_if_rs == i_exe_rd || i_if_rs == i_mem_rd )) begin
+         if_id_we = 1'b0;
+         pc_we    = 1'b0;
       end
       else begin
          if_id_we = 1'b1;
          pc_we    = 1'b1;
-         flush    = 1'b0;
-      end // else: !if(i_id_branch &&...
+      end // else: !if(!i_read_mem &&...
    end // always @ (*)
 endmodule // Bubble_unit
 
