@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
@@ -100,6 +100,8 @@ module Execution_module#
       end
    end
 
+
+
    always @(*) begin
       /* selector de la fuente del primet argumento de 
        * la alu
@@ -112,16 +114,20 @@ module Execution_module#
       endcase
    end
 
+
+
    always @(*) begin
       /* selector de la fuente del segundo argumento 
        * de la alu
        */
       case(i_mux_rt_ctl)
-        RT_TO_B  : dato_aux_b = i_rt_reg;
+        RT_TO_B  : dato_aux_b = dato_b;
         SEXT_TO_B: dato_aux_b = i_sign_ext;
         // default  : dato_aux_b = 0;
       endcase
    end
+
+
 
    always @(*) begin
       /* selector para incorporar el hazzard unit
@@ -134,16 +140,20 @@ module Execution_module#
       endcase
    end
 
+
+
    always @(*) begin
       /* selector para incorporar el hazzard unit
        */
       case(i_mux_b_hz)
-        FROM_ID_EX : dato_b = dato_aux_b;  
+        FROM_ID_EX : dato_b = i_rt_reg;  
         FROM_EX_MEM: dato_b = i_ex_mem_reg_hz;
         FROM_MEM_WB: dato_b = i_mem_wb_reg_hz;
-        default    : dato_b = dato_aux_b;
+        default    : dato_b = i_rt_reg;
       endcase
    end
+
+
 
    always @(*) begin
       /* selector del registro de destino, 
@@ -163,7 +173,7 @@ module Execution_module#
     ) inst_Alu (
       .o_alu     (alu_out),
       .i_data_a  (dato_a),
-      .i_data_b  (dato_b),
+      .i_data_b  (dato_aux_b),
       .i_ope_sel (operation)
     );
   Alu_Control #(

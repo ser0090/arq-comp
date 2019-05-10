@@ -7,7 +7,7 @@
 
 ///  IOTINCHO
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
-`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 module Data_Memory #
   (

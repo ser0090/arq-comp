@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 ///  SER0090
-`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
-
+`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
 module tb_mips();
    parameter NB_BITS   = `NB_BITS; /* asigancion de parametro local */
    parameter NB_REG    = `NB_REG;
@@ -34,7 +34,7 @@ module tb_mips();
    Mips #()
    inst_Mips
      (
-			.o_data      (o_data),
+			.o_led      (o_data),
 			.o_operation (o_operation),
 			.o_function  (o_function),
 			.i_clk       (i_clk),

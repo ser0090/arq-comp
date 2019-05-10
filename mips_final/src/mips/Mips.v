@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
-//`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
+`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
 //`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 module Mips #
@@ -20,7 +20,7 @@ module Mips #
    localparam NB_FUN   = `NB_FUN
    )
    (
-    output [NB_BITS-1:0] o_data,
+    output [13-1:0] o_led,
     output [5:0]         o_operation,
     output [5:0]         o_function,
     //output [NB_BITS-1:0] o_alu_data,
@@ -90,16 +90,16 @@ module Mips #
    wire                  dec_2_bmb_branch;
    wire                  dec_2_bmb_rjump;
 
-   assign o_data = wb_2_reg_data;
+   assign o_led = wb_2_reg_data[12:0];
    assign o_operation =  fet_2_dec_instr[31:26];
    assign o_function =  fet_2_dec_instr[5:0];
 
    Fetch_module #
      (
-      .FILE_DEPTH(26),
-      .INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
+      //.FILE_DEPTH(26),
+      //.INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
       //.INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
-      //.INIT_FILE  ("/home/tincho/Documentos/ADC/mips_final/include/mem_instr.txt") //Comentar
+      .INIT_FILE  ("/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file") //Comentar
       //.INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
 		  
       )
