@@ -49,26 +49,23 @@ module SPI_Slave #(
 			case(state)
 				IDLE: begin
 					  		shift_reg   <= i_data;
-								state       <= RECEVING;
-								bit_counter <= NB_BITS-1;
-								data_out    <= data_out;
-								//old_CLK     <= 1'b0;
+							state       <= RECEVING;
+							bit_counter <= NB_BITS-1;
+							data_out    <= data_out;
 							end
 				RECEVING: begin
-										if(((~old_CLK) && i_SCLK)) begin // si hay un flanco ascendente
+										if(((old_CLK) && ~i_SCLK)) begin // si hay un flanco descendente
 											if(bit_counter != 0) begin // si el contador no llego a 0 
 												shift_reg   <= {shift_reg[NB_BITS-2:0],i_MOSI};
 												bit_counter <= bit_counter - 1'b1;
 												state       <= state;
 												data_out    <= data_out;
-												//old_CLK     <= 1'b0;
 											end
 											else begin
 												state       <= FINISH; // termino la recepcion/transmision 						
 												shift_reg   <= shift_reg;
 												data_out    <= shift_reg;
 												bit_counter <= bit_counter;
-												//old_CLK     <= i_SCLK;
 											end
 										end
 										else begin
@@ -76,7 +73,6 @@ module SPI_Slave #(
 											bit_counter <= bit_counter;
 											state       <= state;
 											data_out    <= data_out;
-											//old_CLK     <= i_SCLK;
 										end
 									end
 				FINISH: begin
@@ -84,7 +80,6 @@ module SPI_Slave #(
 								shift_reg   <= shift_reg;
 								bit_counter <= {NB_COUNTER{1'b0}};
 								data_out    <= data_out;
-								//old_CLK     <= 1'b0;
 								/*
 								 * CODEAR ACA TODAS LAS ACCIONES NECESARIAS PARA 
 								 * QUE EL MODULO SEA UTIL, EJ: ESCRIBIR LA MEMORIA
@@ -96,7 +91,6 @@ module SPI_Slave #(
 									state 			<= state;
 									bit_counter <= bit_counter;
 									data_out    <= data_out;
-									//old_CLK     <= 1'b0;
 							end
 				endcase
 		end
@@ -105,7 +99,6 @@ module SPI_Slave #(
 									state 			<= state;
 									bit_counter <= bit_counter;
 									data_out    <= data_out;
-									//old_CLK 		<= i_SCLK;
 		end
 	end
 

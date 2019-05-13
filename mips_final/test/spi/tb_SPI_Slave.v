@@ -3,7 +3,7 @@
 
 module tb_SPI_Slave (); /* this is automatically generated */
 	
-	parameter NB_BITS     = 8;
+	parameter NB_BITS     = 32;
 
 	wire               o_MISO;
 	wire [NB_BITS-1:0] o_data;
@@ -26,23 +26,23 @@ module tb_SPI_Slave (); /* this is automatically generated */
 		
 		#34
 		i_rst = 1'b0;
-		i_data = 8'hFF;
+		i_data = 32'hA0000005;
 		#11
 		i_cs   = 1'b1;
 		i_MOSI = 1'b1;
-	  for(integer i=0; i<32;i=i+1) begin
+	    for(integer i=0; i<NB_BITS;i=i+1) begin
 		//repeat(NB_BITS) begin
 			#50 
 			i_SCLK  = 1'b1;
 			#50 
 			i_SCLK  = 1'b0;
-			i_MOSI  = 1'b0;
+		//	i_MOSI  = 1'b0;
 		end
 		#50
 		i_MOSI  = 1'b0;
 		i_cs = 1'b0;
 		#200
-		$finish;
+		$finish();
 
 	
 	end
