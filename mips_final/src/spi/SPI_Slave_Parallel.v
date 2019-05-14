@@ -5,14 +5,14 @@
  * para ams info:
  * https://alchitry.com/blogs/tutorials/serial-peripheral-interface-spi
  */
-module SPI_Slave #(
+module SPI_Slave_Parallel #(
 	parameter NB_BITS = 32
 	)
 	(
-	 inout 				  			o_MISO,
+	 inout 	[NB_BITS-1:0] o_MISO,
 	 output [NB_BITS-1:0] o_data, //datos recibidos
 	 
-	 input 				  			i_MOSI,
+	 input [NB_BITS-1:0]  i_MOSI,
 	 input 				  			i_SCLK,
 	 input                i_cs,
 	 input [NB_BITS-1:0]  i_data, //datos a transmitir
@@ -20,65 +20,63 @@ module SPI_Slave #(
 	 input 								i_clk
 	);
 
-	localparam IDLE       = 2'b00,
-						 RECEVING   = 2'b01,
-						 FINISH     = 2'b10;
+	localparam IDLE        = 2'b00,
+						 TRANSFERING = 2'b01,
+						 FINISH      = 2'b10;
 
 	localparam NB_COUNTER = clog2(NB_BITS);
 
 	reg [NB_BITS-1:0]    shift_reg;
-	reg [1:0]            state;
-	reg [NB_COUNTER-1:0] bit_counter; 
+	reg [1:0]            state; 
 	reg [NB_BITS-1:0]    data_out;
 	reg 								 old_CLK; //auxiliar para detectar el flanco
 
 	
-	assign o_MISO = i_cs? shift_reg[NB_BITS-1] : 'bz;
+	assign o_MISO = i_cs? shift_reg : 'bz;
 	assign o_data = data_out;
 
 	always @(posedge i_clk) begin
 		if (i_rst) begin
 			shift_reg   <= {NB_BITS{1'b0}};
 			state       <= IDLE;
-			bit_counter <= {NB_COUNTER{1'b0}};
 			data_out    <= {NB_BITS{1'b0}};
 			old_CLK     <= 1'b0;
 		end
 		else if (i_cs) begin
 			old_CLK     <= i_SCLK;
 			case(state)
-				IDLE: begin
-					  		shift_reg   <= i_data;
-							state       <= RECEVING;
-							bit_counter <= NB_BITS-1;
-							data_out    <= data_out;
+				IDLE: begin 
+				/* este estado inicia el ciclo cuando se habilita el chip,
+				 * los dato a la entrada se almacenan en el registro y se publican
+				 * luego el sistema queda a la espera del SCLK
+				 */
+					  		shift_reg   <= i_data ;
+								state       <= TRANSFERING;
+								data_out    <= data_out;
 							end
-				RECEVING: begin
-										if(((old_CLK) && ~i_SCLK)) begin // si hay un flanco descendente
-											if(bit_counter != 0) begin // si el contador no llego a 0 
-												shift_reg   <= {shift_reg[NB_BITS-2:0],i_MOSI};
-												bit_counter <= bit_counter - 1'b1;
-												state       <= state;
-												data_out    <= data_out;
-											end
-											else begin
-												state       <= FINISH; // termino la recepcion/transmision 						
+			 TRANSFERING : begin
+			 /* espera a que pase el pulso de clock (flanco de bajada),
+			  * entonces captura lo que el master envia y lo publica al modulo posterior
+			  */
+								 		if(((old_CLK) && ~i_SCLK)) begin // si hay un flanco descendente
 												shift_reg   <= shift_reg;
-												data_out    <= shift_reg;
-												bit_counter <= bit_counter;
+												data_out    <= i_MOSI;
+												state       <= FINISH; // termino la recepcion/transmision 						
 											end
-										end
 										else begin
 											shift_reg   <= shift_reg;
-											bit_counter <= bit_counter;
 											state       <= state;
 											data_out    <= data_out;
 										end
 									end
 				FINISH: begin
+				/* Este estado esta reservado para realizar acciones con los datos capturados del master,
+				 * como puede ser escribir en una memoria.
+				 * el valor que sale por MISO no se ve modificado.
+				 * luego de realizar todo vuelve al estado inicial para reiniciar la cominucacion.
+				 */
 								state <= IDLE;
 								shift_reg   <= shift_reg;
-								bit_counter <= {NB_COUNTER{1'b0}};
 								data_out    <= data_out;
 								/*
 								 * CODEAR ACA TODAS LAS ACCIONES NECESARIAS PARA 
@@ -89,15 +87,13 @@ module SPI_Slave #(
 				default: begin
 									shift_reg 	<= shift_reg;
 									state 			<= state;
-									bit_counter <= bit_counter;
 									data_out    <= data_out;
 							end
 				endcase
 		end
 		else begin
 									shift_reg 	<= shift_reg;
-									state 			<= state;
-									bit_counter <= bit_counter;
+									state 			<= IDLE;
 									data_out    <= data_out;
 		end
 	end
