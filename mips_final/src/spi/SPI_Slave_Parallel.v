@@ -20,12 +20,6 @@ module SPI_Slave_Parallel #(
 	 input 								i_clk
 	);
 
-	localparam IDLE        = 2'b00,
-						 TRANSFERING = 2'b01,
-						 FINISH      = 2'b10;
-
-	localparam NB_COUNTER = clog2(NB_BITS);
-
 	reg [NB_BITS-1:0]    shift_reg;
 	reg [NB_BITS-1:0]    data_out;
 	reg 								 old_CLK; //auxiliar para detectar el flanco
@@ -58,7 +52,7 @@ always @(posedge i_clk) begin
 
 always @(posedge i_clk) begin
 		if (i_rst) begin 
-			shift_reg <= {NB_BITS{1'b0}};
+			old_CLK <= {NB_BITS{1'b0}};
 		end
 		else if (i_cs) 
 			old_CLK     <= i_SCLK;

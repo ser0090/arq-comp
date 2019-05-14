@@ -29,7 +29,7 @@ module tb_SPI_Singel_port_mem_integration ();
 	localparam MOSI_VALUE_2 = {8'b00100000,8'h0,16'hF0F0};
 	localparam MOSI_VALUE_3 = {8'b00110100,8'h0,16'hFFFF};
 	localparam MOSI_VALUE_4 = {8'b10000000,8'h0,16'hFFFF};
-	localparam MOSI_VALUE_5 = {8'b00000000,8'h0,16'h0};
+	localparam MOSI_VALUE_5 = {8'b00000100,8'h0,16'h0};
 
 
 
