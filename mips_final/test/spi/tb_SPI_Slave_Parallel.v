@@ -7,7 +7,7 @@ module tb_SPI_Slave_Parallel (); /* this is automatically generated */
 
 	wire [NB_BITS-1:0] o_MISO;
 	wire [NB_BITS-1:0] o_data;
-	
+
 	reg i_rst;
 	reg i_clk;
 	reg [NB_BITS-1:0] i_MOSI;
@@ -61,7 +61,7 @@ module tb_SPI_Slave_Parallel (); /* this is automatically generated */
 			.i_cs   (i_cs),
 			.i_data (i_data),
 			.i_rst  (i_rst),
-			.i_clk  (i_clk)
+			.i_clk  (i_clk),
 		);
 
 
