@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 /// IOTINCHO
@@ -28,14 +28,14 @@ module Fetch_module #
     //input [NB_BITS-1:0]  i_addr_debug, TODO: ver el tema de la direccion_pc
     input [NB_BITS-1:0]  i_data_debug,
     input                i_wren_debug,
+    input                i_debug, // debug signals
+    input                i_step, // step by step
     // fetch singals
     input                i_ctr_beq,
     input                i_ctr_jmp,
     input                i_ctr_flush,
     input                i_pc_we,
     input                i_if_id_we,
-    input                i_debug, // debug signals
-    input                i_step, // step by step
     input                i_clk,
     input                i_rst
     );

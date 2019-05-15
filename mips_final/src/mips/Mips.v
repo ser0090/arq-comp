@@ -86,7 +86,7 @@ module Mips #
    wire [NB_REG-1:0]     dec_2_bub_rd;
    wire                  bub_2_dec_bubble;
    wire                  bub_2_fet_latch_we;
-	 wire                  bub_2_fet_pc_we;
+   wire                  bub_2_fet_pc_we;
    wire                  dec_2_bmb_branch;
    wire                  dec_2_bmb_rjump;
 
@@ -99,28 +99,29 @@ module Mips #
       //.FILE_DEPTH(26),
       .INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
       //.INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
-      //.INIT_FILE  ("/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file") //Comentar
-      //.INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
-		  
+      // .INIT_FILE  ("/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file") //Comentar
+      // .INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
       )
    inst_Fetch_module
      (
-			.o_if_id_pc    (fet_2_dec_pc),
-			.o_if_id_instr (fet_2_dec_instr),
-			//.o_pc_debug    (),  // TODO: conectar con debuuger
-			.i_brq_addr    (dec_2_fet_brh_addr),
-			.i_jmp_addr    (dec_2_fet_jmp_addr),
-			//.i_addr_debug  (0), // TODO: conectar con debugger
-			.i_data_debug  (0),   // TODO: conectar con debugger
+      .o_if_id_pc    (fet_2_dec_pc),
+      .o_if_id_instr (fet_2_dec_instr),
+      //.o_pc_debug    (),  // TODO: conectar con debuuger
+      .i_brq_addr    (dec_2_fet_brh_addr),
+      .i_jmp_addr    (dec_2_fet_jmp_addr),
+      //.i_addr_debug  (0), // TODO: conectar con debugger
+      .i_data_debug  (0),   // TODO: conectar con debugger
       .i_wren_debug  (0),   // TODO: conectar con debugger
-			.i_ctr_beq     (dec_2_fet_pc_beq),
-			.i_ctr_jmp     (dec_2_fet_pc_src),
-			.i_ctr_flush   (dec_2_fet_flush),
-			.i_pc_we       (bub_2_fet_pc_we),
-			.i_if_id_we    (bub_2_fet_latch_we),
-			.i_clk         (i_clk),
-			.i_rst         (i_rst)
-		  );
+      .i_debug       (0),   // TODO: conectar con micro
+      .i_step        (0),   // TODO: conectar con micro
+      .i_ctr_beq     (dec_2_fet_pc_beq),
+      .i_ctr_jmp     (dec_2_fet_pc_src),
+      .i_ctr_flush   (dec_2_fet_flush),
+      .i_pc_we       (bub_2_fet_pc_we),
+      .i_if_id_we    (bub_2_fet_latch_we),
+      .i_clk         (i_clk),
+      .i_rst         (i_rst)
+      );
 
    Decode_module #()
    inst_Decode_module
