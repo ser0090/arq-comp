@@ -107,11 +107,12 @@ module Mips #
      (
 			.o_if_id_pc    (fet_2_dec_pc),
 			.o_if_id_instr (fet_2_dec_instr),
-			//.o_pc_debug    (),
+			//.o_pc_debug    (),  // TODO: conectar con debuuger
 			.i_brq_addr    (dec_2_fet_brh_addr),
 			.i_jmp_addr    (dec_2_fet_jmp_addr),
-			//.i_addr_debug  (0), //TODO: conectar con debugger
-			.i_data_debug  (0), //TODO: conectar con debugger
+			//.i_addr_debug  (0), // TODO: conectar con debugger
+			.i_data_debug  (0),   // TODO: conectar con debugger
+      .i_wren_debug  (0),   // TODO: conectar con debugger
 			.i_ctr_beq     (dec_2_fet_pc_beq),
 			.i_ctr_jmp     (dec_2_fet_pc_src),
 			.i_ctr_flush   (dec_2_fet_flush),
