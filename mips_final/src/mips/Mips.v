@@ -193,20 +193,24 @@ module Mips #
 	 Mem_module #()
    inst_Mem_module
      (
-			.o_mem_data  (mem_2_wb_data),
-			.o_alu_data  (mem_2_wb_alu_data),
-			.o_wb_ctl    ({wb_reg_enb, mem_2_wb_ctl}),
-			.o_reg_dst   (wb_reg_dst),
-			.i_addr      (exe_2_mem_addr),
-			.i_data      (exe_2_mem_data),
-			.i_write_ctl (exe_2_mem_ctl[1:0]),
-			.i_read_ctl  (exe_2_mem_ctl[3:2]),
-			.i_reg_dst   (exe_2_mem_reg_dst),
-			.i_wb_ctl    (exe_2_mem_wb_ctl),
-			.i_clk       (i_clk),
-			.i_rst       (i_rst)
+			.o_mem_data   (mem_2_wb_data),
+			.o_alu_data   (mem_2_wb_alu_data),
+			.o_wb_ctl     ({wb_reg_enb, mem_2_wb_ctl}),
+			.o_reg_dst    (wb_reg_dst),
+      //.o_data_debug (), // TODO:conectar al debugger
+			.i_addr       (exe_2_mem_addr),
+			.i_data       (exe_2_mem_data),
+			.i_write_ctl  (exe_2_mem_ctl[1:0]),
+			.i_read_ctl   (exe_2_mem_ctl[3:2]),
+			.i_reg_dst    (exe_2_mem_reg_dst),
+			.i_wb_ctl     (exe_2_mem_wb_ctl),
+			.i_clk        (i_clk),
+			.i_rst        (i_rst),
+      .i_addr_debug (0), // TODO: conectar al debugger
+      .i_debug      (0), // TODO: conectar al micro
+      .i_step       (0) // TODO: conectar al micro
 		  );
-	 
+
    WriteBack_module #()
    inst_WriteBack_module
      (
