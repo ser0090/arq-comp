@@ -71,8 +71,8 @@ module Mips #
 
    /* --- MEM/WRITE BACK latch --- */
    wire [NB_BITS-1:0]    mem_2_wb_data;
-	 wire [NB_BITS-1:0]    mem_2_wb_alu_data;
-	 wire [NB_WB-2:0]      mem_2_wb_ctl;
+   wire [NB_BITS-1:0]    mem_2_wb_alu_data;
+   wire [NB_WB-2:0]      mem_2_wb_ctl;
 
    /* --- WRITE BACK signals --- */
    wire [NB_BITS-1:0]    wb_2_reg_data;
@@ -126,36 +126,41 @@ module Mips #
    Decode_module #()
    inst_Decode_module
      (
-			.o_id_ex_pc     (dec_2_ex_pc),
-			.o_id_ex_rs     (dec_2_ex_rs),
-			.o_id_ex_rt     (dec_2_ex_rt),
-			.o_id_ex_sgext  (dec_2_ex_sgext),
-			.o_id_ex_exec   (dec_2_ex_exec),
-			.o_brh_addr     (dec_2_fet_brh_addr),
-			.o_jmp_addr     (dec_2_fet_jmp_addr),
-			.o_id_ex_rt_num (dec_2_ex_rt_num),
-			.o_id_ex_rs_num (dec_2_fw_rs_num),
-			.o_id_ex_rd_num (dec_2_ex_rd_num),
+      .o_id_ex_pc     (dec_2_ex_pc),
+      .o_id_ex_rs     (dec_2_ex_rs),
+      .o_id_ex_rt     (dec_2_ex_rt),
+      .o_id_ex_sgext  (dec_2_ex_sgext),
+      .o_id_ex_exec   (dec_2_ex_exec),
+      .o_brh_addr     (dec_2_fet_brh_addr),
+      .o_jmp_addr     (dec_2_fet_jmp_addr),
+      .o_id_ex_rt_num (dec_2_ex_rt_num),
+      .o_id_ex_rs_num (dec_2_fw_rs_num),
+      .o_id_ex_rd_num (dec_2_ex_rd_num),
       .o_id_ex_func   (dec_2_ex_func),
       .o_id_ex_mem    (dec_2_ex_mem),
       .o_id_ex_wrback (dec_2_ex_wrback),
-			.o_pc_beq       (dec_2_fet_pc_beq),
-			.o_pc_src       (dec_2_fet_pc_src),
-			.o_flush        (dec_2_fet_flush),
+      //.o_rs_debug     (), // TODO: conectar al debugger
+      .o_pc_beq       (dec_2_fet_pc_beq),
+      .o_pc_src       (dec_2_fet_pc_src),
+      .o_flush        (dec_2_fet_flush),
       .o_bmb_brch     (dec_2_bmb_branch),   //signal brach instr
       .o_bmb_rjmp     (dec_2_bmb_rjump),   //signal r jump instr
-			.i_pc           (fet_2_dec_pc),
-			.i_instr        (fet_2_dec_instr),
-			.i_wb_data      (wb_2_reg_data),
-			.i_reg_dst      (wb_reg_dst),
-			.i_wb_rf_webn   (wb_reg_enb),
-			.i_bubble       (bub_2_dec_bubble),
-			.i_clk          (i_clk),
-			.i_rst          (i_rst)
-		  );
-   
+      .i_pc           (fet_2_dec_pc),
+      .i_instr        (fet_2_dec_instr),
+      .i_wb_data      (wb_2_reg_data),
+      .i_reg_dst      (wb_reg_dst),
+      .i_reg_debug    (0),  // TODO: conectar al debugger
+      .i_rfsel_debug  (0),  // TODO: conectar al debugger
+      .i_debug        (0),  // TODO: conectar con micro
+      .i_step         (0),  // TODO: conectar con micro
+      .i_wb_rf_webn   (wb_reg_enb),
+      .i_bubble       (bub_2_dec_bubble),
+      .i_clk          (i_clk),
+      .i_rst          (i_rst)
+      );
+
    Execution_module #()
-	 inst_Execution_module
+   inst_Execution_module
      (
 			.o_alu_out       (exe_2_mem_addr),
 			.o_data_reg      (exe_2_mem_data),
