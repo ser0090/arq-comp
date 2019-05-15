@@ -29,16 +29,18 @@ module Execution_module#
 
    localparam DEST_FROM_RD   = `DEST_FROM_RD  ,
    localparam DEST_FROM_RT   = `DEST_FROM_RT  ,
-   localparam DEST_TO_RETURN = `DEST_TO_RETURN
+   localparam DEST_TO_RETURN = `DEST_TO_RETURN,
 
+   localparam NB_WB          = `NB_CTR_WB,
+   localparam NB_MEM         = `NB_CTR_MEM
    )
    (
     output [NB_BITS-1:0]      o_alu_out,
     output [NB_BITS-1:0]      o_data_reg,
     output [NB_REG-1:0]       o_reg_dst,
     output [NB_REG-1:0]       o_num_rd, // singal for bubble Unit
-    output [7:0]              o_wb_ctl,
-    output [7:0]              o_mem_ctl,
+    output [NB_WB-1:0]        o_wb_ctl,
+    output [NB_MEM-1:0]       o_mem_ctl,
 
     //desde hz unit
     input [1:0]               i_mux_a_hz,
@@ -58,16 +60,18 @@ module Execution_module#
     input [NB_BITS-1:0]       i_rs_reg, // dato
     input [NB_BITS-1:0]       i_pc_4,
     input [NB_FUNCTION-1:0]   i_function,
-    input [7:0]               i_wb_ctl, // estas son las señales de control
-    input [7:0]               i_mem_ctl,// que pasa para la proxima etapa
+    input [NB_WB-1:0]         i_wb_ctl, // estas son las señales de control
+    input [NB_MEM-1:0]        i_mem_ctl,// que pasa para la proxima etapa
 
     input                     i_clk,
-    input                     i_rst
+    input                     i_rst,
+    // DEBUG sinals
+    input                     i_debug,
+    input                     i_step
 
     );
 
-
-
+   localparam NB_LATCH = 2*NB_BITS+NB_REG+NB_MEM+NB_WB;
 
    wire [4:0]                 operation;
    wire [NB_BITS-1:0]         alu_out;
@@ -77,33 +81,46 @@ module Execution_module#
    reg [NB_BITS-1:0]          dato_aux_a;
    reg [NB_BITS-1:0]          dato_aux_b;
    reg [4:0]                  reg_dst;
-   reg [95:0]                 EX_MEM;
+   /** SECUENCIAL **/
+   reg [NB_LATCH-1:0]         EX_MEM;
+   reg                        step_prev;
 
-   assign o_wb_ctl   = EX_MEM[7:0]  ;
-   assign o_mem_ctl  = EX_MEM[15:8] ;
-   assign o_alu_out  = EX_MEM[47:16];
-   assign o_data_reg = EX_MEM[79:48];
-   assign o_reg_dst  = EX_MEM[84:80];
+   assign o_wb_ctl   = EX_MEM[NB_WB-1:0]  ;
+   assign o_mem_ctl  = EX_MEM[NB_MEM+NB_WB-1:NB_WB];
+   assign o_alu_out  = EX_MEM[NB_MEM+NB_WB+NB_BITS-1:NB_MEM+NB_WB];
+   assign o_data_reg = EX_MEM[2*NB_BITS+NB_MEM+NB_WB-1:NB_MEM+NB_WB+NB_BITS];
+   assign o_reg_dst  = EX_MEM[NB_LATCH-1:2*NB_BITS+NB_MEM+NB_WB];
+   /*--- bubble signal rd ---*/
    assign o_num_rd   = reg_dst;
 
    always @(posedge i_clk) begin
       if (i_rst) begin
-         EX_MEM[95:0]  <= 96'd0;
+         EX_MEM[NB_LATCH-1:0]  <= {NB_LATCH{1'b0}};
+         step_prev             <= 1'b0;
       end
       else begin
-         EX_MEM[7:0]   <= i_wb_ctl;
-         EX_MEM[15:8]  <= i_mem_ctl;
-         EX_MEM[47:16] <= alu_out;
-         EX_MEM[79:48] <= i_rt_reg;
-         EX_MEM[84:80] <= reg_dst;
-         EX_MEM[95:85] <= 11'd0;
-      end
-   end
-
-
+         if(i_debug) begin
+            step_prev <= i_step;
+            if(i_step && !step_prev) begin
+               EX_MEM[NB_WB-1:0]                                     <= i_wb_ctl;
+               EX_MEM[NB_MEM+NB_WB-1:NB_WB]                          <= i_mem_ctl;
+               EX_MEM[NB_MEM+NB_WB+NB_BITS-1:NB_MEM+NB_WB]           <= alu_out;
+               EX_MEM[2*NB_BITS+NB_MEM+NB_WB-1:NB_MEM+NB_WB+NB_BITS] <= i_rt_reg;
+               EX_MEM[NB_LATCH-1:2*NB_BITS+NB_MEM+NB_WB]             <= reg_dst;
+            end
+         end
+         else begin
+            EX_MEM[NB_WB-1:0]                                     <= i_wb_ctl;
+            EX_MEM[NB_MEM+NB_WB-1:NB_WB]                          <= i_mem_ctl;
+            EX_MEM[NB_MEM+NB_WB+NB_BITS-1:NB_MEM+NB_WB]           <= alu_out;
+            EX_MEM[2*NB_BITS+NB_MEM+NB_WB-1:NB_MEM+NB_WB+NB_BITS] <= i_rt_reg;
+            EX_MEM[NB_LATCH-1:2*NB_BITS+NB_MEM+NB_WB]             <= reg_dst;
+         end // else: !if(i_debug)
+      end // else: !if(i_rst)
+   end // always @ (posedge i_clk)
 
    always @(*) begin
-      /* selector de la fuente del primet argumento de 
+      /* selector de la fuente del primet argumento de
        * la alu
        */
       case (i_mux_rs_ctl)
@@ -113,8 +130,6 @@ module Execution_module#
         default :     dato_aux_a = 0;
       endcase
    end
-
-
 
    always @(*) begin
       /* selector de la fuente del segundo argumento 
@@ -127,8 +142,6 @@ module Execution_module#
       endcase
    end
 
-
-
    always @(*) begin
       /* selector para incorporar el hazzard unit
        */
@@ -140,8 +153,6 @@ module Execution_module#
       endcase
    end
 
-
-
    always @(*) begin
       /* selector para incorporar el hazzard unit
        */
@@ -152,8 +163,6 @@ module Execution_module#
         default    : dato_b = i_rt_reg;
       endcase
    end
-
-
 
    always @(*) begin
       /* selector del registro de destino, 

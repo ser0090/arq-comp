@@ -62,8 +62,8 @@ module Mips #
    /* --- EX/MEM latch --- */
    wire [NB_BITS-1:0]    exe_2_mem_addr;
    wire [NB_BITS-1:0]    exe_2_mem_data;
-   wire [7:0]            exe_2_mem_ctl;
-   wire [7:0]            exe_2_mem_wb_ctl;
+   wire [NB_MEM-1:0]     exe_2_mem_ctl;
+   wire [NB_WB-1:0]      exe_2_mem_wb_ctl;
    //wire [1:0]            exe_2_mem_write_ctl;
    //wire [1:0]            exe_2_mem_read_ctl;
    wire [`NB_REG-1:0]    exe_2_mem_reg_dst;
@@ -183,10 +183,12 @@ module Mips #
 			.i_rs_reg        (dec_2_ex_rs),
 			.i_pc_4          (dec_2_ex_pc),
 			.i_function      (dec_2_ex_func),
-			.i_wb_ctl        ({5'd0,dec_2_ex_wrback}),
-			.i_mem_ctl       ({4'd0, dec_2_ex_mem}),
+			.i_wb_ctl        (dec_2_ex_wrback),
+			.i_mem_ctl       (dec_2_ex_mem),
 			.i_clk           (i_clk),
-			.i_rst           (i_rst)
+			.i_rst           (i_rst),
+			.i_debug         (0), // TODO: conectar al micro
+      .i_step          (0)  // TODO: concetar al micro
 		  );
 	 Mem_module #()
    inst_Mem_module
@@ -200,7 +202,7 @@ module Mips #
 			.i_write_ctl (exe_2_mem_ctl[1:0]),
 			.i_read_ctl  (exe_2_mem_ctl[3:2]),
 			.i_reg_dst   (exe_2_mem_reg_dst),
-			.i_wb_ctl    (exe_2_mem_wb_ctl[2:0]),
+			.i_wb_ctl    (exe_2_mem_wb_ctl),
 			.i_clk       (i_clk),
 			.i_rst       (i_rst)
 		  );
