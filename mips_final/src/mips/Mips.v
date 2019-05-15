@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
-`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
 //`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 module Mips #
@@ -20,17 +20,17 @@ module Mips #
    localparam NB_FUN   = `NB_FUN
    )
    (
-    output [13-1:0] o_led,
-    output [5:0]         o_operation,
-    output [5:0]         o_function,
+    output [31:0] o_led,
+    //output [5:0]  o_operation,
+    //output [5:0]  o_function,
     //output [NB_BITS-1:0] o_alu_data,
     //output [`NB_REG-1:0] o_reg_dst,
     //output [7:0]         o_wb_ctl,
     //input [NB_BITS-1:0]  i_wb_data,
     //input [NB_REG-1:0]   i_reg_dst,
     //input                i_wb_rf_webn,
-    input                i_clk,
-    input                i_rst
+    input         i_clk,
+    input         i_rst
     );
 
    /* ##### SECUENCIAL ###### */
@@ -90,16 +90,16 @@ module Mips #
    wire                  dec_2_bmb_branch;
    wire                  dec_2_bmb_rjump;
 
-   assign o_led = wb_2_reg_data[12:0];
-   assign o_operation =  fet_2_dec_instr[31:26];
-   assign o_function =  fet_2_dec_instr[5:0];
+   assign o_led       = wb_2_reg_data;// [31:0];
+   //assign o_operation =  fet_2_dec_instr[31:26];
+   //assign o_function  =  fet_2_dec_instr[5:0];
 
    Fetch_module #
      (
       //.FILE_DEPTH(26),
-      //.INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
+      .INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
       //.INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
-      .INIT_FILE  ("/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file") //Comentar
+      //.INIT_FILE  ("/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file") //Comentar
       //.INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
 		  
       )
@@ -107,8 +107,11 @@ module Mips #
      (
 			.o_if_id_pc    (fet_2_dec_pc),
 			.o_if_id_instr (fet_2_dec_instr),
+			//.o_pc_debug    (),
 			.i_brq_addr    (dec_2_fet_brh_addr),
 			.i_jmp_addr    (dec_2_fet_jmp_addr),
+			//.i_addr_debug  (0), //TODO: conectar con debugger
+			.i_data_debug  (0), //TODO: conectar con debugger
 			.i_ctr_beq     (dec_2_fet_pc_beq),
 			.i_ctr_jmp     (dec_2_fet_pc_src),
 			.i_ctr_flush   (dec_2_fet_flush),
