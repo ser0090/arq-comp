@@ -13,7 +13,7 @@ module Mem_module #
   (
    parameter NB_BITS  = 32,
    parameter NB_DEPTH = 10,
-   localparam NB_CTR  = `NB_CTR_MEM >> 1
+   localparam NB_CTR  = `NB_CTR_MEM >> 1 // div en 2
    )
    (
     output [NB_BITS-1:0]    o_mem_data,
@@ -21,8 +21,8 @@ module Mem_module #
     output [`NB_CTR_WB-1:0] o_wb_ctl,
     output [`NB_REG-1:0]    o_reg_dst,
     //output [`NB_REG-1:0]    o_reg_dst,
-    // DEBUG singnal
-    output [NB_BITS-1:0]    o_data_debug,
+    //##### DEBUG outpus singals #####
+    //output [NB_BITS-1:0]    o_data_debug, //TODO: conectar spi
 
     input [NB_BITS-1:0]     i_addr,
     input [NB_BITS-1:0]     i_data,
@@ -32,23 +32,21 @@ module Mem_module #
     input [`NB_CTR_WB-1:0]  i_wb_ctl,
     input                   i_clk,
     input                   i_rst,
-    // DEBUG signals
-    input [NB_DEPTH-1:0]    i_addr_debug,
-    input                   i_addr_sel,
-    input                   i_debug,
-    input                   i_step
+    //##### DEBUG input singals #####
+    //input [NB_BITS-1:0]     i_data_debug, // TODO: conectar spi
+    input                   i_debug_enb
     );
 
    localparam COL_WIDTH   = 8;
    localparam NB_COL      = 4;
    localparam NB_LATCH    = `NB_CTR_WB+NB_BITS+`NB_REG;
 
-   //-- SECUENCIAL
+   /* ###### SECUENCIAL ###### */
    reg [NB_LATCH-1:0]       latched_out;
-   reg                      step_prev;
 
    wire [NB_BITS-1:0]       mem_out;
-   //-- OUTPUTS
+
+   /* ###### OUTPUTS ###### */
    assign o_wb_ctl   = latched_out[`NB_CTR_WB-1:0];
    assign o_mem_data = mem_out; // latched_out[39:8];
    assign o_alu_data = latched_out[`NB_CTR_WB+NB_BITS-1:`NB_CTR_WB];
@@ -57,25 +55,16 @@ module Mem_module #
    always @(posedge i_clk) begin
       if (i_rst) begin
          latched_out <= {NB_LATCH{1'b0}};
-         step_prev   <= 1'b0;
       end
       else begin
-         if(i_debug) begin
-            step_prev <= i_step;
-            if(i_step && !step_prev) begin
-               latched_out[`NB_CTR_WB-1:0]                                   <= i_wb_ctl;
-               latched_out[`NB_CTR_WB+NB_BITS-1:`NB_CTR_WB]                  <= i_addr;
-               latched_out[`NB_CTR_WB+`NB_REG+NB_BITS+-1:`NB_CTR_WB+NB_BITS] <= i_reg_dst;
-            end
-         end // if (i_debug)
-         else begin
+         if(i_debug_enb) begin
             //latched_out [39:8]  <= mem_out;
-            latched_out[`NB_CTR_WB-1:0]                                   <= i_wb_ctl;
+            latched_out[`NB_CTR_WB-1:0]                  <= i_wb_ctl;
             // normalmente ingresa una addr de la alu pero puede ser un dat0
-            latched_out[`NB_CTR_WB+NB_BITS-1:`NB_CTR_WB]                  <= i_addr;
-            latched_out[`NB_CTR_WB+`NB_REG+NB_BITS+-1:`NB_CTR_WB+NB_BITS] <= i_reg_dst;
+            latched_out[`NB_CTR_WB+NB_BITS-1:`NB_CTR_WB] <= i_addr;
+            latched_out[NB_LATCH-1:`NB_CTR_WB+NB_BITS]   <= i_reg_dst;
             //latched_out [79:77] <= 3'd0;
-         end // else: !if(i_debug)
+         end
       end // else: !if(i_rst)
    end // always @ (posedge i_clk)
 
@@ -88,15 +77,15 @@ module Mem_module #
    inst_Data_Memory
      (
       .o_data         (mem_out),
-      .o_data_debug   (o_data_debug),
+      //.o_data_debug   (),  //TODO: conectar bus para sacar los datos, esperar un clico mas
       .i_addr         ({2'b00, i_addr[9:2]}),
       .i_data         (i_data),
       .i_write_enable (i_write_ctl),
       .i_read_enable  (i_read_ctl),
       .i_clk          (i_clk),
-      .i_addr_debug   (i_addr_debug),
-      .i_debug_sel    (i_addr_sel),
-      .i_ce_latch     ((i_debug)? (i_step && !step_prev) : 1'b1)
+      .i_rst          (i_rst),
+      .i_addr_debug   (0), // TODO: conecar cables de direccion de debug
+      .i_debug_enb    (i_debug_enb)
       );
 
 endmodule // Mem_module

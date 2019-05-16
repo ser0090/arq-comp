@@ -168,66 +168,66 @@ module Mips #
    Execution_module #()
    inst_Execution_module
      (
-			.o_alu_out       (exe_2_mem_addr),
-			.o_data_reg      (exe_2_mem_data),
-			.o_reg_dst       (exe_2_mem_reg_dst),
-			.o_wb_ctl        (exe_2_mem_wb_ctl),
-			.o_mem_ctl       (exe_2_mem_ctl),
+      .o_alu_out       (exe_2_mem_addr),
+      .o_data_reg      (exe_2_mem_data),
+      .o_reg_dst       (exe_2_mem_reg_dst),
+      .o_wb_ctl        (exe_2_mem_wb_ctl),
+      .o_mem_ctl       (exe_2_mem_ctl),
       .o_num_rd        (dec_2_bub_rd),
       //.o_data_debug     (), // TODO: conectar SPI-salve
 
       .i_mux_a_hz      (fw_2_exe_mux_a_hz),
-			.i_mux_b_hz      (fw_2_exe_mux_b_hz),
-			.i_ex_mem_reg_hz (exe_2_mem_addr),
-			.i_mem_wb_reg_hz (wb_2_reg_data),
-			.i_alu_op_ctl    (dec_2_ex_exec[8:5]),
-			.i_mux_rs_ctl    (dec_2_ex_exec[4:3]),
-			.i_mux_rt_ctl    (dec_2_ex_exec[0]),
-			.i_mux_dest_ctl  (dec_2_ex_exec[2:1]),
-			.i_rt            (dec_2_ex_rt_num),
-			.i_rd            (dec_2_ex_rd_num),
-			.i_sign_ext      (dec_2_ex_sgext),
-			.i_rt_reg        (dec_2_ex_rt),
-			.i_rs_reg        (dec_2_ex_rs),
-			.i_pc_4          (dec_2_ex_pc),
-			.i_function      (dec_2_ex_func),
-			.i_wb_ctl        (dec_2_ex_wrback),
-			.i_mem_ctl       (dec_2_ex_mem),
-			.i_clk           (i_clk),
-			.i_rst           (i_rst),
+      .i_mux_b_hz      (fw_2_exe_mux_b_hz),
+      .i_ex_mem_reg_hz (exe_2_mem_addr),
+      .i_mem_wb_reg_hz (wb_2_reg_data),
+      .i_alu_op_ctl    (dec_2_ex_exec[8:5]),
+      .i_mux_rs_ctl    (dec_2_ex_exec[4:3]),
+      .i_mux_rt_ctl    (dec_2_ex_exec[0]),
+      .i_mux_dest_ctl  (dec_2_ex_exec[2:1]),
+      .i_rt            (dec_2_ex_rt_num),
+      .i_rd            (dec_2_ex_rd_num),
+      .i_sign_ext      (dec_2_ex_sgext),
+      .i_rt_reg        (dec_2_ex_rt),
+      .i_rs_reg        (dec_2_ex_rs),
+      .i_pc_4          (dec_2_ex_pc),
+      .i_function      (dec_2_ex_func),
+      .i_wb_ctl        (dec_2_ex_wrback),
+      .i_mem_ctl       (dec_2_ex_mem),
+      .i_clk           (i_clk),
+      .i_rst           (i_rst),
 
       //.i_data_debug    (0),  // TODO: conectar al debugger
-			.i_debug_enb     (0) // TODO: conectar al micro
-		  );
-	 Mem_module #()
+      .i_debug_enb     (0) // TODO: conectar al micro
+      );
+   Mem_module #()
    inst_Mem_module
      (
-			.o_mem_data   (mem_2_wb_data),
-			.o_alu_data   (mem_2_wb_alu_data),
-			.o_wb_ctl     ({wb_reg_enb, mem_2_wb_ctl}),
-			.o_reg_dst    (wb_reg_dst),
+      .o_mem_data   (mem_2_wb_data),
+      .o_alu_data   (mem_2_wb_alu_data),
+      .o_wb_ctl     ({wb_reg_enb, mem_2_wb_ctl}),
+      .o_reg_dst    (wb_reg_dst),
       //.o_data_debug (), // TODO:conectar al debugger
-			.i_addr       (exe_2_mem_addr),
-			.i_data       (exe_2_mem_data),
-			.i_write_ctl  (exe_2_mem_ctl[1:0]),
-			.i_read_ctl   (exe_2_mem_ctl[3:2]),
-			.i_reg_dst    (exe_2_mem_reg_dst),
-			.i_wb_ctl     (exe_2_mem_wb_ctl),
-			.i_clk        (i_clk),
-			.i_rst        (i_rst),
-      .i_addr_debug (0), // TODO: conectar al debugger
-      .i_debug      (0), // TODO: conectar al micro
-      .i_step       (0) // TODO: conectar al micro
-		  );
+
+      .i_addr       (exe_2_mem_addr),
+      .i_data       (exe_2_mem_data),
+      .i_write_ctl  (exe_2_mem_ctl[1:0]),
+      .i_read_ctl   (exe_2_mem_ctl[3:2]),
+      .i_reg_dst    (exe_2_mem_reg_dst),
+      .i_wb_ctl     (exe_2_mem_wb_ctl),
+      .i_clk        (i_clk),
+      .i_rst        (i_rst),
+      //.i_data_debug    (0),  // TODO: conectar al debugger
+      .i_debug_enb  (0)   // TODO: conectar al micro
+      );
 
    WriteBack_module #()
    inst_WriteBack_module
      (
-			.o_data           (wb_2_reg_data),
-			.i_mem_data       (mem_2_wb_data),
-			.i_alu_data       (mem_2_wb_alu_data),
-			.i_mux_mem_to_reg (mem_2_wb_ctl)
-		  );
+      .o_data           (wb_2_reg_data),
+      .i_mem_data       (mem_2_wb_data),
+      .i_alu_data       (mem_2_wb_alu_data),
+      .i_mux_mem_to_reg (mem_2_wb_ctl)
+      );
 
    Forwarding_Unit #()
    inst_Forwarding_Unit

@@ -36,10 +36,10 @@ module Data_Memory #
     input [1:0]                     i_write_enable,
     input [1:0]                     i_read_enable,
     input                           i_clk, // Clock
+    input                           i_rst, // Clock
     // DEBUG signals
     input [NB_DEPTH-1:0]            i_addr_debug,
-    input                           i_debug_sel,
-    input                           i_ce_latch
+    input                           i_debug_enb
     );
 
    /** CODIGO  PROPIO **/
@@ -96,20 +96,25 @@ module Data_Memory #
    endgenerate
 
    always @(posedge i_clk) begin
-      if(i_debug_sel) begin
-        ram_debug <= BRAM[i_addr_debug];
+      if(i_rst) begin
+        ram_data  <= {WORD{1'b0}};
+        ram_debug <= {WORD{1'b0}};
       end
       else begin
-         if(i_ce_latch) begin
-           case(i_read_enable)
-             READ_DISABLE : ram_data <= {WORD{1'b0}};
-             READ_BYTE    : ram_data <= {{(HALFWORD+BYTE){1'b0}}, BRAM[i_addr][BYTE-1:0]};
-             READ_HALFWORD: ram_data <= {{HALFWORD{1'b0}}, BRAM[i_addr][HALFWORD-1:0]};
-             READ_WORD    : ram_data <= BRAM[i_addr];
-           endcase // case (i_read_enable)
+         if(i_debug_enb) begin
+            case(i_read_enable)
+              READ_DISABLE : ram_data <= {WORD{1'b0}};
+              READ_BYTE    : ram_data <= {{(HALFWORD+BYTE){1'b0}}, BRAM[i_addr][BYTE-1:0]};
+              READ_HALFWORD: ram_data <= {{HALFWORD{1'b0}}, BRAM[i_addr][HALFWORD-1:0]};
+              READ_WORD    : ram_data <= BRAM[i_addr];
+            endcase // case (i_read_enable)
+            ram_debug <= ram_debug ;
          end
-         //ram_data <= BRAM[i_addr];
-      end // else: !if(i_debug_sel)
+         else begin
+            ram_debug <= BRAM[i_addr_debug];
+            ram_data <= ram_data ;
+         end // else: !if(i_debug_enb)
+      end // else: !if(i_rst)
    end // always @ (posedge i_clk)
 
    function integer clogb2;
