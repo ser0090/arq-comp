@@ -41,6 +41,8 @@ module Execution_module#
     output [NB_REG-1:0]       o_num_rd, // singal for bubble Unit
     output [NB_WB-1:0]        o_wb_ctl,
     output [NB_MEM-1:0]       o_mem_ctl,
+    //##### debug output singals #####
+    //output [NB_BITS-1:0] o_data_debug, // TODO: conectar al SPI
 
     //desde hz unit
     input [1:0]               i_mux_a_hz,
@@ -53,22 +55,21 @@ module Execution_module#
     input                     i_mux_rt_ctl,
     input [1:0]               i_mux_dest_ctl,
     //desde ID/EX
-    input [4:0]               i_rt, // lo q esta en la instruccion
+    input [4:0]               i_rt,      // lo q esta en la instruccion
     input [4:0]               i_rd,
     input [NB_BITS-1:0]       i_sign_ext,
-    input [NB_BITS-1:0]       i_rt_reg, //dato
-    input [NB_BITS-1:0]       i_rs_reg, // dato
+    input [NB_BITS-1:0]       i_rt_reg,  //dato
+    input [NB_BITS-1:0]       i_rs_reg,  // dato
     input [NB_BITS-1:0]       i_pc_4,
     input [NB_FUNCTION-1:0]   i_function,
-    input [NB_WB-1:0]         i_wb_ctl, // estas son las señales de control
-    input [NB_MEM-1:0]        i_mem_ctl,// que pasa para la proxima etapa
+    input [NB_WB-1:0]         i_wb_ctl,  // estas son las señales de control
+    input [NB_MEM-1:0]        i_mem_ctl, // que pasa para la proxima etapa
 
     input                     i_clk,
     input                     i_rst,
-    // DEBUG sinals
-    input                     i_debug,
-    input                     i_step
-
+    //##### debug input singals #####
+    //input [NB_BITS-1:0]  i_data_debug, TODO: conectar al SPI-salve
+    input                     i_debug_enb
     );
 
    localparam NB_LATCH = 2*NB_BITS+NB_REG+NB_MEM+NB_WB;
@@ -76,14 +77,14 @@ module Execution_module#
    wire [4:0]                 operation;
    wire [NB_BITS-1:0]         alu_out;
    //wire alu_zero;
+   /* ##### COMBINACIONAL ###### */
    reg [NB_BITS-1:0]          dato_a;
    reg [NB_BITS-1:0]          dato_b;
    reg [NB_BITS-1:0]          dato_aux_a;
    reg [NB_BITS-1:0]          dato_aux_b;
    reg [4:0]                  reg_dst;
-   /** SECUENCIAL **/
+   /* ##### SECUENCIAL ###### */
    reg [NB_LATCH-1:0]         EX_MEM;
-   reg                        step_prev;
 
    assign o_wb_ctl   = EX_MEM[NB_WB-1:0]  ;
    assign o_mem_ctl  = EX_MEM[NB_MEM+NB_WB-1:NB_WB];
@@ -96,26 +97,15 @@ module Execution_module#
    always @(posedge i_clk) begin
       if (i_rst) begin
          EX_MEM[NB_LATCH-1:0]  <= {NB_LATCH{1'b0}};
-         step_prev             <= 1'b0;
       end
       else begin
-         if(i_debug) begin
-            step_prev <= i_step;
-            if(i_step && !step_prev) begin
-               EX_MEM[NB_WB-1:0]                                     <= i_wb_ctl;
-               EX_MEM[NB_MEM+NB_WB-1:NB_WB]                          <= i_mem_ctl;
-               EX_MEM[NB_MEM+NB_WB+NB_BITS-1:NB_MEM+NB_WB]           <= alu_out;
-               EX_MEM[2*NB_BITS+NB_MEM+NB_WB-1:NB_MEM+NB_WB+NB_BITS] <= i_rt_reg;
-               EX_MEM[NB_LATCH-1:2*NB_BITS+NB_MEM+NB_WB]             <= reg_dst;
-            end
-         end
-         else begin
+         if(i_debug_enb) begin
             EX_MEM[NB_WB-1:0]                                     <= i_wb_ctl;
             EX_MEM[NB_MEM+NB_WB-1:NB_WB]                          <= i_mem_ctl;
             EX_MEM[NB_MEM+NB_WB+NB_BITS-1:NB_MEM+NB_WB]           <= alu_out;
             EX_MEM[2*NB_BITS+NB_MEM+NB_WB-1:NB_MEM+NB_WB+NB_BITS] <= i_rt_reg;
             EX_MEM[NB_LATCH-1:2*NB_BITS+NB_MEM+NB_WB]             <= reg_dst;
-         end // else: !if(i_debug)
+         end
       end // else: !if(i_rst)
    end // always @ (posedge i_clk)
 
@@ -176,23 +166,30 @@ module Execution_module#
       endcase
    end
 
-   Alu #(
-         .NB_BITS(NB_BITS),
-         .NB_OPE(NB_OPE)
-    ) inst_Alu (
+   Alu #
+     (
+      .NB_BITS(NB_BITS),
+      .NB_OPE(NB_OPE)
+      )
+   inst_Alu
+     (
       .o_alu     (alu_out),
       .i_data_a  (dato_a),
       .i_data_b  (dato_aux_b),
       .i_ope_sel (operation)
-    );
-  Alu_Control #(
+      );
+
+   Alu_Control #
+     (
       .NB_OPE(NB_OPE),
       .NB_ALU_OP_CTL(NB_ALU_OP_CTL),
       .NB_FUNCTION(NB_FUNCTION)
-    ) inst_Alu_Control (
+      )
+   inst_Alu_Control
+     (
       .o_alu        (operation),
       .i_alu_op_ctl (i_alu_op_ctl),
       .i_function   (i_function)
-    );
+      );
 
-   endmodule
+endmodule // Execution_module

@@ -117,6 +117,7 @@ module Mips #
       .i_if_id_we    (bub_2_fet_latch_we),
       .i_clk         (i_clk),
       .i_rst         (i_rst),
+
       .i_data_debug  (0),   // TODO: conectar con debugger
       .i_debug_enb   (0)   // TODO: conectar con micro
       //.i_cs_debug    (0)   // TODO : conectar al chip sel del spi
@@ -129,29 +130,36 @@ module Mips #
       .o_id_ex_rs     (dec_2_ex_rs),
       .o_id_ex_rt     (dec_2_ex_rt),
       .o_id_ex_sgext  (dec_2_ex_sgext),
-      .o_id_ex_exec   (dec_2_ex_exec),
-      .o_brh_addr     (dec_2_fet_brh_addr),
-      .o_jmp_addr     (dec_2_fet_jmp_addr),
       .o_id_ex_rt_num (dec_2_ex_rt_num),
       .o_id_ex_rs_num (dec_2_fw_rs_num),
       .o_id_ex_rd_num (dec_2_ex_rd_num),
       .o_id_ex_func   (dec_2_ex_func),
-      .o_id_ex_mem    (dec_2_ex_mem),
+
       .o_id_ex_wrback (dec_2_ex_wrback),
-      //.o_data_debug     (), // TODO: conectar SPI-salve
+      .o_id_ex_mem    (dec_2_ex_mem),
+      .o_id_ex_exec   (dec_2_ex_exec),
+
+      .o_brh_addr     (dec_2_fet_brh_addr),
+      .o_jmp_addr     (dec_2_fet_jmp_addr),
       .o_pc_beq       (dec_2_fet_pc_beq),
       .o_pc_src       (dec_2_fet_pc_src),
       .o_flush        (dec_2_fet_flush),
       .o_bmb_brch     (dec_2_bmb_branch),   //signal brach instr
       .o_bmb_rjmp     (dec_2_bmb_rjump),   //signal r jump instr
+
+      //.o_data_debug     (), // TODO: conectar SPI-salve
+
       .i_pc           (fet_2_dec_pc),
       .i_instr        (fet_2_dec_instr),
       .i_wb_data      (wb_2_reg_data),
       .i_reg_dst      (wb_reg_dst),
-      .i_wb_rf_webn   (wb_reg_enb),
-      .i_bubble       (bub_2_dec_bubble),
       .i_clk          (i_clk),
       .i_rst          (i_rst),
+
+      .i_wb_rf_webn   (wb_reg_enb),
+
+      .i_bubble       (bub_2_dec_bubble),
+
       //.i_data_debug    (0),  // TODO: conectar al debugger
       //.i_cs_debug    (0)   // TODO : conectar al chip sel del spi
       .i_debug_enb    (0)    // TODO: conectar con micro
@@ -166,7 +174,9 @@ module Mips #
 			.o_wb_ctl        (exe_2_mem_wb_ctl),
 			.o_mem_ctl       (exe_2_mem_ctl),
       .o_num_rd        (dec_2_bub_rd),
-			.i_mux_a_hz      (fw_2_exe_mux_a_hz),
+      //.o_data_debug     (), // TODO: conectar SPI-salve
+
+      .i_mux_a_hz      (fw_2_exe_mux_a_hz),
 			.i_mux_b_hz      (fw_2_exe_mux_b_hz),
 			.i_ex_mem_reg_hz (exe_2_mem_addr),
 			.i_mem_wb_reg_hz (wb_2_reg_data),
@@ -185,8 +195,9 @@ module Mips #
 			.i_mem_ctl       (dec_2_ex_mem),
 			.i_clk           (i_clk),
 			.i_rst           (i_rst),
-			.i_debug         (0), // TODO: conectar al micro
-      .i_step          (0)  // TODO: concetar al micro
+
+      //.i_data_debug    (0),  // TODO: conectar al debugger
+			.i_debug_enb     (0) // TODO: conectar al micro
 		  );
 	 Mem_module #()
    inst_Mem_module
