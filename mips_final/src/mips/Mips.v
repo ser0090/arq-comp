@@ -107,20 +107,18 @@ module Mips #
       .o_if_id_pc    (fet_2_dec_pc),
       .o_if_id_instr (fet_2_dec_instr),
       //.o_pc_debug    (),  // TODO: conectar con debuuger
+
       .i_brq_addr    (dec_2_fet_brh_addr),
       .i_jmp_addr    (dec_2_fet_jmp_addr),
-      //.i_addr_debug  (0), // TODO: conectar con debugger
-      .i_data_debug  (0),   // TODO: conectar con debugger
-      .i_wren_debug  (0),   // TODO: conectar con debugger
-      .i_debug       (0),   // TODO: conectar con micro
-      .i_step        (0),   // TODO: conectar con micro
       .i_ctr_beq     (dec_2_fet_pc_beq),
       .i_ctr_jmp     (dec_2_fet_pc_src),
       .i_ctr_flush   (dec_2_fet_flush),
       .i_pc_we       (bub_2_fet_pc_we),
       .i_if_id_we    (bub_2_fet_latch_we),
       .i_clk         (i_clk),
-      .i_rst         (i_rst)
+      .i_rst         (i_rst),
+      .i_data_debug  (0),   // TODO: conectar con debugger
+      .i_debug_enb   (0)   // TODO: conectar con micro
       );
 
    Decode_module #()
