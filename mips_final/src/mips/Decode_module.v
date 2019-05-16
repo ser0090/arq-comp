@@ -80,28 +80,39 @@ module Decode_module #
     output [NB_BITS-1:0] o_id_ex_rs,
     output [NB_BITS-1:0] o_id_ex_rt,
     output [NB_BITS-1:0] o_id_ex_sgext,
-    output [NB_EXEC-1:0] o_id_ex_exec,
-    output [NB_BITS-1:0] o_brh_addr,
-    output [NB_BITS-1:0] o_jmp_addr,
     output [NB_REG-1:0]  o_id_ex_rs_num,
     output [NB_REG-1:0]  o_id_ex_rt_num,
     output [NB_REG-1:0]  o_id_ex_rd_num,
     output [NB_FUN-1:0]  o_id_ex_func,
-    output [NB_MEM-1:0]  o_id_ex_mem,
+    //#### CONTROL output signals ####
     output [NB_WB-1:0]   o_id_ex_wrback,
+    output [NB_MEM-1:0]  o_id_ex_mem,
+    output [NB_EXEC-1:0] o_id_ex_exec,
+    //### JUMP/BRACH control outputs ###
+    output [NB_BITS-1:0] o_brh_addr,
+    output [NB_BITS-1:0] o_jmp_addr,
+    output               o_bmb_brch, //signal brach instr
+    output               o_bmb_rjmp, //signal jump register instr
     output               o_pc_beq,
     output               o_pc_src,
     output               o_flush,
-    output               o_bmb_brch, //signal brach instr
-    output               o_bmb_rjmp, //signal jump register instr
+    //##### debug output singals #####
+    //output [NB_BITS-1:0] o_data_debug, // TODO: conectar al SPI
+
     input [NB_BITS-1:0]  i_pc,
     input [NB_BITS-1:0]  i_instr,
     input [NB_BITS-1:0]  i_wb_data,
     input [NB_REG-1:0]   i_reg_dst,
-    input                i_wb_rf_webn,
-    input                i_bubble, // bubble case
+    input                i_rst,
     input                i_clk,
-    input                i_rst
+    //##### WB inputs signal ######
+    input                i_wb_rf_webn,
+    //##### BUBLE control signal ######
+    input                i_bubble,      // bubble case
+    //##### debug input singals #####
+    //input [NB_BITS-1:0]  i_data_debug, TODO: conectar al SPI-salve
+    //input                i_cs_debug    // chip sel para los mux modo debug
+    input                i_debug_enb
     );
 
    localparam NB_INM = 16;
@@ -120,6 +131,7 @@ module Decode_module #
    reg [NB_EXEC-1:0]     ctr_exec;
    reg [NB_MEM-1:0]      ctr_mem;
    reg [NB_WB-1:0]       ctr_wrbk;
+
    /* ##### COMBINACIONAL ###### */
    // -------- SIGN EXTEND ----------
    reg [NB_BITS-1:0]     sign_extend;
@@ -173,36 +185,40 @@ module Decode_module #
    assign o_bmb_brch = beq | ben;
    assign o_bmb_rjmp = jal_addr;
 
+   /* --- DEBUG signals --- */
+
    always @ (posedge i_clk) begin
       if(i_rst) begin
-         pc       <= {NB_BITS{1'b0}};
-         rs       <= {NB_BITS{1'b0}};
-         rt       <= {NB_BITS{1'b0}};
-         sg_ext   <= {NB_BITS{1'b0}};
-         funct    <= {NB_FUN{1'b0}};
-         rt_num   <= {NB_REG{1'b0}};
-         rs_num   <= {NB_REG{1'b0}};
-         rd_num   <= {NB_REG{1'b0}};
-         ctr_exec <= {NB_EXEC{1'b0}};
-         ctr_mem  <= {NB_MEM{1'b0}};
-         ctr_wrbk <= {NB_WB{1'b0}};
+         pc        <= {NB_BITS{1'b0}};
+         rs        <= {NB_BITS{1'b0}};
+         rt        <= {NB_BITS{1'b0}};
+         sg_ext    <= {NB_BITS{1'b0}};
+         funct     <= {NB_FUN{1'b0}};
+         rt_num    <= {NB_REG{1'b0}};
+         rs_num    <= {NB_REG{1'b0}};
+         rd_num    <= {NB_REG{1'b0}};
+         ctr_exec  <= {NB_EXEC{1'b0}};
+         ctr_mem   <= {NB_MEM{1'b0}};
+         ctr_wrbk  <= {NB_WB{1'b0}};
       end
       else begin
-         pc       <= i_pc;
-         rs       <= rfile_rs;
-         rt       <= rfile_rt;
-         sg_ext   <= sign_extend;
-         funct    <= i_instr[NB_FUN-1:0];
-         rt_num   <= i_instr[20:16];
-         rs_num   <= i_instr[25:21];
-         rd_num   <= i_instr[15:11];
-         ctr_exec <= (i_bubble)? {NB_EXEC{1'b0}} : {alu_op, rs_alu, rd_sel, rt_alu};
-         ctr_mem  <= (i_bubble)? {NB_MEM{1'b0}} : {mem_rd, mem_wr};
-         ctr_wrbk <= (i_bubble)? {NB_WB{1'b0}} : {wrt_enb, wrt_back};
+         if(i_debug_enb) begin
+            pc       <= i_pc;
+            rs       <= rfile_rs;
+            rt       <= rfile_rt;
+            sg_ext   <= sign_extend;
+            funct    <= i_instr[NB_FUN-1:0];
+            rt_num   <= i_instr[20:16];
+            rs_num   <= i_instr[25:21];
+            rd_num   <= i_instr[15:11];
+            ctr_exec <= (i_bubble)? {NB_EXEC{1'b0}} : {alu_op, rs_alu, rd_sel, rt_alu};
+            ctr_mem  <= (i_bubble)? {NB_MEM{1'b0}} : {mem_rd, mem_wr};
+            ctr_wrbk <= (i_bubble)? {NB_WB{1'b0}} : {wrt_enb, wrt_back};
+         end // if (i_debug_enb)
       end // else: !if(i_rst)
    end // always @ (posedge i_clk)
 
-   // ###### SIGN EXTEND ###########
+   // ########### SIGN EXTEND ##############
    always @ (*) begin
       case(se_case)
         JMP_EXT: sign_extend = {{NB_BITS-NB_IDX{1'b0}}, i_instr[NB_IDX-1:0]};
@@ -215,6 +231,7 @@ module Decode_module #
    /* ##################################################
       ###################### CONTROL ###################
       ################################################## */
+   // TODO : agregar funciones de la instruccion HALT
    always @ (*) begin
       case(i_instr[31:26])
         J: begin
@@ -677,6 +694,7 @@ module Decode_module #
       .o_zero        (rfile_zero),
       .i_data        (i_wb_data),      // data write
       .i_read_addr_1 (i_instr[25:21]), // read register rs selector 1
+      // TODO: resolver direccion de rs proveniente del deubber, reemplazar signal
       .i_read_addr_2 (i_instr[20:16]), // read register rt selector 2
       .i_write_addr  (i_reg_dst),      // write selector
       .i_wenb        (i_wb_rf_webn),   // write control enable

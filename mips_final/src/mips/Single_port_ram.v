@@ -15,26 +15,27 @@ module Single_port_ram #
    parameter FILE_DEPTH      = 31,            // Specify RAM data width
    parameter RAM_PERFORMANCE = "LOW_LATENCY", // Select "HIGH_PERFORMANCE" or "LOW_LATENCY"
    parameter INIT_FILE       = "",            // Specify name/location
-   parameter SSL             = 0,     // NOP operation sll $0 $0 0
+   parameter SSL             = 0,             // NOP operation sll $0 $0 0
    localparam RAM_DEPTH      = 2**NB_DEPTH
    )
    (
-    output [RAM_WIDTH-1:0] o_data, // RAM output data
-    input [NB_DEPTH-1:0]   i_addr, // Address bus, width determined from RAM_DEPTH
-    input [RAM_WIDTH-1:0]  i_data, // RAM input data
-    input                  i_clk, // Clock
-    input                  i_wea, // Write enable
-    input                  i_ctr_flush,
+    output [RAM_WIDTH-1:0] o_data,      // RAM output data
+    input [NB_DEPTH-1:0]   i_addr,      // Address bus
+    input [RAM_WIDTH-1:0]  i_data,      // RAM input data
+    input                  i_wea,       // Write enable
+    input                  i_ctr_flush, //
     input                  i_if_id_we,
-    //input                  i_ena,   // RAM Enable, for additional power savings
-    input                  i_rst, // Output reset (does not affect memory contents)
-    input                  i_regcea // Output register enable
+    input                  i_clk,       // Clock
+    input                  i_rst,       // Output reset (does not affect memory contents)
+    //##### debug input singals #####
+    input                  i_regcea     // Output register enable
     );
 
    reg [RAM_WIDTH-1:0]     BRAM [RAM_DEPTH-1:0];
    reg [RAM_WIDTH-1:0]     ram_data = {RAM_WIDTH{1'b0}};
-   
-   // The following code either initializes the memory values to a specified file or to all zeros to match hardware
+
+   // The following code either initializes the memory values to a specified
+   // file or to all zeros to match hardware
    generate
       if (INIT_FILE != "") begin: use_init_file
          integer ram_index;
@@ -53,19 +54,20 @@ module Single_port_ram #
    endgenerate
 
    always @(posedge i_clk) begin
-      if (i_wea) begin
+      if (i_rst)
+        ram_data <= {RAM_WIDTH{1'b0}};
+      else if (i_wea)
          BRAM[i_addr]  <= i_data;
-         ram_data      <= i_data;
-      end
-      else begin
+      else if(i_regcea) begin
          case({i_ctr_flush, i_if_id_we})
            2'b01:   ram_data <= BRAM[i_addr];
            2'b10:   ram_data <= ram_data;
            2'b11:   ram_data <= SSL;
            default: ram_data <= ram_data;
          endcase // case ({i_ctr_flush, i_if_id_we}
-         //ram_data <= BRAM[i_addr];
-      end // else: !if(i_wea)
+      end
+      else
+        ram_data <= ram_data;
    end // always @ (posedge i_clk)
 
    generate
@@ -89,8 +91,8 @@ module Single_port_ram #
       input integer          depth;
       for (clogb2=0; depth>0; clogb2=clogb2+1)
         depth = depth >> 1;
-   endfunction
-endmodule
+   endfunction // clogb2
+endmodule // Single_port_ram
 
 // The following is an instantiation template for xilinx_single_port_ram_write_first
 /*
