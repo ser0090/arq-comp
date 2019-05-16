@@ -22,14 +22,16 @@ module Mips #
    )
    (
     output [31:0] o_led,
-    //output [5:0]  o_operation,
-    //output [5:0]  o_function,
+    output [5:0]  o_operation,
+    output [5:0]  o_function,
     //output [NB_BITS-1:0] o_alu_data,
     //output [`NB_REG-1:0] o_reg_dst,
     //output [7:0]         o_wb_ctl,
     //input [NB_BITS-1:0]  i_wb_data,
     //input [NB_REG-1:0]   i_reg_dst,
     //input                i_wb_rf_webn,
+    input         i_continue,
+    input         i_valid,    // por flanco ascendente
     input         i_clk,
     input         i_rst
     );
@@ -39,6 +41,7 @@ module Mips #
    /* ##### COMBINACIONAL ###### */
 
    /* #### WIRES #####*/
+   wire                  debug_enb;
    // --- Wire Connectios FET/DEC ---
    wire [NB_BITS-1:0]    fet_2_dec_pc;
    wire [NB_BITS-1:0]    fet_2_dec_instr;
@@ -92,8 +95,18 @@ module Mips #
    wire                  dec_2_bmb_rjump;
 
    assign o_led       = wb_2_reg_data;// [31:0];
-   //assign o_operation =  fet_2_dec_instr[31:26];
-   //assign o_function  =  fet_2_dec_instr[5:0];
+   assign o_operation =  fet_2_dec_instr[31:26];
+   assign o_function  =  fet_2_dec_instr[5:0];
+
+   Debugger_interface #()
+   inst_Debugger_interface
+     (
+      .o_debug_enb (debug_enb),
+      .i_continue  (i_continue),
+      .i_valid     (i_valid),
+      .i_clk       (i_clk),
+      .i_rst       (i_rst)
+      );
 
    Fetch_module #
      (
@@ -121,7 +134,7 @@ module Mips #
       .i_rst         (i_rst),
 
       .i_data_debug  (0),   // TODO: conectar con debugger
-      .i_debug_enb   (0)   // TODO: conectar con micro
+      .i_debug_enb   (debug_enb)   // TODO: conectar con micro
       //.i_cs_debug    (0)   // TODO : conectar al chip sel del spi
       );
 
@@ -164,7 +177,7 @@ module Mips #
 
       //.i_data_debug    (0),  // TODO: conectar al debugger
       //.i_cs_debug    (0)   // TODO : conectar al chip sel del spi
-      .i_debug_enb    (0)    // TODO: conectar con micro
+      .i_debug_enb    (debug_enb)    // TODO: conectar con micro
       );
 
    Execution_module #()
@@ -199,7 +212,7 @@ module Mips #
       .i_rst           (i_rst),
 
       //.i_data_debug    (0),  // TODO: conectar al debugger
-      .i_debug_enb     (0) // TODO: conectar al micro
+      .i_debug_enb     (debug_enb) // TODO: conectar al micro
       );
    Mem_module #()
    inst_Mem_module
@@ -219,7 +232,7 @@ module Mips #
       .i_clk        (i_clk),
       .i_rst        (i_rst),
       //.i_data_debug    (0),  // TODO: conectar al debugger
-      .i_debug_enb  (0)   // TODO: conectar al micro
+      .i_debug_enb  (debug_enb)   // TODO: conectar al micro
       );
 
    WriteBack_module #()
