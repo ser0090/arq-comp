@@ -119,6 +119,7 @@ module Mips #
       .i_rst         (i_rst),
       .i_data_debug  (0),   // TODO: conectar con debugger
       .i_debug_enb   (0)   // TODO: conectar con micro
+      //.i_cs_debug    (0)   // TODO : conectar al chip sel del spi
       );
 
    Decode_module #()
@@ -137,7 +138,7 @@ module Mips #
       .o_id_ex_func   (dec_2_ex_func),
       .o_id_ex_mem    (dec_2_ex_mem),
       .o_id_ex_wrback (dec_2_ex_wrback),
-      //.o_rs_debug     (), // TODO: conectar al debugger
+      //.o_data_debug     (), // TODO: conectar SPI-salve
       .o_pc_beq       (dec_2_fet_pc_beq),
       .o_pc_src       (dec_2_fet_pc_src),
       .o_flush        (dec_2_fet_flush),
@@ -147,14 +148,13 @@ module Mips #
       .i_instr        (fet_2_dec_instr),
       .i_wb_data      (wb_2_reg_data),
       .i_reg_dst      (wb_reg_dst),
-      .i_reg_debug    (0),  // TODO: conectar al debugger
-      .i_rfsel_debug  (0),  // TODO: conectar al debugger
-      .i_debug        (0),  // TODO: conectar con micro
-      .i_step         (0),  // TODO: conectar con micro
       .i_wb_rf_webn   (wb_reg_enb),
       .i_bubble       (bub_2_dec_bubble),
       .i_clk          (i_clk),
-      .i_rst          (i_rst)
+      .i_rst          (i_rst),
+      //.i_data_debug    (0),  // TODO: conectar al debugger
+      //.i_cs_debug    (0)   // TODO : conectar al chip sel del spi
+      .i_debug_enb    (0)    // TODO: conectar con micro
       );
 
    Execution_module #()

@@ -34,6 +34,7 @@ module Fetch_module #
     //##### debug input singals #####
     input [NB_BITS-1:0]  i_data_debug,
     input                i_debug_enb   // debug enable activo por alto
+    //input                i_cs_debug    // chip sel para los mux modo debug
     );
 
    /* ###### SECUENCIAL ###### */
