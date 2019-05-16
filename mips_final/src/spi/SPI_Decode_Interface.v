@@ -4,7 +4,6 @@
 module SPI_Decode_Interface#(
 		parameter NB_BITS   = 32,
 		parameter NB_LATCH  = 128,//pc_4+rs_reg+rt_reg+sign_ext
-		parameter RAM_DEPTH = 10,
 		parameter NB_REG    = 5
 	) /* this is automatically generated */
 	(

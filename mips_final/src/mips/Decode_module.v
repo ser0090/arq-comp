@@ -97,7 +97,7 @@ module Decode_module #
     output               o_pc_src,
     output               o_flush,
     //##### debug output singals #####
-    //output [NB_BITS-1:0] o_data_debug, // TODO: conectar al SPI
+    output [NB_BITS-1:0] o_to_SPI, //conectar al SPI
 
     input [NB_BITS-1:0]  i_pc,
     input [NB_BITS-1:0]  i_instr,
@@ -110,8 +110,8 @@ module Decode_module #
     //##### BUBLE control signal ######
     input                i_bubble,      // bubble case
     //##### debug input singals #####
-    //input [NB_BITS-1:0]  i_data_debug, TODO: conectar al SPI-salve
-    //input                i_cs_debug    // chip sel para los mux modo debug
+    input [NB_BITS-1:0]  i_from_SPI,  // conectar al SPI-salve
+    input                i_cs_debug,  // chip sel para los mux modo debug
     input                i_debug_enb
     );
 
@@ -186,6 +186,7 @@ module Decode_module #
    assign o_bmb_rjmp = jal_addr;
 
    /* --- DEBUG signals --- */
+   wire [NB_REG-1:0]rs_from_interface;
 
    always @ (posedge i_clk) begin
       if(i_rst) begin
@@ -693,7 +694,7 @@ module Decode_module #
       .o_rt          (rfile_rt),       // registro rt de salida
       .o_zero        (rfile_zero),
       .i_data        (i_wb_data),      // data write
-      .i_read_addr_1 (i_instr[25:21]), // read register rs selector 1
+      .i_read_addr_1 (rs_from_interface), // read register rs selector 1
       // TODO: resolver direccion de rs proveniente del deubber, reemplazar signal
       .i_read_addr_2 (i_instr[20:16]), // read register rt selector 2
       .i_write_addr  (i_reg_dst),      // write selector
@@ -701,5 +702,20 @@ module Decode_module #
       .i_clk         (i_clk),          // clock
       .i_rst         (i_rst)           // reset
       );
+
+    SPI_Decode_Interface #(
+      .NB_BITS(NB_BITS),
+      .NB_LATCH(NB_BITS*4),
+      .NB_REG(NB_REG)
+    ) inst_SPI_Decode_Interface (
+      .o_SPI      (o_to_SPI),
+      .o_rs       (rs_from_interface),
+      .i_latch    ({o_id_ex_sgext,o_id_ex_rt,o_id_ex_rs,o_id_ex_pc}),
+      .i_rs       (i_instr[25:21]),
+      .i_reg_data (rfile_rs),
+      .i_SPI      (i_from_SPI),
+      .i_in_use   (i_cs_debug)
+    );
+
 endmodule // Decode_module
 

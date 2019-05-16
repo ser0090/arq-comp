@@ -42,7 +42,7 @@ module Execution_module#
     output [NB_WB-1:0]        o_wb_ctl,
     output [NB_MEM-1:0]       o_mem_ctl,
     //##### debug output singals #####
-    //output [NB_BITS-1:0] o_data_debug, // TODO: conectar al SPI
+    output [NB_BITS-1:0] o_to_SPI, //conectar al SPI
 
     //desde hz unit
     input [1:0]               i_mux_a_hz,
@@ -68,7 +68,7 @@ module Execution_module#
     input                     i_clk,
     input                     i_rst,
     //##### debug input singals #####
-    //input [NB_BITS-1:0]  i_data_debug, TODO: conectar al SPI-salve
+    input [NB_BITS-1:0]       i_from_SPI, //conectar al SPI-salve
     input                     i_debug_enb
     );
 
@@ -191,5 +191,15 @@ module Execution_module#
       .i_alu_op_ctl (i_alu_op_ctl),
       .i_function   (i_function)
       );
+
+      SPI_Execution_Interface #(
+      .NB_BITS(NB_BITS),
+      .NB_LATCH(NB_LATCH)
+    ) inst_SPI_Execution_Interface (
+      .o_SPI   (o_to_SPI),
+      .i_latch ({EX_MEM}),
+      .i_SPI   (i_from_SPI)
+    );
+
 
 endmodule // Execution_module

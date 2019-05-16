@@ -22,7 +22,7 @@ module Mem_module #
     output [`NB_REG-1:0]    o_reg_dst,
     //output [`NB_REG-1:0]    o_reg_dst,
     //##### DEBUG outpus singals #####
-    //output [NB_BITS-1:0]    o_data_debug, //TODO: conectar spi
+    output [NB_BITS-1:0]    o_to_SPI, // conectar spi
 
     input [NB_BITS-1:0]     i_addr,
     input [NB_BITS-1:0]     i_data,
@@ -33,7 +33,7 @@ module Mem_module #
     input                   i_clk,
     input                   i_rst,
     //##### DEBUG input singals #####
-    //input [NB_BITS-1:0]     i_data_debug, // TODO: conectar spi
+    input [NB_BITS-1:0]     i_from_SPI, // conectar spi
     input                   i_debug_enb
     );
 
@@ -45,6 +45,11 @@ module Mem_module #
    reg [NB_LATCH-1:0]       latched_out;
 
    wire [NB_BITS-1:0]       mem_out;
+
+   /* ### cables para debug unit ### */
+
+   wire [NB_DEPTH-1:0] debug_addr;
+   wire [NB_BITS-1:0]  mem_to_debug;
 
    /* ###### OUTPUTS ###### */
    assign o_wb_ctl   = latched_out[`NB_CTR_WB-1:0];
@@ -77,15 +82,26 @@ module Mem_module #
    inst_Data_Memory
      (
       .o_data         (mem_out),
-      //.o_data_debug   (),  //TODO: conectar bus para sacar los datos, esperar un clico mas
+      .o_data_debug   (mem_to_debug),  //conectar bus para sacar los datos, esperar un clico mas
       .i_addr         ({2'b00, i_addr[9:2]}),
       .i_data         (i_data),
       .i_write_enable (i_write_ctl),
       .i_read_enable  (i_read_ctl),
       .i_clk          (i_clk),
       .i_rst          (i_rst),
-      .i_addr_debug   (0), // TODO: conecar cables de direccion de debug
+      .i_addr_debug   (debug_addr), //conectar cables de direccion de debug
       .i_debug_enb    (i_debug_enb)
       );
+      SPI_Mem_Interface #(
+      .NB_BITS(NB_BITS),
+      .NB_LATCH(NB_LATCH+NB_BITS),
+      .RAM_DEPTH(NB_DEPTH)
+    ) inst_SPI_Mem_Interface (
+      .o_SPI      (o_to_SPI),
+      .o_addr     (debug_addr),
+      .i_latch    ({latched_out,mem_out}),
+      .i_mem_data (mem_to_debug),
+      .i_SPI      (i_from_SPI)
+    );
 
 endmodule // Mem_module

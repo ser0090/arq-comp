@@ -21,19 +21,24 @@ module Mips #
    localparam NB_FUN   = `NB_FUN
    )
    (
-    output [31:0] o_led,
-    output [5:0]  o_operation,
-    output [5:0]  o_function,
+    output [31:0]         o_led,
+    output [5:0]          o_operation,
+    output [5:0]          o_function,
+    output [NB_BITS-1:0]  o_MISO,
     //output [NB_BITS-1:0] o_alu_data,
     //output [`NB_REG-1:0] o_reg_dst,
     //output [7:0]         o_wb_ctl,
     //input [NB_BITS-1:0]  i_wb_data,
     //input [NB_REG-1:0]   i_reg_dst,
     //input                i_wb_rf_webn,
-    input         i_continue,
-    input         i_valid,    // por flanco ascendente
-    input         i_clk,
-    input         i_rst
+    input                i_continue,
+    input                i_valid,    // por flanco ascendente
+    input                i_clk,
+    input                i_rst,
+    input [NB_BITS-1:0]  i_MOSI,
+    input                i_SCLK,
+    input [3:0]          i_SPI_cs
+
     );
 
    /* ##### SECUENCIAL ###### */
@@ -94,6 +99,21 @@ module Mips #
    wire                  dec_2_bmb_branch;
    wire                  dec_2_bmb_rjump;
 
+   // wires para los spi de debug
+
+   wire [NB_BITS-1:0]  SPI_2_Fetch;
+   wire [NB_BITS-1:0]  Fetch_2_SPI;
+
+   wire [NB_BITS-1:0]  SPI_2_Decode;
+   wire [NB_BITS-1:0]  Decode_2_SPI;
+
+   wire [NB_BITS-1:0]  SPI_2_Exe;
+   wire [NB_BITS-1:0]  Exe_2_SPI;
+
+   wire [NB_BITS-1:0]  SPI_2_Mem;
+   wire [NB_BITS-1:0]  Mem_2_SPI;
+
+
    assign o_led       = wb_2_reg_data;// [31:0];
    assign o_operation =  fet_2_dec_instr[31:26];
    assign o_function  =  fet_2_dec_instr[5:0];
@@ -108,10 +128,14 @@ module Mips #
       .i_rst       (i_rst)
       );
 
+
+
+
+
    Fetch_module #
      (
       //.FILE_DEPTH(26),
-      .INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
+      //.INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
       //.INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
       // .INIT_FILE  ("/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file") //Comentar
       // .INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
@@ -121,7 +145,7 @@ module Mips #
      (
       .o_if_id_pc    (fet_2_dec_pc),
       .o_if_id_instr (fet_2_dec_instr),
-      //.o_pc_debug    (),  // TODO: conectar con debuuger
+      .o_to_SPI      (Fetch_2_SPI),  // TODO: conectar con debuuger
 
       .i_brq_addr    (dec_2_fet_brh_addr),
       .i_jmp_addr    (dec_2_fet_jmp_addr),
@@ -133,10 +157,28 @@ module Mips #
       .i_clk         (i_clk),
       .i_rst         (i_rst),
 
-      .i_data_debug  (0),   // TODO: conectar con debugger
-      .i_debug_enb   (debug_enb)   // TODO: conectar con micro
-      //.i_cs_debug    (0)   // TODO : conectar al chip sel del spi
+      .i_from_SPI    (SPI_2_Fetch),   //conectar con debugger
+      .i_debug_enb   (debug_enb),   // conectar con micro
+      .i_cs_debug    (i_SPI_cs[0])   // conectar al chip sel del spi
       );
+
+      SPI_Slave_Parallel #( // conectado al fetch
+      .NB_BITS(NB_BITS)
+    ) inst_SPI_Slave_Parallel_Fetch (
+      .o_MISO (o_MISO),
+      .o_data (SPI_2_Fetch),
+      .i_MOSI (i_MOSI),
+      .i_SCLK (i_SCLK),
+      .i_cs   (i_SPI_cs[0]),
+      .i_data (Fetch_2_SPI),
+      .i_rst  (i_rst),
+      .i_clk  (i_clk)
+    );
+
+
+
+
+
 
    Decode_module #()
    inst_Decode_module
@@ -162,7 +204,7 @@ module Mips #
       .o_bmb_brch     (dec_2_bmb_branch),   //signal brach instr
       .o_bmb_rjmp     (dec_2_bmb_rjump),   //signal r jump instr
 
-      //.o_data_debug     (), // TODO: conectar SPI-salve
+      .o_to_SPI       (Decode_2_SPI), // TODO: conectar SPI-salve
 
       .i_pc           (fet_2_dec_pc),
       .i_instr        (fet_2_dec_instr),
@@ -175,10 +217,27 @@ module Mips #
 
       .i_bubble       (bub_2_dec_bubble),
 
-      //.i_data_debug    (0),  // TODO: conectar al debugger
-      //.i_cs_debug    (0)   // TODO : conectar al chip sel del spi
-      .i_debug_enb    (debug_enb)    // TODO: conectar con micro
+      .i_from_SPI     (SPI_2_Decode), // conectar al debugger
+      .i_cs_debug     (i_SPI_cs[1]),    // conectar al chip sel del spi
+      .i_debug_enb    (debug_enb)     // conectar con micro
       );
+
+    SPI_Slave_Parallel #( // conectado al fetch
+      .NB_BITS(NB_BITS)
+    ) inst_SPI_Slave_Parallel_Decode (
+      .o_MISO (o_MISO),
+      .o_data (SPI_2_Decode),
+      .i_MOSI (i_MOSI),
+      .i_SCLK (i_SCLK),
+      .i_cs   (i_SPI_cs[1]),
+      .i_data (Decode_2_SPI),
+      .i_rst  (i_rst),
+      .i_clk  (i_clk)
+    );
+
+
+
+
 
    Execution_module #()
    inst_Execution_module
@@ -189,7 +248,7 @@ module Mips #
       .o_wb_ctl        (exe_2_mem_wb_ctl),
       .o_mem_ctl       (exe_2_mem_ctl),
       .o_num_rd        (dec_2_bub_rd),
-      //.o_data_debug     (), // TODO: conectar SPI-salve
+      .o_to_SPI        (Exe_2_SPI), // TODO: conectar SPI-salve
 
       .i_mux_a_hz      (fw_2_exe_mux_a_hz),
       .i_mux_b_hz      (fw_2_exe_mux_b_hz),
@@ -211,9 +270,25 @@ module Mips #
       .i_clk           (i_clk),
       .i_rst           (i_rst),
 
-      //.i_data_debug    (0),  // TODO: conectar al debugger
+      .i_from_SPI      (SPI_2_Exe),  // TODO: conectar al debugger
       .i_debug_enb     (debug_enb) // TODO: conectar al micro
       );
+
+   SPI_Slave_Parallel #( // conectado al fetch
+      .NB_BITS(NB_BITS)
+    ) inst_SPI_Slave_Parallel_Execution (
+      .o_MISO (o_MISO),
+      .o_data (SPI_2_Exe),
+      .i_MOSI (i_MOSI),
+      .i_SCLK (i_SCLK),
+      .i_cs   (i_SPI_cs[2]),
+      .i_data (Exe_2_SPI),
+      .i_rst  (i_rst),
+      .i_clk  (i_clk)
+    );
+      
+
+
    Mem_module #()
    inst_Mem_module
      (
@@ -221,7 +296,7 @@ module Mips #
       .o_alu_data   (mem_2_wb_alu_data),
       .o_wb_ctl     ({wb_reg_enb, mem_2_wb_ctl}),
       .o_reg_dst    (wb_reg_dst),
-      //.o_data_debug (), // TODO:conectar al debugger
+      .o_to_SPI     (Mem_2_SPI), // TODO:conectar al debugger
 
       .i_addr       (exe_2_mem_addr),
       .i_data       (exe_2_mem_data),
@@ -231,9 +306,25 @@ module Mips #
       .i_wb_ctl     (exe_2_mem_wb_ctl),
       .i_clk        (i_clk),
       .i_rst        (i_rst),
-      //.i_data_debug    (0),  // TODO: conectar al debugger
+      .i_from_SPI   (SPI_2_Mem),  // TODO: conectar al debugger
       .i_debug_enb  (debug_enb)   // TODO: conectar al micro
       );
+
+  SPI_Slave_Parallel #( // conectado al fetch
+      .NB_BITS(NB_BITS)
+    ) inst_SPI_Slave_Parallel_Mem (
+      .o_MISO (o_MISO),
+      .o_data (SPI_2_Mem),
+      .i_MOSI (i_MOSI),
+      .i_SCLK (i_SCLK),
+      .i_cs   (i_SPI_cs[3]),
+      .i_data (Mem_2_SPI),
+      .i_rst  (i_rst),
+      .i_clk  (i_clk)
+    );
+
+
+
 
    WriteBack_module #()
    inst_WriteBack_module

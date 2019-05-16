@@ -20,7 +20,7 @@ module Fetch_module #
     output [NB_BITS-1:0] o_if_id_pc,   // to decode and debug
     output [NB_BITS-1:0] o_if_id_instr,
     //##### debug output sig ######
-    //output [NB_BITS-1:0] o_data_debug,  //TODO: conectar al SPI-salve
+    output [NB_BITS-1:0] o_to_SPI,  //TODO: conectar al SPI-salve
 
     input [NB_BITS-1:0]  i_brq_addr,
     input [NB_BITS-1:0]  i_jmp_addr,
@@ -32,9 +32,9 @@ module Fetch_module #
     input                i_clk,
     input                i_rst,
     //##### debug input singals #####
-    input [NB_BITS-1:0]  i_data_debug,
-    input                i_debug_enb   // debug enable activo por alto
-    //input                i_cs_debug    // chip sel para los mux modo debug
+    input [NB_BITS-1:0]  i_from_SPI,
+    input                i_debug_enb,     // debug enable activo por alto
+    input                i_cs_debug    // chip sel para los mux modo debug
     );
 
    /* ###### SECUENCIAL ###### */
@@ -63,6 +63,14 @@ module Fetch_module #
       end
    end // always @ (posedge i_clk)
 
+
+   //wires para conectar la interfaz de SPI
+   wire [RAM_DEPTH-1:0] addr;
+   wire [NB_BITS-1:0]   data;
+   //wire [NB_BITS-1:0]   to_SPI;
+   wire                 wea;
+
+
    Single_port_ram #
      (
       .RAM_WIDTH       (NB_BITS),        // Specify RAM data width
@@ -73,15 +81,33 @@ module Fetch_module #
       )
    inst_ram_instruction
      (
-      .o_data      (o_if_id_instr),      // RAM output data,  RAM_WIDTH
-      .i_addr      (pc[RAM_DEPTH+1:2]),  // TODO: conectar Address bus para debug
-      .i_data      (i_data_debug),       // RAM input data, width determined from RAM_WIDTH
-      .i_wea       (1'b0),               // TODO: conectar Write enable desde modulo SPI-slave
+      .o_data      (o_if_id_instr),     // RAM output data,  RAM_WIDTH
+      .i_addr      (addr),              //conectar Address bus para debug
+      .i_data      (data),              // RAM input data, width determined from RAM_WIDTH
+      .i_wea       (wea),               //conectar Write enable desde modulo SPI-slave
       .i_ctr_flush (i_ctr_flush),
       .i_if_id_we  (i_if_id_we),
-      .i_clk       (i_clk),              // Clock
+      .i_clk       (i_clk),             // Clock
       .i_rst       (i_rst),
       .i_regcea    (i_debug_enb)         // Latch out Enable
       );
+
+      SPI_Fetch_Interface #(
+      .NB_BITS(NB_BITS),
+      .NB_LATCH(64),
+      .RAM_DEPTH(RAM_DEPTH)
+    ) inst_SPI_Fetch_Interface (
+      .o_addr   (addr),
+      .o_data   (data),
+      .o_wea    (wea),
+      .o_SPI    (o_to_SPI),
+      .i_PC     (pc),
+      .i_latch  ({o_if_id_instr,if_id_pc}),
+      .i_SPI    (i_from_SPI),
+      .i_in_use (i_cs_debug),
+      .i_clk    (i_clk),
+      .i_rst    (i_rst)
+    );
+
 endmodule // Fetch_module
 

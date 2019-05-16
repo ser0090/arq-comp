@@ -4,8 +4,7 @@
 module SPI_Mem_Interface#(
 		parameter NB_BITS   = 32,
 		parameter NB_LATCH  = 72,//`NB_CTR_WB+NB_BITS+`NB_REG
-		parameter RAM_DEPTH = 10,
-		parameter NB_REG    = 5
+		parameter RAM_DEPTH = 10
 	) /* this is automatically generated */
 	(
 		output reg [NB_BITS-1:0] o_SPI,   //conectar al SPI_Slave data_in
@@ -20,9 +19,9 @@ module SPI_Mem_Interface#(
 	 * bits:
 	 * 15-0 : direccion de memoria
 	 * 17-16: 00 = memory_out
-	 *        01 = latch word_0 
-	 *        10 = latch word_1 
-	 *        11 = latch word_2 
+	 *        01 = latch word_0 / mem_latched
+	 *        10 = latch word_1 / 
+	 *        11 = latch word_2 / 
 	 *
 	 *
 	 */
