@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 
 ///  SER0090
-//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
-`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 
 module Mips #
@@ -134,8 +134,8 @@ module Mips #
 
    Fetch_module #
      (
-      //.FILE_DEPTH(26),
-      //.INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
+      .FILE_DEPTH(26),
+      .INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
       //.INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
       // .INIT_FILE  ("/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file") //Comentar
       // .INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar

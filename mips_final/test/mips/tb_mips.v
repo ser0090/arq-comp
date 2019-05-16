@@ -20,6 +20,7 @@ module tb_mips();
    reg                i_clk;
    reg                i_rst;
    wire [NB_BITS-1:0] o_data;
+   wire [NB_BITS-1:0] o_MISO;
    wire [5:0]         o_operation;
    wire [5:0]         o_function;
 
@@ -30,7 +31,7 @@ module tb_mips();
       i_valid    = 1'b0;
  
       #4.9 i_rst = 1'b0;
-      i_continue = 1'b0;
+      /*i_continue = 1'b0;
       #10 i_valid    = 1'b1;
       #20 i_valid    = 1'b0;
       #10 i_valid    = 1'b1;
@@ -47,7 +48,7 @@ module tb_mips();
       #10 i_valid    = 1'b0;
       #10 i_valid    = 1'b1;
       #10 i_valid    = 1'b0;
-
+       */
       //sumulation
       #240 $finish;
    end
@@ -59,10 +60,14 @@ module tb_mips();
       .o_led       (o_data),
       .o_operation (o_operation),
       .o_function  (o_function),
+      .o_MISO      (o_MISO),
       .i_valid     (i_valid),
       .i_continue  (i_continue),
       .i_clk       (i_clk),
-      .i_rst       (i_rst)
+      .i_rst       (i_rst),
+      .i_MOSI      (0),
+      .i_SCLK      (0),
+      .i_SPI_cs    (0)
       );
 endmodule // tb_mips
 
