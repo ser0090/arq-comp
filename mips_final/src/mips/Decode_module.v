@@ -702,20 +702,22 @@ module Decode_module #
       .i_clk         (i_clk),          // clock
       .i_rst         (i_rst)           // reset
       );
-
-    SPI_Decode_Interface #(
+   SPI_Decode_Interface #
+     (
       .NB_BITS(NB_BITS),
       .NB_LATCH(NB_BITS*4),
       .NB_REG(NB_REG)
-    ) inst_SPI_Decode_Interface (
+      )
+   u_SPI_Decode_Interface
+     (
       .o_SPI      (o_to_SPI),
       .o_rs       (rs_from_interface),
-      .i_latch    ({o_id_ex_sgext,o_id_ex_rt,o_id_ex_rs,o_id_ex_pc}),
+      .i_latch    ({sg_ext, rt , rs, pc}),
       .i_rs       (i_instr[25:21]),
       .i_reg_data (rfile_rs),
       .i_SPI      (i_from_SPI),
       .i_in_use   (i_cs_debug)
-    );
+      );
 
 endmodule // Decode_module
 
