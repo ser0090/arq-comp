@@ -21,9 +21,9 @@ module Mips #
    localparam NB_FUN   = `NB_FUN
    )
    (
-    output [31:0]         o_led,
-    output [5:0]          o_operation,
-    output [5:0]          o_function,
+    //output [31:0]         o_led,
+    //output [5:0]          o_operation,
+    //output [5:0]          o_function,
     output [NB_BITS-1:0]  o_MISO,
     //output [NB_BITS-1:0] o_alu_data,
     //output [`NB_REG-1:0] o_reg_dst,

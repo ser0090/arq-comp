@@ -1,14 +1,14 @@
-// Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+// Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
-// Tool Version: Vivado v.2017.1 (lin64) Build 1846317 Fri Apr 14 18:54:47 MDT 2017
-// Date        : Sat Jun 24 19:08:03 2017
-// Host        : einstein running 64-bit Linux Mint 17.2 Rafaela
-// Command     : write_verilog -force -mode funcsim
-//               /home/apola/projects/EAMTA2017/practico/run/micro/micro.srcs/sources_1/bd/design_1/ip/design_1_lmb_bram_0/design_1_lmb_bram_0_sim_netlist.v
+// Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
+// Date        : Fri May 17 15:40:49 2019
+// Host        : grela running 64-bit Ubuntu 18.04.2 LTS
+// Command     : write_verilog -force -mode funcsim -rename_top design_1_lmb_bram_0 -prefix
+//               design_1_lmb_bram_0_ design_1_lmb_bram_0_sim_netlist.v
 // Design      : design_1_lmb_bram_0
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
-// Device      : xc7a35ticsg324-1L
+// Device      : xc7a35tcpg236-1
 // --------------------------------------------------------------------------------
 `timescale 1 ps / 1 ps
 
@@ -218,7 +218,6 @@ module design_1_lmb_bram_0
         .web(web));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_generic_cstr" *) 
 module design_1_lmb_bram_0_blk_mem_gen_generic_cstr
    (douta,
     doutb,
@@ -386,7 +385,6 @@ module design_1_lmb_bram_0_blk_mem_gen_generic_cstr
         .web(web[3]));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_prim_width" *) 
 module design_1_lmb_bram_0_blk_mem_gen_prim_width
    (douta,
     doutb,
@@ -890,7 +888,6 @@ module design_1_lmb_bram_0_blk_mem_gen_prim_width__parameterized6
         .web(web));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_prim_wrapper" *) 
 module design_1_lmb_bram_0_blk_mem_gen_prim_wrapper
    (douta,
     doutb,
@@ -3042,7 +3039,6 @@ module design_1_lmb_bram_0_blk_mem_gen_prim_wrapper__parameterized6
         .WEBWE({1'b0,1'b0,1'b0,1'b0,web,web,web,web}));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_top" *) 
 module design_1_lmb_bram_0_blk_mem_gen_top
    (douta,
     doutb,
@@ -3129,7 +3125,7 @@ endmodule
 (* C_USE_URAM = "0" *) (* C_WEA_WIDTH = "4" *) (* C_WEB_WIDTH = "4" *) 
 (* C_WRITE_DEPTH_A = "8192" *) (* C_WRITE_DEPTH_B = "8192" *) (* C_WRITE_MODE_A = "WRITE_FIRST" *) 
 (* C_WRITE_MODE_B = "WRITE_FIRST" *) (* C_WRITE_WIDTH_A = "32" *) (* C_WRITE_WIDTH_B = "32" *) 
-(* C_XDEVICEFAMILY = "artix7" *) (* ORIG_REF_NAME = "blk_mem_gen_v8_3_6" *) (* downgradeipidentifiedwarnings = "yes" *) 
+(* C_XDEVICEFAMILY = "artix7" *) (* downgradeipidentifiedwarnings = "yes" *) 
 module design_1_lmb_bram_0_blk_mem_gen_v8_3_6
    (clka,
     rsta,
@@ -3413,7 +3409,6 @@ module design_1_lmb_bram_0_blk_mem_gen_v8_3_6
         .web(web));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_v8_3_6_synth" *) 
 module design_1_lmb_bram_0_blk_mem_gen_v8_3_6_synth
    (douta,
     doutb,

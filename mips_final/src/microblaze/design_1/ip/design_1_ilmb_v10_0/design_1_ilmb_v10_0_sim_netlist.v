@@ -1,18 +1,18 @@
-// Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+// Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
-// Tool Version: Vivado v.2017.1 (lin64) Build 1846317 Fri Apr 14 18:54:47 MDT 2017
-// Date        : Sat Jun 24 19:05:34 2017
-// Host        : einstein running 64-bit Linux Mint 17.2 Rafaela
-// Command     : write_verilog -force -mode funcsim
-//               /home/apola/projects/EAMTA2017/practico/run/micro/micro.srcs/sources_1/bd/design_1/ip/design_1_ilmb_v10_0/design_1_ilmb_v10_0_sim_netlist.v
-// Design      : design_1_ilmb_v10_0
+// Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
+// Date        : Fri May 17 15:39:52 2019
+// Host        : grela running 64-bit Ubuntu 18.04.2 LTS
+// Command     : write_verilog -force -mode funcsim -rename_top design_1_ilmb_v10_0 -prefix
+//               design_1_ilmb_v10_0_ design_1_dlmb_v10_0_sim_netlist.v
+// Design      : design_1_dlmb_v10_0
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
-// Device      : xc7a35ticsg324-1L
+// Device      : xc7a35tcpg236-1
 // --------------------------------------------------------------------------------
 `timescale 1 ps / 1 ps
 
-(* CHECK_LICENSE_TYPE = "design_1_ilmb_v10_0,lmb_v10,{}" *) (* downgradeipidentifiedwarnings = "yes" *) (* x_core_info = "lmb_v10,Vivado 2017.1" *) 
+(* CHECK_LICENSE_TYPE = "design_1_dlmb_v10_0,lmb_v10,{}" *) (* downgradeipidentifiedwarnings = "yes" *) (* x_core_info = "lmb_v10,Vivado 2017.1" *) 
 (* NotValidForBitStream *)
 module design_1_ilmb_v10_0
    (LMB_Clk,
@@ -125,7 +125,7 @@ module design_1_ilmb_v10_0
 endmodule
 
 (* C_EXT_RESET_HIGH = "1" *) (* C_LMB_AWIDTH = "32" *) (* C_LMB_DWIDTH = "32" *) 
-(* C_LMB_NUM_SLAVES = "1" *) (* ORIG_REF_NAME = "lmb_v10" *) 
+(* C_LMB_NUM_SLAVES = "1" *) 
 module design_1_ilmb_v10_0_lmb_v10
    (LMB_Clk,
     SYS_Rst,

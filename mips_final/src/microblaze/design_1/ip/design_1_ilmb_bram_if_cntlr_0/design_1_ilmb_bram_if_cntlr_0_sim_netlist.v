@@ -1,14 +1,14 @@
-// Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+// Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
-// Tool Version: Vivado v.2017.1 (lin64) Build 1846317 Fri Apr 14 18:54:47 MDT 2017
-// Date        : Sat Jun 24 19:06:31 2017
-// Host        : einstein running 64-bit Linux Mint 17.2 Rafaela
-// Command     : write_verilog -force -mode funcsim
-//               /home/apola/projects/EAMTA2017/practico/run/micro/micro.srcs/sources_1/bd/design_1/ip/design_1_ilmb_bram_if_cntlr_0/design_1_ilmb_bram_if_cntlr_0_sim_netlist.v
+// Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
+// Date        : Fri May 17 15:39:53 2019
+// Host        : grela running 64-bit Ubuntu 18.04.2 LTS
+// Command     : write_verilog -force -mode funcsim -rename_top design_1_ilmb_bram_if_cntlr_0 -prefix
+//               design_1_ilmb_bram_if_cntlr_0_ design_1_ilmb_bram_if_cntlr_0_sim_netlist.v
 // Design      : design_1_ilmb_bram_if_cntlr_0
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
-// Device      : xc7a35ticsg324-1L
+// Device      : xc7a35tcpg236-1
 // --------------------------------------------------------------------------------
 `timescale 1 ps / 1 ps
 
@@ -214,7 +214,7 @@ endmodule
 (* C_MASK1 = "64'b0000000000000000000000000000000000000000100000000000000000000000" *) (* C_MASK2 = "64'b0000000000000000000000000000000000000000100000000000000000000000" *) (* C_MASK3 = "64'b0000000000000000000000000000000000000000100000000000000000000000" *) 
 (* C_NUM_LMB = "1" *) (* C_S_AXI_CTRL_ADDR_WIDTH = "32" *) (* C_S_AXI_CTRL_BASEADDR = "32'b11111111111111111111111111111111" *) 
 (* C_S_AXI_CTRL_DATA_WIDTH = "32" *) (* C_S_AXI_CTRL_HIGHADDR = "32'b00000000000000000000000000000000" *) (* C_UE_FAILING_REGISTERS = "0" *) 
-(* C_WRITE_ACCESS = "2" *) (* ORIG_REF_NAME = "lmb_bram_if_cntlr" *) 
+(* C_WRITE_ACCESS = "2" *) 
 module design_1_ilmb_bram_if_cntlr_0_lmb_bram_if_cntlr
    (LMB_Clk,
     LMB_Rst,
@@ -548,8 +548,8 @@ module design_1_ilmb_bram_if_cntlr_0_lmb_bram_if_cntlr
   LUT2 #(
     .INIT(4'h8)) 
     \BRAM_WEN_A[0]_INST_0 
-       (.I0(LMB_WriteStrobe),
-        .I1(LMB_BE[0]),
+       (.I0(LMB_BE[0]),
+        .I1(LMB_WriteStrobe),
         .O(BRAM_WEN_A[0]));
   (* SOFT_HLUTNM = "soft_lutpair1" *) 
   LUT2 #(

@@ -1,14 +1,14 @@
--- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
+-- Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2017.1 (lin64) Build 1846317 Fri Apr 14 18:54:47 MDT 2017
--- Date        : Sat Jun 24 19:08:03 2017
--- Host        : einstein running 64-bit Linux Mint 17.2 Rafaela
--- Command     : write_vhdl -force -mode funcsim
---               /home/apola/projects/EAMTA2017/practico/run/micro/micro.srcs/sources_1/bd/design_1/ip/design_1_lmb_bram_0/design_1_lmb_bram_0_sim_netlist.vhdl
+-- Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
+-- Date        : Fri May 17 15:40:49 2019
+-- Host        : grela running 64-bit Ubuntu 18.04.2 LTS
+-- Command     : write_vhdl -force -mode funcsim -rename_top design_1_lmb_bram_0 -prefix
+--               design_1_lmb_bram_0_ design_1_lmb_bram_0_sim_netlist.vhdl
 -- Design      : design_1_lmb_bram_0
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
--- Device      : xc7a35ticsg324-1L
+-- Device      : xc7a35tcpg236-1
 -- --------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -31,8 +31,6 @@ entity design_1_lmb_bram_0_blk_mem_gen_prim_wrapper is
     wea : in STD_LOGIC_VECTOR ( 0 to 0 );
     web : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of design_1_lmb_bram_0_blk_mem_gen_prim_wrapper : entity is "blk_mem_gen_prim_wrapper";
 end design_1_lmb_bram_0_blk_mem_gen_prim_wrapper;
 
 architecture STRUCTURE of design_1_lmb_bram_0_blk_mem_gen_prim_wrapper is
@@ -2183,8 +2181,6 @@ entity design_1_lmb_bram_0_blk_mem_gen_prim_width is
     wea : in STD_LOGIC_VECTOR ( 0 to 0 );
     web : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of design_1_lmb_bram_0_blk_mem_gen_prim_width : entity is "blk_mem_gen_prim_width";
 end design_1_lmb_bram_0_blk_mem_gen_prim_width;
 
 architecture STRUCTURE of design_1_lmb_bram_0_blk_mem_gen_prim_width is
@@ -2543,8 +2539,6 @@ entity design_1_lmb_bram_0_blk_mem_gen_generic_cstr is
     wea : in STD_LOGIC_VECTOR ( 3 downto 0 );
     web : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of design_1_lmb_bram_0_blk_mem_gen_generic_cstr : entity is "blk_mem_gen_generic_cstr";
 end design_1_lmb_bram_0_blk_mem_gen_generic_cstr;
 
 architecture STRUCTURE of design_1_lmb_bram_0_blk_mem_gen_generic_cstr is
@@ -2707,8 +2701,6 @@ entity design_1_lmb_bram_0_blk_mem_gen_top is
     wea : in STD_LOGIC_VECTOR ( 3 downto 0 );
     web : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of design_1_lmb_bram_0_blk_mem_gen_top : entity is "blk_mem_gen_top";
 end design_1_lmb_bram_0_blk_mem_gen_top;
 
 architecture STRUCTURE of design_1_lmb_bram_0_blk_mem_gen_top is
@@ -2752,8 +2744,6 @@ entity design_1_lmb_bram_0_blk_mem_gen_v8_3_6_synth is
     wea : in STD_LOGIC_VECTOR ( 3 downto 0 );
     web : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of design_1_lmb_bram_0_blk_mem_gen_v8_3_6_synth : entity is "blk_mem_gen_v8_3_6_synth";
 end design_1_lmb_bram_0_blk_mem_gen_v8_3_6_synth;
 
 architecture STRUCTURE of design_1_lmb_bram_0_blk_mem_gen_v8_3_6_synth is
@@ -2992,8 +2982,6 @@ entity design_1_lmb_bram_0_blk_mem_gen_v8_3_6 is
   attribute C_WRITE_WIDTH_B of design_1_lmb_bram_0_blk_mem_gen_v8_3_6 : entity is 32;
   attribute C_XDEVICEFAMILY : string;
   attribute C_XDEVICEFAMILY of design_1_lmb_bram_0_blk_mem_gen_v8_3_6 : entity is "artix7";
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of design_1_lmb_bram_0_blk_mem_gen_v8_3_6 : entity is "blk_mem_gen_v8_3_6";
   attribute downgradeipidentifiedwarnings : string;
   attribute downgradeipidentifiedwarnings of design_1_lmb_bram_0_blk_mem_gen_v8_3_6 : entity is "yes";
 end design_1_lmb_bram_0_blk_mem_gen_v8_3_6;
@@ -3341,6 +3329,21 @@ architecture STRUCTURE of design_1_lmb_bram_0 is
   attribute C_XDEVICEFAMILY : string;
   attribute C_XDEVICEFAMILY of U0 : label is "artix7";
   attribute downgradeipidentifiedwarnings of U0 : label is "yes";
+  attribute x_interface_info : string;
+  attribute x_interface_info of clka : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA CLK";
+  attribute x_interface_info of clkb : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTB CLK";
+  attribute x_interface_info of ena : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA EN";
+  attribute x_interface_info of enb : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTB EN";
+  attribute x_interface_info of rsta : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA RST";
+  attribute x_interface_info of rstb : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTB RST";
+  attribute x_interface_info of addra : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA ADDR";
+  attribute x_interface_info of addrb : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTB ADDR";
+  attribute x_interface_info of dina : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA DIN";
+  attribute x_interface_info of dinb : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTB DIN";
+  attribute x_interface_info of douta : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA DOUT";
+  attribute x_interface_info of doutb : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTB DOUT";
+  attribute x_interface_info of wea : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA WE";
+  attribute x_interface_info of web : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTB WE";
 begin
 U0: entity work.design_1_lmb_bram_0_blk_mem_gen_v8_3_6
      port map (
