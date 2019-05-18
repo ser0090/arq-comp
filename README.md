@@ -15,7 +15,6 @@ para propositos de desarrollo y testing .
 
 ### Prerequisites
 
-
 ### Installing
 
 
@@ -33,6 +32,6 @@ para propositos de desarrollo y testing .
 ## License
 
 
-## Acknowledgments
-
+## Notes
+exportar Block Desing [here](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2017_3/ug994-vivado-ip-subsystems.pdf)
 * Nadie Por ahora 
