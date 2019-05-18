@@ -19,8 +19,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 ///  SER0090
-`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
-//`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
@@ -61,7 +61,7 @@ module Top_rtl#
    design_1 #()
    u_micro
      (
-      .clock100         (sys_clock),            // Clock aplicacion
+      .clock50          (clk50),            // Clock aplicacion
       .gpio_rtl_tri_o   (gpio_o_data_tri_o),  // GPIO OUTPUT
       .gpio_rtl_tri_i   (gpio_i_data_tri_i),    // GPIO INPUT
       .reset            (i_rst),                // Hard Reset
@@ -88,13 +88,6 @@ module Top_rtl#
       .i_SCLK      (gpio_o_data_tri_o[29]),
       .i_SPI_cs    (gpio_o_data_tri_o[28:25])
       );
-      
-  design_2 #()
-  design_2_i
-       (.clk_out1_0(clk50),
-        //.locked_0(locked_0),
-        .reset(i_rst),
-        .sys_clock(sys_clock));
 
 endmodule // Top_rtl
 
