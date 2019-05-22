@@ -1,4 +1,4 @@
--- (c) Copyright 1995-2017 Xilinx, Inc. All rights reserved.
+-- (c) Copyright 1995-2019 Xilinx, Inc. All rights reserved.
 -- 
 -- This file contains confidential and proprietary information
 -- of Xilinx, Inc. and is protected under U.S. and
@@ -47,14 +47,14 @@
 -- DO NOT MODIFY THIS FILE.
 
 -- IP VLNV: xilinx.com:ip:mdm:3.2
--- IP Revision: 9
+-- IP Revision: 15
 
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
-LIBRARY mdm_v3_2_9;
-USE mdm_v3_2_9.MDM;
+LIBRARY mdm_v3_2_15;
+USE mdm_v3_2_15.MDM;
 
 ENTITY design_1_mdm_1_0 IS
   PORT (
@@ -79,6 +79,7 @@ ARCHITECTURE design_1_mdm_1_0_arch OF design_1_mdm_1_0 IS
       C_FAMILY : STRING;
       C_JTAG_CHAIN : INTEGER;
       C_USE_BSCAN : INTEGER;
+      C_BSCANID : INTEGER;
       C_DEBUG_INTERFACE : INTEGER;
       C_USE_CONFIG_RESET : INTEGER;
       C_AVOID_PRIMITIVES : INTEGER;
@@ -88,16 +89,21 @@ ARCHITECTURE design_1_mdm_1_0_arch OF design_1_mdm_1_0 IS
       C_DBG_REG_ACCESS : INTEGER;
       C_DBG_MEM_ACCESS : INTEGER;
       C_USE_CROSS_TRIGGER : INTEGER;
+      C_EXT_TRIG_RESET_VALUE : STD_LOGIC_VECTOR;
       C_TRACE_OUTPUT : INTEGER;
       C_TRACE_DATA_WIDTH : INTEGER;
       C_TRACE_CLK_FREQ_HZ : INTEGER;
       C_TRACE_CLK_OUT_PHASE : INTEGER;
+      C_TRACE_ASYNC_RESET : INTEGER;
+      C_TRACE_PROTOCOL : INTEGER;
+      C_TRACE_ID : INTEGER;
       C_S_AXI_ADDR_WIDTH : INTEGER;
       C_S_AXI_DATA_WIDTH : INTEGER;
       C_S_AXI_ACLK_FREQ_HZ : INTEGER;
       C_M_AXI_ADDR_WIDTH : INTEGER;
       C_M_AXI_DATA_WIDTH : INTEGER;
       C_M_AXI_THREAD_ID_WIDTH : INTEGER;
+      C_ADDR_SIZE : INTEGER;
       C_DATA_SIZE : INTEGER;
       C_M_AXIS_DATA_WIDTH : INTEGER;
       C_M_AXIS_ID_WIDTH : INTEGER
@@ -106,6 +112,7 @@ ARCHITECTURE design_1_mdm_1_0_arch OF design_1_mdm_1_0 IS
       Config_Reset : IN STD_LOGIC;
       Scan_Reset : IN STD_LOGIC;
       Scan_Reset_Sel : IN STD_LOGIC;
+      Scan_En : IN STD_LOGIC;
       S_AXI_ACLK : IN STD_LOGIC;
       S_AXI_ARESETN : IN STD_LOGIC;
       M_AXI_ACLK : IN STD_LOGIC;
@@ -1610,6 +1617,8 @@ ARCHITECTURE design_1_mdm_1_0_arch OF design_1_mdm_1_0 IS
       bscan_ext_sel : IN STD_LOGIC;
       bscan_ext_drck : IN STD_LOGIC;
       bscan_ext_tdo : OUT STD_LOGIC;
+      bscan_ext_tck : IN STD_LOGIC;
+      bscan_ext_bscanid_en : IN STD_LOGIC;
       Ext_JTAG_DRCK : OUT STD_LOGIC;
       Ext_JTAG_RESET : OUT STD_LOGIC;
       Ext_JTAG_SEL : OUT STD_LOGIC;
@@ -1621,22 +1630,25 @@ ARCHITECTURE design_1_mdm_1_0_arch OF design_1_mdm_1_0 IS
     );
   END COMPONENT MDM;
   ATTRIBUTE X_INTERFACE_INFO : STRING;
-  ATTRIBUTE X_INTERFACE_INFO OF Debug_SYS_Rst: SIGNAL IS "xilinx.com:signal:reset:1.0 RST.Debug_SYS_Rst RST";
-  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Clk_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 CLK";
-  ATTRIBUTE X_INTERFACE_INFO OF Dbg_TDI_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 TDI";
-  ATTRIBUTE X_INTERFACE_INFO OF Dbg_TDO_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 TDO";
-  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Reg_En_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 REG_EN";
-  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Capture_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 CAPTURE";
-  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Shift_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 SHIFT";
-  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Update_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 UPDATE";
-  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Rst_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 RST";
+  ATTRIBUTE X_INTERFACE_PARAMETER : STRING;
   ATTRIBUTE X_INTERFACE_INFO OF Dbg_Disable_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 DISABLE";
+  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Rst_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 RST";
+  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Update_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 UPDATE";
+  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Shift_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 SHIFT";
+  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Capture_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 CAPTURE";
+  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Reg_En_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 REG_EN";
+  ATTRIBUTE X_INTERFACE_INFO OF Dbg_TDO_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 TDO";
+  ATTRIBUTE X_INTERFACE_INFO OF Dbg_TDI_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 TDI";
+  ATTRIBUTE X_INTERFACE_INFO OF Dbg_Clk_0: SIGNAL IS "xilinx.com:interface:mbdebug:3.0 MBDEBUG_0 CLK";
+  ATTRIBUTE X_INTERFACE_PARAMETER OF Debug_SYS_Rst: SIGNAL IS "XIL_INTERFACENAME RST.Debug_SYS_Rst, POLARITY ACTIVE_HIGH, INSERT_VIP 0";
+  ATTRIBUTE X_INTERFACE_INFO OF Debug_SYS_Rst: SIGNAL IS "xilinx.com:signal:reset:1.0 RST.Debug_SYS_Rst RST";
 BEGIN
   U0 : MDM
     GENERIC MAP (
       C_FAMILY => "artix7",
       C_JTAG_CHAIN => 2,
       C_USE_BSCAN => 0,
+      C_BSCANID => 76547328,
       C_DEBUG_INTERFACE => 0,
       C_USE_CONFIG_RESET => 0,
       C_AVOID_PRIMITIVES => 0,
@@ -1646,16 +1658,21 @@ BEGIN
       C_DBG_REG_ACCESS => 0,
       C_DBG_MEM_ACCESS => 0,
       C_USE_CROSS_TRIGGER => 0,
+      C_EXT_TRIG_RESET_VALUE => X"F1234",
       C_TRACE_OUTPUT => 0,
       C_TRACE_DATA_WIDTH => 32,
       C_TRACE_CLK_FREQ_HZ => 200000000,
       C_TRACE_CLK_OUT_PHASE => 90,
+      C_TRACE_ASYNC_RESET => 0,
+      C_TRACE_PROTOCOL => 1,
+      C_TRACE_ID => 110,
       C_S_AXI_ADDR_WIDTH => 4,
       C_S_AXI_DATA_WIDTH => 32,
       C_S_AXI_ACLK_FREQ_HZ => 100000000,
       C_M_AXI_ADDR_WIDTH => 32,
       C_M_AXI_DATA_WIDTH => 32,
       C_M_AXI_THREAD_ID_WIDTH => 1,
+      C_ADDR_SIZE => 32,
       C_DATA_SIZE => 32,
       C_M_AXIS_DATA_WIDTH => 32,
       C_M_AXIS_ID_WIDTH => 7
@@ -1664,6 +1681,7 @@ BEGIN
       Config_Reset => '0',
       Scan_Reset => '0',
       Scan_Reset_Sel => '0',
+      Scan_En => '0',
       S_AXI_ACLK => '0',
       S_AXI_ARESETN => '0',
       M_AXI_ACLK => '0',
@@ -2292,6 +2310,8 @@ BEGIN
       bscan_ext_capture => '0',
       bscan_ext_sel => '0',
       bscan_ext_drck => '0',
+      bscan_ext_tck => '0',
+      bscan_ext_bscanid_en => '0',
       Ext_JTAG_TDO => '0'
     );
 END design_1_mdm_1_0_arch;
