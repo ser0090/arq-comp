@@ -20,7 +20,7 @@
 
 ///  SER0090
 //`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
-`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
@@ -29,7 +29,7 @@
 
 module Top_rtl#
   (
-   parameter NB_BITS = `NB_BITS
+   parameter NB_BITS = 32
    )
     (
      //output [3:0] o_led,
@@ -61,10 +61,10 @@ module Top_rtl#
    design_1 #()
    u_micro
      (
-      .clock50          (clk50),            // Clock aplicacion
+      .clock50         (clk50),            // Clock aplicacion
       .gpio_rtl_tri_o   (gpio_o_data_tri_o),  // GPIO OUTPUT
       .gpio_rtl_tri_i   (gpio_i_data_tri_i),    // GPIO INPUT
-      .reset            (i_rst),                // Hard Reset
+      .reset            (~i_rst),                // Hard Reset
       .sys_clock        (clk100),               // Clock de FPGA
       //.o_lock_clock     (locked      ),       // Senal Lock Clock
       .usb_uart_rxd     (in_rx_uart),           // UART RX
@@ -90,5 +90,3 @@ module Top_rtl#
       );
 
 endmodule // Top_rtl
-
-
