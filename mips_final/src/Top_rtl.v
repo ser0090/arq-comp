@@ -32,12 +32,12 @@ module Top_rtl#
    parameter NB_BITS = 32
    )
     (
-     //output [3:0] o_led,
+     output [2:0] o_led,
      output out_tx_uart,
      //input 	    i_btnC,
      input  in_rx_uart,
      input  clk100,
-     input  i_sw
+     input[1:0]  i_sw
      );
 
    wire [NB_BITS-1:0] gpio_i_data_tri_i;
@@ -47,13 +47,15 @@ module Top_rtl#
    wire               clk50;
    wire               uart_rtl_rxd;
    wire               uart_rtl_txd;
-
-   assign  i_rst           = i_sw;
+   
+   //assign  i_rst           = i_sw;
    //assign  sys_clock       = i_clk;
    //assign  uart_rtl_rxd    = uart_txd_in;
    //assign  uart_rxd_out    = uart_rtl_txd;
    //assign  gpio_i_data_tri_i   = {{28{1'b0}}, i_sw[4:1]};
-   //assign  o_led           https://www.xilinx.com/support/answers/51331.html =  gpio_o_data_tri_o[3:0];//conectamos lo primeros byts
+   assign  o_led[1] = gpio_o_data_tri_o[29];//conectamos lo primeros byts
+   assign  o_led[2] = gpio_o_data_tri_o[30];//conectamos lo primeros byts
+   assign  o_led[0] = gpio_o_data_tri_o[31];//conectamos lo primeros byts
 
    ///////////////////////////////////////////
    //////////////    MicroBlaze   ////////////
@@ -64,7 +66,7 @@ module Top_rtl#
       .clock50         (clk50),            // Clock aplicacion
       .gpio_rtl_tri_o   (gpio_o_data_tri_o),  // GPIO OUTPUT
       .gpio_rtl_tri_i   (gpio_i_data_tri_i),    // GPIO INPUT
-      .reset            (~i_rst),                // Hard Reset
+      .reset            (i_sw[0]),                // Hard Reset
       .sys_clock        (clk100),               // Clock de FPGA
       //.o_lock_clock     (locked      ),       // Senal Lock Clock
       .usb_uart_rxd     (in_rx_uart),           // UART RX
@@ -81,7 +83,7 @@ module Top_rtl#
       //.o_operation (o_operation),
       // //.o_function  (o_function),
       .i_clk       (clk50),
-      .i_rst       (i_rst),
+      .i_rst       (i_sw[1]),
       .i_continue  (gpio_o_data_tri_o[31]),
       .i_valid     (gpio_o_data_tri_o[30]),    // por flanco ascendente
       .i_MOSI      ({7'd0, gpio_o_data_tri_o[24:0]}),
