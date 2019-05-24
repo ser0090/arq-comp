@@ -134,11 +134,11 @@ module Mips #
 
    Fetch_module #
      (
-      .FILE_DEPTH(26),
+      .FILE_DEPTH(11),
       //.INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
-      .INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
+      //.INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
       // .INIT_FILE  ("/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file") //Comentar
-      // .INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
+       .INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
 
       )
    inst_Fetch_module

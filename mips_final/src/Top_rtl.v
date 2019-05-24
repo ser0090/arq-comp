@@ -24,7 +24,7 @@
 
 ///  IOTINCHO
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
-//`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
+`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 
 module Top_rtl#
@@ -53,9 +53,9 @@ module Top_rtl#
    //assign  uart_rtl_rxd    = uart_txd_in;
    //assign  uart_rxd_out    = uart_rtl_txd;
    //assign  gpio_i_data_tri_i   = {{28{1'b0}}, i_sw[4:1]};
-   assign  o_led[1] = gpio_o_data_tri_o[29];//conectamos lo primeros byts
-   assign  o_led[2] = gpio_o_data_tri_o[30];//conectamos lo primeros byts
-   assign  o_led[0] = gpio_o_data_tri_o[31];//conectamos lo primeros byts
+   assign  o_led[1] = gpio_o_data_tri_o[29];//SCLK conectamos lo primeros byts
+   assign  o_led[2] = gpio_o_data_tri_o[30];//STEP conectamos lo primeros byts
+   assign  o_led[0] = gpio_o_data_tri_o[31];//CONTINUE conectamos lo primeros byts
 
    ///////////////////////////////////////////
    //////////////    MicroBlaze   ////////////
