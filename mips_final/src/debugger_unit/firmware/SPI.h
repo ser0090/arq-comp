@@ -19,9 +19,9 @@
  */
 
 
-#define CS_DECODE (u32)(1<<26)
-#define CS_EXEC   (u32)(1<<27)
-#define CS_MEM    (u32)(1<<28)
+
+
+//#define CS_MEM    (u32)(1<<28)
 
 #define SCLK      (u32)(1<<29)
 #define STEP      (u32)(1<<30)

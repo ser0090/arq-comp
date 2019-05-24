@@ -2,6 +2,7 @@
 #define SPI_DECODE_H
 
 #include "SPI.h"
+#define CS_DECODE (u32)(1<<26)
 /* FORMATO DE LA PETICION 
  * bits: accion
  * 20-16 : selector de registros: 0 = la operacion corresponde 
@@ -18,11 +19,11 @@
 
 #define REG_ADDR_POSITION 16
 
-#define D_READ_REG      (u32)(0)
-#define D_READ_PC_4     (u32)(00<<21)
-#define D_READ_RS       (u32)(01<<21)
-#define D_READ_RT       (u32)(10<<21)
-#define D_READ_SIGN_EXT (u32)(11<<21)
+#define D_READ_PC_4     (u32)(000<<21)
+#define D_READ_RS       (u32)(001<<21)
+#define D_READ_RT       (u32)(010<<21)
+#define D_READ_SIGN_EXT (u32)(011<<21)
+#define D_READ_REG      (u32)(100<<21)
 
 struct reg_file{
 	u32 r1;
