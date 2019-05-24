@@ -695,7 +695,6 @@ module Decode_module #
       .o_zero        (rfile_zero),
       .i_data        (i_wb_data),      // data write
       .i_read_addr_1 (rs_from_interface), // read register rs selector 1
-      // TODO: resolver direccion de rs proveniente del deubber, reemplazar signal
       .i_read_addr_2 (i_instr[20:16]), // read register rt selector 2
       .i_write_addr  (i_reg_dst),      // write selector
       .i_wenb        (i_wb_rf_webn),   // write control enable

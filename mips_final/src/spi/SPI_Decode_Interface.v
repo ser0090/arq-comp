@@ -27,11 +27,11 @@ module SPI_Decode_Interface#(
 	 *																	y no de registro
 	 *															X = numero de registro
 	 * 														  
-	 * 22-21 : selector de palabra de latch: 00 = PC_4     / primera palabra del latch
-	 *																		 01 = RS_REG   / segunda palabra del latch
-	 *																		 10 = RT_REG   / tercera palabra del latch
-	 *																		 11 = SIGN_EXT / segunda palabra del latch
-	 *
+	 * 23-21 : selector de palabra de latch: 000 = PC_4     / primera palabra del latch
+	 *																		   001 = RS_REG   / segunda palabra del latch
+	 *																		   010 = RT_REG   / tercera palabra del latch
+	 *																		   011 = SIGN_EXT / segunda palabra del latch
+	 *																			 1XX = reg_file 
 	 */
 
   localparam  GET_PC_4     = 2'b00,
@@ -39,7 +39,7 @@ module SPI_Decode_Interface#(
   						GET_RT_REG   = 2'b10,
   						GET_SIGN_EXT = 2'b11;
 
-	assign o_SPI  = (|i_SPI[20:16])? i_reg_data : to_SPI;
+	assign o_SPI  = (i_SPI[23])? i_reg_data : to_SPI;
 
 	assign o_rs = i_in_use? i_SPI[20:16] : i_rs;
 
