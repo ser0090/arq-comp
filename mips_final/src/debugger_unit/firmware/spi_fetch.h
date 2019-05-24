@@ -35,8 +35,8 @@ typedef struct {
 	u32 pc;
 	u32 pc_latch;
 	u32 inst_latch;
-} fetch_state;
+} fetch_stat;
 
-void get_fetch_state(fetch_state *state);
+void get_fetch_stat(fetch_stat *state);
 
 #endif

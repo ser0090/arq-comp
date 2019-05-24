@@ -3,22 +3,21 @@
 #include "platform.h"
 #include "xil_printf.h"
 #include "spi_fetch.h"
-
+#include "spi_decode.h"
 
 
 int main()
 {
-	fetch_state fs;
+	fetch_stat fetch_status;
+    decode_stat decode_status;
     init_platform();
     spi_initialize();
 
-    fs.pc=0;
-    fs.pc_latch=0;
-    fs.inst_latch=0;
 
 while(1){
 	step();
-	get_fetch_state(&fs);
+	get_fetch_stat(&fetch_status);
+	get_decode_stat(&decode_status);
 }
 
     return 0;
