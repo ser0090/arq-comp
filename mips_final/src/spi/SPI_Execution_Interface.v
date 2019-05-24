@@ -3,7 +3,7 @@
 
 module SPI_Execution_Interface#(
 		parameter NB_BITS   = 32,
-		parameter NB_LATCH  = 96//2*NB_BITS+NB_REG+NB_MEM+NB_WB
+		parameter NB_LATCH  = 96//2*NB_BITS+NB_REG+`NB_CTR_WB+`NB_CTR_MEM
 	) /* this is automatically generated */
 	(
 		output [NB_BITS-1:0]	 o_SPI,   //conectar al SPI_Slave data_in
@@ -13,17 +13,23 @@ module SPI_Execution_Interface#(
 	);
 
 	/*FORMATO DE PETICION
-	 * bits: 17-16: indica la palabra (en orden) 
-	 *						del latch que quiero extraer.
+	 * bits: 17-16: 00 = alu_out
+	 *              01 = rt_reg
+	 *              10 = rd
 	 */
+
+	 localparam GET_ALU    = 2'b00;
+	 localparam GET_RT_REG = 2'b01;
+	 localparam GET_RD     = 2'b10;
+
 	 reg [NB_BITS-1:0] to_SPI;
 	 assign o_SPI = to_SPI;
 
 	 always @(*) begin
 	 	case(i_SPI[17:16])
-	 		2'b00  : to_SPI = i_latch[1*NB_BITS-1:0*NB_BITS];//word 0
-	 		2'b01  : to_SPI = i_latch[2*NB_BITS-1:1*NB_BITS];//word 1		
-	 		2'b10  : to_SPI = {{3*NB_BITS-NB_LATCH{1'b0}},i_latch[NB_LATCH-1:2*NB_BITS]};//word 2		
+	 		GET_ALU    : to_SPI = i_latch[`NB_CTR_WB+`NB_CTR_MEM+NB_BITS-1:`NB_CTR_WB+`NB_CTR_MEM];
+	 		GET_RT_REG : to_SPI = i_latch[2*NB_BITS+`NB_CTR_WB+`NB_CTR_MEM-1:`NB_CTR_WB+`NB_CTR_MEM+NB_BITS];		
+	 		GET_RD     : to_SPI = {{NB_BITS-NB_LATCH-1-2*NB_BITS+`NB_CTR_WB+`NB_CTR_MEM{1'b0}},i_latch[NB_LATCH-1:2*NB_BITS+`NB_CTR_WB+`NB_CTR_MEM]};
 	 		default: to_SPI = {NB_BITS{1'b0}};				
 	 	endcase
 	 end
