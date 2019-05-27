@@ -82,7 +82,8 @@ module Fetch_module #
    inst_ram_instruction
      (
       .o_data      (o_if_id_instr),     // RAM output data,  RAM_WIDTH
-      .i_addr      (addr),              //conectar Address bus para debug
+      .i_addr      (pc[RAM_DEPTH-1+2:2]),   //conectar Address bus para debug
+      .i_wr_addr   (addr),              //conectar Address del SPI interface
       .i_data      (data),              // RAM input data, width determined from RAM_WIDTH
       .i_wea       (wea),               //conectar Write enable desde modulo SPI-slave
       .i_ctr_flush (i_ctr_flush),

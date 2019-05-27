@@ -19,20 +19,26 @@ module SPI_Mem_Interface#(
 	 * bits:
 	 * 15-0 : direccion de memoria
 	 * 17-16: 00 = memory_out
-	 *        01 = latch word_0 / mem_latched
-	 *        10 = latch word_1 / 
-	 *        11 = latch word_2 / 
+	 *        01 = mem_latched
+	 *        10 = alu_latched 
+	 *        11 = rd 
 	 *
 	 *
 	 */
+
+	 localparam GET_MEM_DATA  = 2'b00;
+	 localparam GET_MEM_LATCH = 2'b01;
+	 localparam GET_ALU_LATCH = 2'b10;
+	 localparam GET_RD        = 2'b11;
+
 	assign o_addr = i_SPI[RAM_DEPTH-1:0];
 
 	always @(*) begin
 		case(i_SPI[17:16])
-			2'b00: o_SPI = i_mem_data;
-			2'b01: o_SPI = i_latch[1*NB_BITS-1:0];
-			2'b10: o_SPI = i_latch[2*NB_BITS-1:1*NB_BITS];
-			2'b11: o_SPI = {{3*NB_BITS-NB_LATCH{1'b0}},i_latch[NB_LATCH-1:2*NB_BITS]};
+			GET_MEM_DATA : o_SPI = i_mem_data;
+			GET_MEM_LATCH: o_SPI = i_latch[1*NB_BITS-1:0];
+			GET_ALU_LATCH: o_SPI = i_latch[2*NB_BITS-1:1*NB_BITS];
+			GET_RD       : o_SPI = {{3*NB_BITS-NB_LATCH{1'b0}},i_latch[NB_LATCH-1:2*NB_BITS]};
 		endcase
 	end
 

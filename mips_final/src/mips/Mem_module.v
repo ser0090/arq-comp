@@ -99,7 +99,7 @@ module Mem_module #
     ) inst_SPI_Mem_Interface (
       .o_SPI      (o_to_SPI),
       .o_addr     (debug_addr),
-      .i_latch    ({latched_out,mem_out}),
+      .i_latch    ({latched_out[NB_LATCH-1:`NB_CTR_WB],mem_out}),
       .i_mem_data (mem_to_debug),
       .i_SPI      (i_from_SPI)
     );

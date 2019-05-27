@@ -35,10 +35,10 @@ module SPI_Fetch_Interface#(
 	 reg [NB_BITS-1:0]       data;
 	 reg [NB_BITS-1:0]       to_SPI;
 
-	 assign o_addr = i_in_use? addr:i_PC[RAM_DEPTH-1+2:2];
+	 assign o_addr = addr;
 	 assign o_SPI  = to_SPI;
    assign o_data = data;
-   assign o_wea = i_in_use && i_SPI[22];
+   assign o_wea = i_in_use & i_SPI[22];
 
    localparam WRITE_MEM_OR_NONE = 2'b00;
    localparam WRITE_DATA_HL     = 2'b01;

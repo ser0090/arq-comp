@@ -21,6 +21,7 @@ module Single_port_ram #
    (
     output [RAM_WIDTH-1:0] o_data,      // RAM output data
     input [NB_DEPTH-1:0]   i_addr,      // Address bus
+    input [NB_DEPTH-1:0]   i_wr_addr,   // Address bus
     input [RAM_WIDTH-1:0]  i_data,      // RAM input data
     input                  i_wea,       // Write enable
     input                  i_ctr_flush, //
@@ -52,12 +53,14 @@ module Single_port_ram #
              BRAM[ram_index] = {RAM_WIDTH{1'b0}};
       end
    endgenerate
-
+   always @(posedge i_clk) begin
+   if (i_wea)
+         BRAM[i_wr_addr] = i_data;
+ 
+   end
    always @(posedge i_clk) begin
       if (i_rst)
         ram_data <= {RAM_WIDTH{1'b0}};
-      else if (i_wea)
-         BRAM[i_addr]  <= i_data;
       else if(i_regcea) begin
          case({i_ctr_flush, i_if_id_we})
            2'b01:   ram_data <= BRAM[i_addr];
