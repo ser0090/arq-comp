@@ -53,12 +53,11 @@ module Single_port_ram #
              BRAM[ram_index] = {RAM_WIDTH{1'b0}};
       end
    endgenerate
+
    always @(posedge i_clk) begin
-   if (i_wea)
-         BRAM[i_wr_addr] = i_data;
- 
-   end
-   always @(posedge i_clk) begin
+      if (i_wea)
+         BRAM[i_wr_addr] <= i_data;
+         
       if (i_rst)
         ram_data <= {RAM_WIDTH{1'b0}};
       else if(i_regcea) begin

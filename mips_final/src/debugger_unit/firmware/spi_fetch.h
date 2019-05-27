@@ -20,16 +20,16 @@
 	  *
 	  */
 
-#define F_WRITE_INST   (u32)(1<<22)
+#define F_WRITE_INST   (u32)(0b1<<22)
 
-#define F_DATA_NO_DATA (u32)(00<<19)
-#define F_DATA_ADDR    (u32)(01<<19)
-#define F_DATA_HU      (u32)(10<<19)
-#define F_DATA_HL      (u32)(11<<19)
+#define F_DATA_NO_DATA (u32)(0b00<<19)
+#define F_DATA_HL      (u32)(0b01<<19)
+#define F_DATA_HU      (u32)(0b10<<19)
+#define F_DATA_ADDR    (u32)(0b11<<19)
 
-#define F_READ_PC         (u32)(00<<16)
-#define F_READ_PC_LATCH   (u32)(01<<16)
-#define F_READ_INST_LATCH (u32)(10<<16)
+#define F_READ_PC         (u32)(0b00<<16)
+#define F_READ_PC_LATCH   (u32)(0b01<<16)
+#define F_READ_INST_LATCH (u32)(0b10<<16)
 
 typedef struct {
 	u32 pc;
@@ -38,5 +38,6 @@ typedef struct {
 } fetch_stat;
 
 void get_fetch_stat(fetch_stat *state);
+void write_instruction(u16 addr, u32 instruction);
 
 #endif

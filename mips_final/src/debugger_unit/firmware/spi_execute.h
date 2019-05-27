@@ -9,9 +9,9 @@
 *              10 = rd
 */
 
-#define E_READ_ALU (u32)(00<<16)
-#define E_READ_RT  (u32)(01<<16)
-#define E_READ_RD  (u32)(10<<16)
+#define E_READ_ALU (u32)(0b00<<16)
+#define E_READ_RT  (u32)(0b01<<16)
+#define E_READ_RD  (u32)(0b10<<16)
 
 typedef struct{
 	u32 alu;

@@ -19,11 +19,11 @@
 
 #define REG_ADDR_POSITION 16
 
-#define D_READ_PC_4     (u32)(000<<21)
-#define D_READ_RS       (u32)(001<<21)
-#define D_READ_RT       (u32)(010<<21)
-#define D_READ_SIGN_EXT (u32)(011<<21)
-#define D_READ_REG      (u32)(100<<21)
+#define D_READ_PC_4     (u32)(0b000<<21)
+#define D_READ_RS       (u32)(0b001<<21)
+#define D_READ_RT       (u32)(0b010<<21)
+#define D_READ_SIGN_EXT (u32)(0b011<<21)
+#define D_READ_REG      (u32)(0b100<<21)
 
 struct reg_file{
 	u32 r1;

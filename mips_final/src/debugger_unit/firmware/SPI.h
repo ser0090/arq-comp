@@ -19,10 +19,6 @@
  */
 
 
-
-
-//#define CS_MEM    (u32)(1<<28)
-
 #define SCLK      (u32)(1<<29)
 #define STEP      (u32)(1<<30)
 #define CONTINUE  (u32)(1<<31)

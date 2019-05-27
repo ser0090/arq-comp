@@ -20,7 +20,8 @@ int spi_initialize(){
 }
 
 void spi_get(u32 cs,u32 ctl,u16 data,u32 *res){
-	XGpio_DiscreteWrite(&gpio_out,1, (u32)( cs | ctl | data ));
+	u32 aux =  cs | ctl | data ;
+	XGpio_DiscreteWrite(&gpio_out,1, (u32)(aux));
     XGpio_DiscreteWrite(&gpio_out,1, (u32)( cs | ctl | SCLK ));
     XGpio_DiscreteWrite(&gpio_out,1, (u32)( cs ));
 
