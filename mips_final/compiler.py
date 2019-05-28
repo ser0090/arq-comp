@@ -14,9 +14,10 @@ in_file = open(args.input,'r')
 if args.output:
 	out_file_name = args.output
 else:
-	out_file_name = './bin_str_file'
+	out_file_name = './out'
 
-out_file = open(out_file_name,'w')
+out_hex_file = open(out_file_name+".hex",'w')
+out_bin_file = open(out_file_name+".bin",'wb') 
 if in_file.closed:
 	print("file error")
 
@@ -28,17 +29,20 @@ while(True):
 	   line is "\n": break
 
 
-	so = re.search(r'(\w*) (.*)',line)
+	so = re.search(r'(\w*) ([^;\n]*)',line)
 
 	print(so.group())
 	
 	#print("group1 :", so.group(1).strip())
 	func = instruction[so.group(1).strip().lower()]
 	inst = func(so.group(2))
-	out_file.write(inst+'\n')
+	out_hex_file.write(hex(int(inst,2))+'\n')
+	out_bin_file.write(bytearray([int(inst[0:8]  , 2),
+								  int(inst[8:16] , 2),
+								  int(inst[16:24], 2),
+								  int(inst[24:32], 2)]))
 
 
-
-
-out_file.close()
+out_hex_file.close()
+out_bin_file.close()
 in_file.close()
