@@ -27,7 +27,7 @@ typedef struct{
 	u32 rd;
 }mem_stat;
 
-void get_mem_stat(mem_stat* stat);
+void  get_mem_stat(mem_stat* stat);
 void  get_mem_data(u16 addr, u32* value);
 
 
