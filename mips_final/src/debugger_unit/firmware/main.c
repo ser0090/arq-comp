@@ -22,7 +22,6 @@ int main()
 	static XUartLite   uart_module;
     init_platform();
     XUartLite_Initialize(&uart_module, 0);
-    XUartLite_DisableInterrupt(&uart_module);
     XUartLite_ResetFifos(&uart_module);
     spi_initialize();
 u8 header = 0 ;
@@ -31,6 +30,15 @@ while(1){
 	switch(header){
 		case FETCH_STATUS_REQ:
 			fetch_status_req(&uart_module);
+			break;
+		case DECODE_STATUS_REQ:
+			decode_status_req(&uart_module);
+			break;
+		case EXEC_STATUS_REQ:
+			exec_status_req(&uart_module);
+			break;
+		case MEM_STATUS_REQ:
+			mem_status_req(&uart_module);
 			break;
 		case WRITE_INST_REQ:
 			write_instruction_req(&uart_module);

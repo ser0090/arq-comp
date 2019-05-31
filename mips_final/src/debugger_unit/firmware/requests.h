@@ -24,7 +24,7 @@
  */
 #define FETCH_STATUS_REQ   (u8)0x01
 #define DECODE_STATUS_REQ  (u8)0x02
-#define EXECUTE_STATUS_REQ (u8)0x03
+#define EXEC_STATUS_REQ    (u8)0x03
 #define MEM_STATUS_REQ     (u8)0x04
 #define MEM_DATA_REQ       (u8)0x05
 #define WRITE_INST_REQ     (u8)0x10
@@ -64,13 +64,6 @@
  * 0x10: write instruction ack
  * 0x20: step ack
  */
-#define FETCH_STATUS_REPLY   (u8)0x01
-#define DECODE_STATUS_REPLY  (u8)0x02
-#define EXECUTE_STATUS_REPLY (u8)0x03
-#define MEM_STATUS_REPLY     (u8)0x04
-#define MEM_DATA_REPLY       (u8)0x05
-#define WRITE_INST_REPLY     (u8)0x10
-#define STEP_REPLY           (u8)0x20
 
 /* write instruction reply:
  * 		-no reply
@@ -111,10 +104,13 @@
  */
 
 void uart_blok_recv(XUartLite* module,u8 *buffer,unsigned int n);
+void uart_blok_send(XUartLite* module,u8 *buffer,unsigned int n);
 void write_instruction_req(XUartLite *module);
 void step_req(XUartLite *module);
 void fetch_status_req(XUartLite *module);
-
+void decode_status_req(XUartLite *module);
+void exec_status_req(XUartLite *module);
+void mem_status_req(XUartLite *module);
 
 
 
