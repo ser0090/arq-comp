@@ -25,6 +25,7 @@ module Mips #
     //output [5:0]          o_operation,
     //output [5:0]          o_function,
     output [NB_BITS-1:0]  o_MISO,
+    output                o_halt,
     //output [NB_BITS-1:0] o_alu_data,
     //output [`NB_REG-1:0] o_reg_dst,
     //output [7:0]         o_wb_ctl,
@@ -114,7 +115,7 @@ module Mips #
    wire [NB_BITS-1:0]    SPI_2_Mem;
    wire [NB_BITS-1:0]    Mem_2_SPI;
 
-
+   assign o_halt = ~dec_halt;//esta negado para que la salida sea activa por alto
    assign o_led       = wb_2_reg_data;// [31:0];
    assign o_operation = fet_2_dec_instr[31:26];
    assign o_function  = fet_2_dec_instr[5:0];

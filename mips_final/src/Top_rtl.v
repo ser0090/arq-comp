@@ -23,8 +23,8 @@
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
-//`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
-`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
+`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 
 module Top_rtl#
@@ -40,6 +40,8 @@ module Top_rtl#
     input [1:0]  i_sw
     );
 
+   localparam GPIO_HALT_PIN = 0;
+
    wire [NB_BITS-1:0] gpio_i_data_tri_i;
    wire [NB_BITS-1:0] gpio_o_data_tri_o;
    wire               i_rst;
@@ -48,6 +50,8 @@ module Top_rtl#
    wire               uart_rtl_rxd;
    wire               uart_rtl_txd;
 
+   wire               halt;
+   wire               halt_or_spi;
    //assign  i_rst           = i_sw;
    //assign  sys_clock       = i_clk;
    //assign  uart_rtl_rxd    = uart_txd_in;
@@ -60,12 +64,13 @@ module Top_rtl#
    ///////////////////////////////////////////
    //////////////    MicroBlaze   ////////////
    ///////////////////////////////////////////
+   assign halt_or_spi = (|gpio_o_data_tri_o[28:25])? gpio_i_data_tri_i[GPIO_HALT_PIN]:halt;
    design_1 #()
    u_micro
      (
       .clock50        (clk50),             // Clock aplicacion
       .gpio_rtl_tri_o (gpio_o_data_tri_o), // GPIO OUTPUT
-      .gpio_rtl_tri_i (gpio_i_data_tri_i), // GPIO INPUT
+      .gpio_rtl_tri_i ({gpio_i_data_tri_i[NB_BITS-1:1],halt_or_spi}), // GPIO INPUT
       .reset          (i_sw[0]),           // Hard Reset
       .sys_clock      (clk100),            // Clock de FPGA
       //.o_lock_clock // Senal Lock Clock
@@ -80,6 +85,7 @@ module Top_rtl#
    inst_Mips
      (
       .o_MISO      (gpio_i_data_tri_i),
+      .o_halt      (halt),//esta negado para que la salida sea activa por alto
       //.o_operation (o_operation),
       // //.o_function  (o_function),
       .i_clk       (clk50),
