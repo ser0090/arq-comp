@@ -24,8 +24,9 @@ int main()
     XUartLite_Initialize(&uart_module, 0);
     XUartLite_ResetFifos(&uart_module);
     spi_initialize();
-u8 header = 0 ;
+u8 header;
 while(1){
+	header = 0; // reset header
 	uart_blok_recv(&uart_module,&header,1);
 	switch(header){
 		case FETCH_STATUS_REQ:
@@ -40,6 +41,9 @@ while(1){
 		case MEM_STATUS_REQ:
 			mem_status_req(&uart_module);
 			break;
+		case MEM_DATA_REQ:
+			mem_data_req(&uart_module);
+			break;
 		case WRITE_INST_REQ:
 			write_instruction_req(&uart_module);
 			break;
@@ -47,7 +51,6 @@ while(1){
 			step_req(&uart_module);
 			break;
 	}
-	header = 0;
 
 }
     return 0;

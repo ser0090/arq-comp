@@ -27,6 +27,7 @@
 #define EXEC_STATUS_REQ    (u8)0x03
 #define MEM_STATUS_REQ     (u8)0x04
 #define MEM_DATA_REQ       (u8)0x05
+
 #define WRITE_INST_REQ     (u8)0x10
 #define STEP_REQ           (u8)0x20
 #define START_REQ          (u8)0x30
@@ -111,6 +112,8 @@ void fetch_status_req(XUartLite *module);
 void decode_status_req(XUartLite *module);
 void exec_status_req(XUartLite *module);
 void mem_status_req(XUartLite *module);
+void mem_data_req(XUartLite *module);
+
 
 
 

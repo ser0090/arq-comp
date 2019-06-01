@@ -13,13 +13,14 @@ module SPI_Fetch_Interface#(
 		output [NB_BITS-1:0]	 o_SPI,   //conectar al SPI_Slave data_in
 
 		input  [NB_BITS-1:0]   i_PC,    //conectar al PC_reg
+		input  [NB_BITS-1:0]   i_cycles,    //conectar al contador de ciclos
 		input  [NB_LATCH-1:0]  i_latch, //conectal latch (probablemente hay que concatenar regs)
 		input  [NB_BITS-1:0]   i_SPI,   //conectar al SPI_Slave data_out
 		input  								 i_in_use, // conectar al debug signal
 		input									 i_clk,
 		input									 i_rst
 	);
-   /* Estructura de lo recibido desde el micro
+     /* Estructura de lo recibido desde el micro
 	  * 22: operaciones sobre la memoria ; 1 = write, 0 = nada
 	  * 20-19: contiene un dato: 00 = operar sobre memoria ,  
 	  *													01 = HL_DATA
@@ -35,17 +36,17 @@ module SPI_Fetch_Interface#(
 	 reg [NB_BITS-1:0]       data;
 	 reg [NB_BITS-1:0]       to_SPI;
 
-	 assign o_addr = addr;
-	 assign o_SPI  = to_SPI;
-   assign o_data = data;
-   assign o_wea = i_in_use & i_SPI[22];
+	assign o_addr = addr;
+	assign o_SPI  = to_SPI;
+   	assign o_data = data;
+   	assign o_wea = i_in_use & i_SPI[22];
 
-   localparam WRITE_MEM_OR_NONE = 2'b00;
-   localparam WRITE_DATA_HL     = 2'b01;
-   localparam WRITE_DATA_HU     = 2'b10;
-   localparam WRITE_ADDR        = 2'b11;
+   	localparam WRITE_MEM_OR_NONE = 2'b00;
+   	localparam WRITE_DATA_HL     = 2'b01;
+   	localparam WRITE_DATA_HU     = 2'b10;
+   	localparam WRITE_ADDR        = 2'b11;
 
-	 always @(posedge i_clk) begin
+	always @(posedge i_clk) begin
 		  if (i_rst) begin
 			   addr <= {RAM_DEPTH{1'b0}};
 			   data <= {NB_BITS{1'b0}};
@@ -75,16 +76,17 @@ module SPI_Fetch_Interface#(
 	 end // always @ (posedge i_clk)
 
 
-	localparam GET_PC      = 2'b00;
-	localparam GET_LATCH_1 = 2'b01;
-	localparam GET_LATCH_2 = 2'b10;
+	localparam GET_PC         = 2'b00;
+	localparam GET_PC_LATCH   = 2'b01;
+	localparam GET_INST_LATCH = 2'b10;
+	localparam GET_CYCLES     = 2'b11;
 
 	always @(*) begin
 		case(i_SPI[17:16])
-			GET_PC:      to_SPI = i_PC; //PC
-			GET_LATCH_1: to_SPI = i_latch[31:0]; //PC_larched
-			GET_LATCH_2: to_SPI = i_latch[63:32]; // instruccion latcheada
-			default:     to_SPI = {NB_BITS{1'b0}};
+			GET_PC        : to_SPI = i_PC; //PC
+			GET_PC_LATCH  : to_SPI = i_latch[31:0]; //PC_larched
+			GET_INST_LATCH: to_SPI = i_latch[63:32]; // instruccion latcheada
+			GET_CYCLES    : to_SPI = i_cycles;
 		endcase
 	end
 

@@ -34,12 +34,15 @@ def step_req(serial):
 def fetch_req(serial):
 	serial.write(request_codes['fetch'])
 	_wait_ack(serial,request_codes['fetch'])
-	pc = serial.read(4)[::-1]
-	pc_4 = serial.read(4)[::-1]
-	inst = serial.read(4)[::-1]
+	pc     = serial.read(4)[::-1]
+	pc_4   = serial.read(4)[::-1]
+	inst   = serial.read(4)[::-1]
+	cycles = serial.read(4)[::-1]
 	print("pc  : ",pc)
 	print("pc_4: ",pc_4)
 	print("inst: ",inst)
+	print("inst: ",cycles)
+
 
 def decode_req(serial):
     serial.write(request_codes['decode'])

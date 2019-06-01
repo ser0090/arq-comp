@@ -30,11 +30,14 @@
 #define F_READ_PC         (u32)(0b00<<16)
 #define F_READ_PC_LATCH   (u32)(0b01<<16)
 #define F_READ_INST_LATCH (u32)(0b10<<16)
+#define F_READ_CYCLES     (u32)(0b10<<16)
+
 
 typedef struct {
 	u32 pc;
 	u32 pc_latch;
 	u32 inst_latch;
+	u32 cycles;
 } fetch_stat;
 
 void get_fetch_stat(fetch_stat *state);

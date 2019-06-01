@@ -65,3 +65,17 @@ void mem_status_req(XUartLite *module){
 	uart_blok_send(module,&reply,1);
 	uart_blok_send(module,(u8*)&my_stat,sizeof(mem_stat));
 }
+
+void mem_data_req(XUartLite *module){
+	u16 addr;
+	u16 count;
+	u32 buf;
+	u8 reply = MEM_DATA_REQ;
+	uart_blok_recv(module,(u8*)&addr ,sizeof(u16));
+	uart_blok_recv(module,(u8*)&count,sizeof(u16));
+	uart_blok_send(module,&reply,1); //send header
+	for (int i=0 ; i<count; i++){
+		get_mem_data((addr+i*4),&buf);
+		uart_blok_send(module,(u8*)buf,sizeof(u32));
+	}
+}

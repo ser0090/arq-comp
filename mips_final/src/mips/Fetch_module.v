@@ -20,8 +20,7 @@ module Fetch_module #
     output [NB_BITS-1:0] o_if_id_pc, // to decode and debug
     output [NB_BITS-1:0] o_if_id_instr,
     //##### debug output sig ######
-    output [NB_BITS-1:0] o_to_SPI, //: conectar al SPI-salve
-    output [NB_BITS-1:0] o_cycles, //TODO: borrar
+    output [NB_BITS-1:0] o_to_SPI, //: conectar al SPI-salves
 
     input [NB_BITS-1:0]  i_brq_addr,
     input [NB_BITS-1:0]  i_jmp_addr,
@@ -45,7 +44,6 @@ module Fetch_module #
    reg [NB_BITS-1:0]     cycles;
    //Outputs
    assign o_if_id_pc = if_id_pc;
-   assign o_cycles   = cycles;  //TODO:borrar
 
    initial begin
       pc     = {NB_BITS{1'b0}};
@@ -113,6 +111,7 @@ module Fetch_module #
       .o_data   (data),
       .o_wea    (wea),
       .o_SPI    (o_to_SPI),
+      .i_cycles (cycles),
       .i_PC     (pc),
       .i_latch  ({o_if_id_instr,if_id_pc}),
       .i_SPI    (i_from_SPI),

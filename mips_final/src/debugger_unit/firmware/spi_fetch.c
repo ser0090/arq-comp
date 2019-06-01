@@ -4,6 +4,7 @@ void get_fetch_stat(fetch_stat *state){
 	spi_get(CS_FETCH, F_READ_INST_LATCH, 0, &state->inst_latch);
 	spi_get(CS_FETCH, F_READ_PC_LATCH  , 0, &state->pc_latch);
 	spi_get(CS_FETCH, F_READ_PC        , 0, &state->pc);
+	spi_get(CS_FETCH, F_READ_CYCLES    , 0, &state->cycles);
 }
 
 void write_instruction(u16 addr, u32 instruction){
