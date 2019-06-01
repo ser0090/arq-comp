@@ -2,7 +2,7 @@
 
 ///  SER0090
 //`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
-//`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
@@ -96,6 +96,8 @@ module Decode_module #
     output               o_pc_beq,
     output               o_pc_src,
     output               o_flush,
+    //##### HALT singal #####
+    output               o_halt,
     //##### debug output singals #####
     output [NB_BITS-1:0] o_to_SPI, //conectar al SPI
 
@@ -108,10 +110,10 @@ module Decode_module #
     //##### WB inputs signal ######
     input                i_wb_rf_webn,
     //##### BUBLE control signal ######
-    input                i_bubble,      // bubble case
+    input                i_bubble, // bubble case
     //##### debug input singals #####
-    input [NB_BITS-1:0]  i_from_SPI,  // conectar al SPI-salve
-    input                i_cs_debug,  // chip sel para los mux modo debug
+    input [NB_BITS-1:0]  i_from_SPI, // conectar al SPI-salve
+    input                i_cs_debug, // chip sel para los mux modo debug
     input                i_debug_enb
     );
 
@@ -145,7 +147,6 @@ module Decode_module #
    reg                   beq;
    reg                   ben;
    reg                   pc_src;
-   //reg                   pc_beq;
    reg                   jal_addr;
    // ------  MEM ctrl Signals ------
    reg [1:0]             mem_wr;
@@ -153,13 +154,17 @@ module Decode_module #
    // --- WRITE BACK ctrl Signals ---
    reg [NB_WB-2:0]       wrt_back;
    reg                   wrt_enb;
+   // --- HATL Signal ---
+   reg                   halt;
 
    /* #### WIRES #####*/
    // --- Register file Signals ---
    wire [NB_BITS-1:0]    rfile_rs;
    wire [NB_BITS-1:0]    rfile_rt;
    wire                  rfile_zero;
-   //wire                  pc_beq_s;
+
+   /* --- DEBUG signals --- */
+   wire [NB_REG-1:0]     rs_from_interface;
 
    /* ########## SALIDAS ############ */
    /* --- ID/EX latch --- */
@@ -184,9 +189,8 @@ module Decode_module #
    assign o_flush    = ((beq & rfile_zero) | (ben & ~rfile_zero)) | pc_src;
    assign o_bmb_brch = beq | ben;
    assign o_bmb_rjmp = jal_addr;
-
-   /* --- DEBUG signals --- */
-   wire [NB_REG-1:0]rs_from_interface;
+   // --- HATL Signal ---
+   assign o_halt     = halt;
 
    always @ (posedge i_clk) begin
       if(i_rst) begin
@@ -245,8 +249,6 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b1;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b1; // nop
            //branch signals
            beq      = 1'b0;
            ben      = 1'b0;
@@ -256,6 +258,8 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = 1'b0;
+           // HALT signal
+           halt     = 1'b1;
         end // case: J
         JAL: begin
            se_case  = JMP_EXT;
@@ -267,8 +271,6 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b1;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b1; // nop
            //branch signals
            beq      = 1'b0;
            ben      = 1'b0;
@@ -278,7 +280,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = 1'b1; // reg 31
-        end // case: JAL
+           // HALT signal
+           halt     = 1'b1;
+       end // case: JAL
         BEQ: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -289,8 +293,6 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = rfile_zero;
-           //flush    = 1'b0;  //nop
            //branch signals
            beq      = 1'b1;  // beq case
            ben      = 1'b0;
@@ -300,7 +302,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = 1'b0;
-        end // case: BEQ
+           // HALT signal
+           halt     = 1'b1;
+       end // case: BEQ
         BEN: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -322,7 +326,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = 1'b0;
-        end // case: BEN
+           // HALT signal
+           halt     = 1'b1;
+       end // case: BEN
         ADDI: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -333,8 +339,6 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -343,7 +347,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = 1'b1;
-        end // case: ADDI
+           // HALT signal
+           halt     = 1'b1;
+       end // case: ADDI
         SLTI: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -354,8 +360,6 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -364,7 +368,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = 1'b1;
-        end // case: SLTI
+           // HALT signal
+           halt     = 1'b1;
+       end // case: SLTI
         ANDI: begin
            se_case  = ZRO_EXT;
            // exec signals
@@ -375,8 +381,6 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -385,7 +389,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = 1'b1;
-        end // case: ANDI
+           // HALT signal
+           halt     = 1'b1;
+       end // case: ANDI
         ORI: begin
            se_case  = ZRO_EXT;
            // exec signals
@@ -396,8 +402,6 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -406,7 +410,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = 1'b1;
-        end // case: ORI
+           // HALT signal
+           halt     = 1'b1;
+       end // case: ORI
         XORI: begin
            se_case  = ZRO_EXT;
            // exec signals
@@ -417,8 +423,6 @@ module Decode_module #
            // muxs de saltos
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -427,7 +431,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = 1'b1;
-        end // case: XOIR
+           // HALT signal
+           halt     = 1'b1;
+       end // case: XOIR
         LUI: begin
            se_case  = ZRO_EXT;
            // exec signals
@@ -435,10 +441,9 @@ module Decode_module #
            rs_alu   = DEF_TO_A; // rs
            rt_alu   = SE_TO_B; // inm
            rd_sel   = RT;
+           // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -447,7 +452,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = 1'b1;
-        end // case: LUI
+           // HALT signal
+           halt     = 1'b1;
+       end // case: LUI
         LB: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -458,8 +465,6 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -468,7 +473,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_SIGN_BYT;
            wrt_enb  = 1'b1;
-        end // case: LB
+           // HALT signal
+           halt     = 1'b1;
+       end // case: LB
         LH: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -479,8 +486,6 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -489,7 +494,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_SIGN_HAL;
            wrt_enb  = 1'b1;
-        end // case: LH
+           // HALT signal
+           halt     = 1'b1;
+       end // case: LH
         LW: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -500,8 +507,6 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -510,7 +515,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_MEM;
            wrt_enb  = 1'b1;
-        end // case: LW
+           // HALT signal
+           halt     = 1'b1;
+       end // case: LW
         LBU: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -521,8 +528,6 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -531,7 +536,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_MEM;
            wrt_enb  = 1'b1;
-        end // case: LBU
+           // HALT signal
+           halt     = 1'b1;
+       end // case: LBU
         LHU: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -542,8 +549,6 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -552,7 +557,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_MEM;
            wrt_enb  = 1'b1;
-        end // case: LHU
+           // HALT signal
+           halt     = 1'b1;
+       end // case: LHU
         LWU: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -563,8 +570,6 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -573,7 +578,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_MEM;
            wrt_enb  = 1'b1;
-        end // case: LWU
+           // HALT signal
+           halt     = 1'b1;
+       end // case: LWU
         SB: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -584,8 +591,6 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -594,7 +599,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_MEM;
            wrt_enb  = 1'b0;
-        end // case: SB
+           // HALT signal
+           halt     = 1'b1;
+       end // case: SB
         SH: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -605,8 +612,6 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -615,7 +620,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_MEM;
            wrt_enb  = 1'b0;
-        end // case: SH
+           // HALT signal
+           halt     = 1'b1;
+       end // case: SH
         SW: begin
            se_case  = SGN_EXT;
            // exec signals
@@ -626,8 +633,6 @@ module Decode_module #
            // mux salto
            jal_addr = 1'b0;
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -636,7 +641,9 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_MEM;
            wrt_enb  = 1'b0;
-        end // case: SW
+           // HALT signal
+           halt     = 1'b1;
+       end // case: SW
         SPECIAL: begin
            se_case  = SPC_EXT;
            // exec signals
@@ -648,14 +655,11 @@ module Decode_module #
              SRA:     rs_alu = SE_TO_A;
              default: rs_alu = RS_TO_A;
            endcase // case (i_instr[5:0])
-           //rs_alu   = (i_instr[25:21]==5'b0)? SE_TO_A : RS_TO_A; // sa inmt
            rt_alu   = RT_TO_B; // rt
            rd_sel   = RD;
            // mux salto Special Jump
            jal_addr = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            pc_src   = (i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0; //(i_instr[5:0]==JR || i_instr[5:0]==JALR)? 1'b1 : 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
            //mem signals
@@ -664,25 +668,26 @@ module Decode_module #
            //write back signals
            wrt_back = `DATA_FROM_ALU;
            wrt_enb  = (i_instr[5:0]==JR || i_instr[5:0]==6'd0)? 1'b0 : 1'b1;
+           // HALT signal
+           halt     = 1'b1;
         end // case: SPECIAL
-        default: begin
-           se_case  = SGN_EXT;
-           alu_op   = ALU_J;
-           rs_alu   = DEF_TO_A;
-           rt_alu   = SE_TO_B;
-           rd_sel   = RD;
-           jal_addr = 1'b0;
+        default: begin    // -----------HALT--------
+           se_case  = ZRO_EXT;   // zero exetnd
+           alu_op   = ALU_SCP;   // especial ope
+           rs_alu   = DEF_TO_A;  // default
+           rt_alu   = SE_TO_B;   // sgin extension
+           rd_sel   = R31;       // por si escribe el reg 0
+           jal_addr = 1'b0;      //
            pc_src   = 1'b0;
-           //pc_beq   = 1'b0;
-           //flush    = 1'b0;
            beq      = 1'b0;
            ben      = 1'b0;
-           //mem signals
+           //CTR signals
            mem_rd   = `READ_DISABLE;
            mem_wr   = `WRITE_DISABLE;
-           //write back signals
-           wrt_back = `DATA_FROM_ALU;
+           wrt_back = 2'b00;
            wrt_enb  = 1'b0;
+           // HALT signal
+           halt     = 1'b0;
         end // case: default
       endcase // case (i_instr[31:26])
    end // always @ (*)
@@ -701,7 +706,8 @@ module Decode_module #
       .i_clk         (i_clk),          // clock
       .i_rst         (i_rst)           // reset
       );
-   SPI_Decode_Interface #
+
+  SPI_Decode_Interface #
      (
       .NB_BITS(NB_BITS),
       .NB_LATCH(NB_BITS*4),

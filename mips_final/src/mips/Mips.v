@@ -98,26 +98,30 @@ module Mips #
    wire                  bub_2_fet_pc_we;
    wire                  dec_2_bmb_branch;
    wire                  dec_2_bmb_rjump;
+   /* --------- HALT signal ---------- */
+   wire                  dec_halt;
 
    // wires para los spi de debug
+   wire [NB_BITS-1:0]    SPI_2_Fetch;
+   wire [NB_BITS-1:0]    Fetch_2_SPI;
 
-   wire [NB_BITS-1:0]  SPI_2_Fetch;
-   wire [NB_BITS-1:0]  Fetch_2_SPI;
+   wire [NB_BITS-1:0]    SPI_2_Decode;
+   wire [NB_BITS-1:0]    Decode_2_SPI;
 
-   wire [NB_BITS-1:0]  SPI_2_Decode;
-   wire [NB_BITS-1:0]  Decode_2_SPI;
+   wire [NB_BITS-1:0]    SPI_2_Exe;
+   wire [NB_BITS-1:0]    Exe_2_SPI;
 
-   wire [NB_BITS-1:0]  SPI_2_Exe;
-   wire [NB_BITS-1:0]  Exe_2_SPI;
-
-   wire [NB_BITS-1:0]  SPI_2_Mem;
-   wire [NB_BITS-1:0]  Mem_2_SPI;
+   wire [NB_BITS-1:0]    SPI_2_Mem;
+   wire [NB_BITS-1:0]    Mem_2_SPI;
 
 
    assign o_led       = wb_2_reg_data;// [31:0];
-   assign o_operation =  fet_2_dec_instr[31:26];
-   assign o_function  =  fet_2_dec_instr[5:0];
+   assign o_operation = fet_2_dec_instr[31:26];
+   assign o_function  = fet_2_dec_instr[5:0];
 
+   /**#################################################################
+    ###################### Unidad de Debugg  ##########################
+    ##################################################################**/
    Debugger_interface #()
    inst_Debugger_interface
      (
@@ -128,24 +132,22 @@ module Mips #
       .i_rst       (i_rst)
       );
 
-
-
-
-
+   /**#################################################################
+    #########################  UNIT FETCH  ############################
+    ##################################################################**/
    Fetch_module #
      (
-      .FILE_DEPTH(79),
+      .FILE_DEPTH(20),
       //.INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
-      //.INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
+      .INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
       // .INIT_FILE  ("/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file") //Comentar
-       .INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
-
+      // .INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
       )
    inst_Fetch_module
      (
       .o_if_id_pc    (fet_2_dec_pc),
       .o_if_id_instr (fet_2_dec_instr),
-      .o_to_SPI      (Fetch_2_SPI),  // TODO: conectar con debuuger
+      .o_to_SPI      (Fetch_2_SPI), // TODO: conectar con debuuger
 
       .i_brq_addr    (dec_2_fet_brh_addr),
       .i_jmp_addr    (dec_2_fet_jmp_addr),
@@ -157,14 +159,18 @@ module Mips #
       .i_clk         (i_clk),
       .i_rst         (i_rst),
 
-      .i_from_SPI    (SPI_2_Fetch),   //conectar con debugger
-      .i_debug_enb   (debug_enb),   // conectar con micro
-      .i_cs_debug    (i_SPI_cs[0])   // conectar al chip sel del spi
+      .i_from_SPI    (SPI_2_Fetch), //conectar con debugger
+      .i_debug_enb   (debug_enb & dec_halt),   // conectar con micro
+      .i_cs_debug    (i_SPI_cs[0])  // conectar al chip sel del spi
       );
 
-      SPI_Slave_Parallel #( // conectado al fetch
+   //#########################  UNIT SPI  ############################
+   SPI_Slave_Parallel #
+     (
       .NB_BITS(NB_BITS)
-    ) inst_SPI_Slave_Parallel_Fetch (
+      )
+   inst_SPI_Slave_Parallel_Fetch
+     (
       .o_MISO (o_MISO),
       .o_data (SPI_2_Fetch),
       .i_MOSI (i_MOSI),
@@ -173,13 +179,11 @@ module Mips #
       .i_data (Fetch_2_SPI),
       .i_rst  (i_rst),
       .i_clk  (i_clk)
-    );
+      );
 
-
-
-
-
-
+   /**#################################################################
+    #########################  UNIT DECODE  ############################
+    ##################################################################**/
    Decode_module #()
    inst_Decode_module
      (
@@ -201,10 +205,11 @@ module Mips #
       .o_pc_beq       (dec_2_fet_pc_beq),
       .o_pc_src       (dec_2_fet_pc_src),
       .o_flush        (dec_2_fet_flush),
-      .o_bmb_brch     (dec_2_bmb_branch),   //signal brach instr
-      .o_bmb_rjmp     (dec_2_bmb_rjump),   //signal r jump instr
+      .o_bmb_brch     (dec_2_bmb_branch), //signal brach instr
+      .o_bmb_rjmp     (dec_2_bmb_rjump),  //signal r jump instr
+      .o_halt         (dec_halt),         //HATL signal
 
-      .o_to_SPI       (Decode_2_SPI), // TODO: conectar SPI-salve
+      .o_to_SPI       (Decode_2_SPI),     // TODO: conectar SPI-salve
 
       .i_pc           (fet_2_dec_pc),
       .i_instr        (fet_2_dec_instr),
@@ -217,14 +222,18 @@ module Mips #
 
       .i_bubble       (bub_2_dec_bubble),
 
-      .i_from_SPI     (SPI_2_Decode), // conectar al debugger
-      .i_cs_debug     (i_SPI_cs[1]),    // conectar al chip sel del spi
-      .i_debug_enb    (debug_enb)     // conectar con micro
+      .i_from_SPI     (SPI_2_Decode),     // conectar al debugger
+      .i_cs_debug     (i_SPI_cs[1]),      // conectar al chip sel del spi
+      .i_debug_enb    (debug_enb)         // conectar con micro
       );
 
-    SPI_Slave_Parallel #( // conectado al fetch
-      .NB_BITS(NB_BITS)
-    ) inst_SPI_Slave_Parallel_Decode (
+   //#########################  UNIT SPI  ############################
+   SPI_Slave_Parallel #
+      ( // conectado al fetch
+        .NB_BITS(NB_BITS)
+        )
+   inst_SPI_Slave_Parallel_Decode
+     (
       .o_MISO (o_MISO),
       .o_data (SPI_2_Decode),
       .i_MOSI (i_MOSI),
@@ -233,11 +242,10 @@ module Mips #
       .i_data (Decode_2_SPI),
       .i_rst  (i_rst),
       .i_clk  (i_clk)
-    );
-
-
-
-
+      );
+   /**#################################################################
+    #####################  UNIT EXECUTIOn  ############################
+    ##################################################################**/
 
    Execution_module #()
    inst_Execution_module
@@ -248,7 +256,7 @@ module Mips #
       .o_wb_ctl        (exe_2_mem_wb_ctl),
       .o_mem_ctl       (exe_2_mem_ctl),
       .o_num_rd        (dec_2_bub_rd),
-      .o_to_SPI        (Exe_2_SPI), // TODO: conectar SPI-salve
+      .o_to_SPI        (Exe_2_SPI), // : conectar SPI-salve
 
       .i_mux_a_hz      (fw_2_exe_mux_a_hz),
       .i_mux_b_hz      (fw_2_exe_mux_b_hz),
@@ -270,13 +278,17 @@ module Mips #
       .i_clk           (i_clk),
       .i_rst           (i_rst),
 
-      .i_from_SPI      (SPI_2_Exe),  // TODO: conectar al debugger
-      .i_debug_enb     (debug_enb) // TODO: conectar al micro
+      .i_from_SPI      (SPI_2_Exe),  // : conectar al debugger
+      .i_debug_enb     (debug_enb) // : conectar al micro
       );
 
-   SPI_Slave_Parallel #( // conectado al fetch
-      .NB_BITS(NB_BITS)
-    ) inst_SPI_Slave_Parallel_Execution (
+   //#########################  UNIT SPI  ############################
+   SPI_Slave_Parallel #
+     ( // conectado al fetch
+       .NB_BITS(NB_BITS)
+       )
+   inst_SPI_Slave_Parallel_Execution
+     (
       .o_MISO (o_MISO),
       .o_data (SPI_2_Exe),
       .i_MOSI (i_MOSI),
@@ -285,9 +297,11 @@ module Mips #
       .i_data (Exe_2_SPI),
       .i_rst  (i_rst),
       .i_clk  (i_clk)
-    );
-      
+      );
 
+   /**#################################################################
+    #####################  UNIT EXECUTION  ############################
+    ##################################################################**/
 
    Mem_module #()
    inst_Mem_module
@@ -310,9 +324,14 @@ module Mips #
       .i_debug_enb  (debug_enb)   // TODO: conectar al micro
       );
 
-  SPI_Slave_Parallel #( // conectado al fetch
-      .NB_BITS(NB_BITS)
-    ) inst_SPI_Slave_Parallel_Mem (
+   //#########################  UNIT SPI  ############################
+
+   SPI_Slave_Parallel #
+     ( // conectado al fetch
+       .NB_BITS(NB_BITS)
+       )
+   inst_SPI_Slave_Parallel_Mem
+     (
       .o_MISO (o_MISO),
       .o_data (SPI_2_Mem),
       .i_MOSI (i_MOSI),
@@ -321,11 +340,11 @@ module Mips #
       .i_data (Mem_2_SPI),
       .i_rst  (i_rst),
       .i_clk  (i_clk)
-    );
+      );
 
-
-
-
+   /**#################################################################
+    ########################  UNIT WRITE BACK #########################
+    ##################################################################**/
    WriteBack_module #()
    inst_WriteBack_module
      (
@@ -334,6 +353,10 @@ module Mips #
       .i_alu_data       (mem_2_wb_alu_data),
       .i_mux_mem_to_reg (mem_2_wb_ctl)
       );
+
+   /**#################################################################
+    ####################### UNIT FORWARDING ###########################
+    ##################################################################**/
 
    Forwarding_Unit #()
    inst_Forwarding_Unit
@@ -347,6 +370,9 @@ module Mips #
 			.i_ex_mem_wr_en (exe_2_mem_wb_ctl[2]),
 			.i_mem_wb_wr_en (wb_reg_enb)
 		  );
+   /**#################################################################
+    ########################### UNIT HAZARD ###########################
+    ##################################################################**/
 
    Bubble_unit #()
    inst_Bubble_unit
@@ -363,9 +389,6 @@ module Mips #
 			.i_branch   (dec_2_bmb_branch),
 			.i_jump     (dec_2_bmb_rjump),
 			.i_write_fr (dec_2_ex_wrback[2] | exe_2_mem_wb_ctl[2] | wb_reg_enb) // write back enabl fr
-			//.i_idc_wfr  (dec_2_ex_wrback[2]),     // write back enable from DEC
-			//.i_exe_wfr  (exe_2_mem_wb_ctl[2]),    // write back enable from EXE
-			//.i_mem_wfr  (wb_reg_enb)              // write back enable from MEM
 		  );
 
 endmodule // Mpis

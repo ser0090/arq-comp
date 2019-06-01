@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 ///  SER0090
-`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
-//`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
+//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
 module tb_mips();
@@ -57,9 +57,9 @@ module tb_mips();
    Mips #()
    inst_Mips
      (
-      .o_led       (o_data),
-      .o_operation (o_operation),
-      .o_function  (o_function),
+      //.o_led       (o_data),
+      //.o_operation (o_operation),
+      //.o_function  (o_function),
       .o_MISO      (o_MISO),
       .i_valid     (i_valid),
       .i_continue  (i_continue),

@@ -3,7 +3,7 @@
 ///  SER0090
 //`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
-
+//`include "/home/sergio/arq-comp/mips_final/src/spi/SPI_Fetch_Interface.v"  //Comentar
 /// IOTINCHO
 //`include "/home/tincho/../arq-comp/mips_final/include/include.v" //Comentar
 //`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
@@ -17,10 +17,11 @@ module Fetch_module #
    parameter INIT_FILE  = ""
    )
    (
-    output [NB_BITS-1:0] o_if_id_pc,   // to decode and debug
+    output [NB_BITS-1:0] o_if_id_pc, // to decode and debug
     output [NB_BITS-1:0] o_if_id_instr,
     //##### debug output sig ######
-    output [NB_BITS-1:0] o_to_SPI,  //TODO: conectar al SPI-salve
+    output [NB_BITS-1:0] o_to_SPI, //: conectar al SPI-salve
+    output [NB_BITS-1:0] o_cycles, //TODO: borrar
 
     input [NB_BITS-1:0]  i_brq_addr,
     input [NB_BITS-1:0]  i_jmp_addr,
@@ -33,24 +34,28 @@ module Fetch_module #
     input                i_rst,
     //##### debug input singals #####
     input [NB_BITS-1:0]  i_from_SPI,
-    input                i_debug_enb,     // debug enable activo por alto
+    input                i_debug_enb, // debug enable activo por alto
     input                i_cs_debug    // chip sel para los mux modo debug
     );
 
    /* ###### SECUENCIAL ###### */
    reg [NB_BITS-1:0]     if_id_pc;
    reg [NB_BITS-1:0]     pc;
-
+   // contadore de ciclos
+   reg [NB_BITS-1:0]     cycles;
    //Outputs
    assign o_if_id_pc = if_id_pc;
+   assign o_cycles   = cycles;  //TODO:borrar
 
-   initial
-     pc = {NB_BITS{1'b0}};
-
+   initial begin
+      pc     = {NB_BITS{1'b0}};
+      cycles = {NB_BITS{1'b0}};
+   end
    always @(posedge i_clk) begin
       if(i_rst) begin
          pc        <= {NB_BITS{1'b0}};
          if_id_pc  <= {NB_BITS{1'b0}};
+         cycles    <= {NB_BITS{1'b0}};
       end
       else if(i_debug_enb) begin
          case({i_pc_we, i_ctr_beq, i_ctr_jmp})
@@ -59,7 +64,9 @@ module Fetch_module #
            3'b101:  pc <= i_jmp_addr;
            default: pc <= pc;
          endcase // case ({i_pc_we, i_ctr_beq, i_ctr_jmp})
+
          if_id_pc <= (i_if_id_we)? pc + 4: if_id_pc;
+         cycles   <= cycles + 1;
       end
    end // always @ (posedge i_clk)
 
@@ -81,23 +88,27 @@ module Fetch_module #
       )
    inst_ram_instruction
      (
-      .o_data      (o_if_id_instr),     // RAM output data,  RAM_WIDTH
-      .i_addr      (pc[RAM_DEPTH-1+2:2]),   //conectar Address bus para debug
-      .i_wr_addr   (addr),              //conectar Address del SPI interface
-      .i_data      (data),              // RAM input data, width determined from RAM_WIDTH
-      .i_wea       (wea),               //conectar Write enable desde modulo SPI-slave
+      .o_data      (o_if_id_instr),       // RAM output data,  RAM_WIDTH
+      .i_addr      (pc[RAM_DEPTH-1+2:2]), //conectar Address bus para debug
+      .i_wr_addr   (addr),                //conectar Address del SPI interface
+      .i_data      (data),                // RAM input data, determined from RAM_WIDTH
+      .i_wea       (wea),                 //conectar Write enable desde modulo SPI-slave
       .i_ctr_flush (i_ctr_flush),
       .i_if_id_we  (i_if_id_we),
-      .i_clk       (i_clk),             // Clock
+      .i_clk       (i_clk),               // Clock
       .i_rst       (i_rst),
-      .i_regcea    (i_debug_enb)         // Latch out Enable
+      .i_regcea    (i_debug_enb)          // Latch out Enable
       );
 
-      SPI_Fetch_Interface #(
-      .NB_BITS(NB_BITS),
-      .NB_LATCH(64),
-      .RAM_DEPTH(RAM_DEPTH)
-    ) inst_SPI_Fetch_Interface (
+   // TODO: agregar salida para el contador de clicos
+   SPI_Fetch_Interface #
+     (
+      .NB_BITS   (NB_BITS),
+      .NB_LATCH  (64),
+      .RAM_DEPTH (RAM_DEPTH)
+      )
+   inst_SPI_Fetch_Interface
+     (
       .o_addr   (addr),
       .o_data   (data),
       .o_wea    (wea),
@@ -108,7 +119,7 @@ module Fetch_module #
       .i_in_use (i_cs_debug),
       .i_clk    (i_clk),
       .i_rst    (i_rst)
-    );
+      );
 
 endmodule // Fetch_module
 
