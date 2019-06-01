@@ -31,14 +31,14 @@ module Top_rtl#
   (
    parameter NB_BITS = 32
    )
-    (
-     output [2:0] o_led,
-     output out_tx_uart,
-     //input 	    i_btnC,
-     input  in_rx_uart,
-     input  clk100,
-     input[1:0]  i_sw
-     );
+   (
+    output [2:0] o_led,
+    output       out_tx_uart,
+    //input 	    i_btnC,
+    input        in_rx_uart,
+    input        clk100,
+    input [1:0]  i_sw
+    );
 
    wire [NB_BITS-1:0] gpio_i_data_tri_i;
    wire [NB_BITS-1:0] gpio_o_data_tri_o;
@@ -47,7 +47,7 @@ module Top_rtl#
    wire               clk50;
    wire               uart_rtl_rxd;
    wire               uart_rtl_txd;
-   
+
    //assign  i_rst           = i_sw;
    //assign  sys_clock       = i_clk;
    //assign  uart_rtl_rxd    = uart_txd_in;
@@ -63,14 +63,14 @@ module Top_rtl#
    design_1 #()
    u_micro
      (
-      .clock50         (clk50),            // Clock aplicacion
-      .gpio_rtl_tri_o   (gpio_o_data_tri_o),  // GPIO OUTPUT
-      .gpio_rtl_tri_i   (gpio_i_data_tri_i),    // GPIO INPUT
-      .reset            (i_sw[0]),                // Hard Reset
-      .sys_clock        (clk100),               // Clock de FPGA
-      //.o_lock_clock     (locked      ),       // Senal Lock Clock
-      .usb_uart_rxd     (in_rx_uart),           // UART RX
-      .usb_uart_txd     (out_tx_uart)           // UART TX
+      .clock50        (clk50),             // Clock aplicacion
+      .gpio_rtl_tri_o (gpio_o_data_tri_o), // GPIO OUTPUT
+      .gpio_rtl_tri_i (gpio_i_data_tri_i), // GPIO INPUT
+      .reset          (i_sw[0]),           // Hard Reset
+      .sys_clock      (clk100),            // Clock de FPGA
+      //.o_lock_clock // Senal Lock Clock
+      .usb_uart_rxd   (in_rx_uart),        // UART RX
+      .usb_uart_txd   (out_tx_uart)        // UART TX
       );
 
    ///////////////////////////////////////////
