@@ -38,10 +38,10 @@ def fetch_req(serial):
 	pc_4   = serial.read(4)[::-1]
 	inst   = serial.read(4)[::-1]
 	cycles = serial.read(4)[::-1]
-	print("pc  : ",pc)
-	print("pc_4: ",pc_4)
-	print("inst: ",inst)
-	print("inst: ",cycles)
+	print("pc  :   ",''.join(format(x, '02x') for x in pc))
+	print("pc_4:   ",''.join(format(x, '02x') for x in pc_4))
+	print("inst:   ",''.join(format(x, '02x') for x in inst))
+	print("cycles: ",''.join(format(x, '02x') for x in cycles))
 
 
 def decode_req(serial):
@@ -82,3 +82,13 @@ def mem_req(serial):
 	print("mem: 0x",''.join(format(x, '02x') for x in mem))
 	print("alu: 0x",''.join(format(x, '02x') for x in alu))
 	print("rd:  0x",''.join(format(x, '02x') for x in rd))
+
+def mem_data_req(serial,addr,word_count):
+	serial.write(request_codes['mem_data']) #write header
+	serial.write(bytearray([(addr//4)%256 , (addr//4)//256])) # send address
+	serial.write(bytearray([(word_count//4)%256 , (word_count//4)//256])) # send count
+	_wait_ack(serial,request_codes['mem_data'])
+	words=[]
+	for i in range(word_count):
+		words.append(serial.read())
+		print("rd:  0x",''.join(format(x, '02x') for x in words[i]))
