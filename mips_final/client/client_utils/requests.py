@@ -89,6 +89,7 @@ def mem_data_req(serial,addr,word_count):
 	serial.write(bytearray([(word_count//4)%256 , (word_count//4)//256])) # send count
 	_wait_ack(serial,request_codes['mem_data'])
 	words=[]
+	print('addr             value')
 	for i in range(word_count):
 		words.append(serial.read())
-		print("rd:  0x",''.join(format(x, '02x') for x in words[i]))
+		print('0x'.join(addr+i),":  0x",''.join(format(x, '02x') for x in words[i]))

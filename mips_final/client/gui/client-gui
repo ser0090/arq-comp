@@ -1,0 +1,26 @@
+#!/usr/bin/python3
+
+import PySimpleGUI as sg
+from subprocess import check_output
+from frames import main_frame as mf
+
+
+if __name__ == '__main__':
+    layout = [
+        [sg.Text('Device connection')],
+        [sg.Text('Device', size=(15, 1)), sg.InputText(check_output('ls -1 /dev/ttyS*| head -n 1', shell=True).strip(),key='_DEVICE_')],
+        [sg.Text('Baudrate', size=(15, 1)), sg.InputText('115200')],
+        [sg.Submit("Connect"), sg.Cancel()]
+    ]
+
+    window = sg.Window('MIPS Debbugger Client').Layout(layout)
+    button, values = window.Read()
+
+
+if button == 'Connect':
+    #TODO: implementar metodo de testeo de conexion
+    mf._device_ = values['_DEVICE_']
+    print("conecting..")
+    window.Close()
+    mf.show()
+

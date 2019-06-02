@@ -10,4 +10,6 @@ request_codes['write_bin'] = b'\x10'
 request_codes['step']      = b'\x20'
 request_codes['start']     = b'\x30'
 
+#TODO: implementar metodo de testeo de conexion
+
 
