@@ -8,7 +8,7 @@ from frames import main_frame as mf
 if __name__ == '__main__':
     layout = [
         [sg.Text('Device connection')],
-        [sg.Text('Device', size=(15, 1)), sg.InputText(check_output('ls -1 /dev/ttyS*| head -n 1', shell=True).strip(),key='_DEVICE_')],
+        [sg.Text('Device', size=(15, 1)), sg.InputText(str(check_output('ls -1 /dev/ttyS*| head -n 1', shell=True).strip())[2:-1],key='_DEVICE_')],
         [sg.Text('Baudrate', size=(15, 1)), sg.InputText('115200')],
         [sg.Submit("Connect"), sg.Cancel()]
     ]
@@ -17,10 +17,10 @@ if __name__ == '__main__':
     button, values = window.Read()
 
 
-if button == 'Connect':
-    #TODO: implementar metodo de testeo de conexion
-    mf._device_ = values['_DEVICE_']
-    print("conecting..")
-    window.Close()
-    mf.show()
+    if button == 'Connect':
+        #TODO: implementar metodo de testeo de conexion
+        print(values['_DEVICE_'])
+        print("conecting..")
+        window.Close()
+        mf.show(values['_DEVICE_'])
 
