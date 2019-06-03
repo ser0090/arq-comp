@@ -7,8 +7,10 @@ void uart_blok_recv(XUartLite* module,u8 *buffer,unsigned int n){
 }
 
 void uart_blok_send(XUartLite* module,u8 *buffer,unsigned int n){
-	for (int i=0 ; i<n; i++)
-		while(XUartLite_Send(module,buffer+i,1) == 0);
+	for (int i=0 ; i<n; i++){
+		while(XUartLite_IsSending(module));
+		XUartLite_Send(module,buffer+i,1);
+	}
 }
 
 
@@ -32,7 +34,7 @@ void step_req(XUartLite *module){
 		get_mem_stat(&mem_status);
 		for(int i=0;i<ADDR_WINDOW;i++)
 			get_mem_data(i*4,mem_data+i);*/
-	}
+}
 
 void fetch_status_req(XUartLite *module){
 	fetch_stat my_stat;
@@ -76,6 +78,17 @@ void mem_data_req(XUartLite *module){
 	uart_blok_send(module,&reply,1); //send header
 	for (int i=0 ; i<count; i++){
 		get_mem_data((addr+i*4),&buf);
-		uart_blok_send(module,(u8*)buf,sizeof(u32));
+		uart_blok_send(module,(u8*)&buf,sizeof(u32));
 	}
+}
+
+void test_req(XUartLite *module){
+	u8 reply = TEST_REQ;
+	uart_blok_send(module,&reply,1);
+}
+
+void start_req(XUartLite *module){
+	u8 reply = START_REQ;
+	start();
+	uart_blok_send(module,&reply,1);
 }

@@ -31,7 +31,7 @@
 #define WRITE_INST_REQ     (u8)0x10
 #define STEP_REQ           (u8)0x20
 #define START_REQ          (u8)0x30
-
+#define TEST_REQ 		   (u8)0xAA
 
 /*
  * write instruction request:
@@ -113,8 +113,8 @@ void decode_status_req(XUartLite *module);
 void exec_status_req(XUartLite *module);
 void mem_status_req(XUartLite *module);
 void mem_data_req(XUartLite *module);
-
-
+void test_req(XUartLite *module);
+void start_req(XUartLite *module);
 
 
 

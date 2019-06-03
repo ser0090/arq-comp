@@ -47,7 +47,8 @@ def jalr(params):
 		   '0'*5 +
 		   r_type.function['jalr'])
 
-
-
-
+def halt(params):
+	return(opcode['halt']+
+		  to_26_bit_str('0')
+		  )
 

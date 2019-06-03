@@ -6,12 +6,9 @@ from utils import requests
 # TODO : testear que funcione bien
 parser = argparse.ArgumentParser()
 parser.add_argument("device", help="serial device to connect")
-parser.add_argument("address", help="data memory address on hex format: 0x<value>")
-parser.add_argument("count", help="cantidad de words a leer")
 args = parser.parse_args()
-
 ser = serial.Serial(args.device,
 					 baudrate=115200, 
-					 bytesize=serial.EIGHTBITS)  # open serial port
-
-requests.mem_data_req(ser,int(args.address[2:],16),int(args.count))
+					 bytesize=serial.EIGHTBITS,
+					 timeout=2)  # open serial port
+requests.step_req(ser)

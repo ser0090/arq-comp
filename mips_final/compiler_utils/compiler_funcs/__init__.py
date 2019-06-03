@@ -32,7 +32,8 @@ opcode['bne']     = '000101'
 opcode['j']       = '000010'
 opcode['jal']     = '000011'
 opcode['jr']      = '000000'
-opcode['jalr']      = '000000'
+opcode['jalr']    = '000000'
+opcode['halt']    = '101111'
 
 
 

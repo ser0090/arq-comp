@@ -43,6 +43,8 @@ instruction['j']    = j_type.j
 instruction['jal']  = j_type.jal
 instruction['jr']   = j_type.jr
 instruction['jalr'] = j_type.jalr
+instruction['halt'] = j_type.halt
+
 
 
 

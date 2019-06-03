@@ -34,7 +34,7 @@
 int spi_initialize();
 
 void spi_get(u32 cs,u32 ctl,u16 data,u32 *res);
-
+void start();
 void step();
 
 

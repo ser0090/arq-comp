@@ -34,3 +34,10 @@ void step(){
 	XGpio_DiscreteWrite(&gpio_out,1, (u32)STEP);
     XGpio_DiscreteWrite(&gpio_out,1, (u32)0);
 }
+
+void start(){
+
+	XGpio_DiscreteWrite(&gpio_out,1, (u32)CONTINUE);
+	while((XGpio_DiscreteRead(&gpio_in, 1) & 0x01) == 0);
+	XGpio_DiscreteWrite(&gpio_out,1, (u32)0);
+}

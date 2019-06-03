@@ -5,7 +5,10 @@ from subprocess import check_output, CalledProcessError
 main_tab_layout= [
                 [sg.Text('Write program')],
                 [sg.Input(key='_BIN_FILE_'),sg.FileBrowse(),sg.Button('Write')],
-                [sg.Text('',key='_WRITE_RES_')]
+                [sg.Text('',key='_WRITE_RES_')],
+                [sg.Button('Start')],
+                [sg.Text('',key='_START_RES_',size=(50,1))]
+
 
 ]
 
@@ -17,7 +20,7 @@ fetch_tab_layout= [
 
 dec_tab_layout= [
                     [sg.Text('Decode Stage Status:')],
-                    [sg.Text('',size=(35,10),background_color='white',text_color='blue',key='_DECODE_STAT_')]
+                    [sg.Text('',size=(35,40),background_color='white',text_color='blue',key='_DECODE_STAT_')]
              ]
 
 exec_tab_layout= [
@@ -33,7 +36,7 @@ mem_tab_layout= [
                     [sg.Multiline('',size=(35,20),background_color='white',text_color='blue',key='_MEM_DATA_',)]
 ]
 layout = [
-            [sg.Input('../bin',key='_BIN_FOLDER_')],
+            [sg.Text('BIN_PATH:'),sg.Input('',key='_BIN_FOLDER_',size=(70,1))],
             [sg.TabGroup([
                         [
                             sg.Tab('Main'       , main_tab_layout , tooltip='tip'),
@@ -105,24 +108,50 @@ def _get_mem_data(window,values,device):
         stat = check_output(cmd, shell=True).strip()
     except CalledProcessError:
         stat = 'ERROR'
-    window.Element('_MEM_STAT_').Update(stat)
+    window.Element('_MEM_DATA_').Update(stat)
 
+def _step(window,values,device):
+    cmd = values['_BIN_FOLDER_'].strip() + '/step ' + device
+    print(cmd)
+    try:
+        stat = check_output(cmd, shell=True).strip()
+    except CalledProcessError:
+        stat = 'ERROR'
+    window.Element('_WRITE_RES_').Update(stat)
 
-def show(device):
+def _start(window,values,device):
+    cmd = values['_BIN_FOLDER_'].strip() + '/start ' + device
+    print(cmd)
+    try:
+        stat = check_output(cmd, shell=True).strip()
+    except CalledProcessError:
+        stat = 'ERROR'
+    window.Element('_START_RES_').Update(stat)
+
+def _refresh(window,values,device):
+    _update_fetch(window,values,device)
+    _update_decode(window,values,device)
+    _update_exec(window,values,device)
+    _update_mem(window,values,device)
+    _get_mem_data(window,values,device)
+
+def show(device,binfolder):
     window = sg.Window('Mipd Debugger GUI', layout)
+    window.Element('_BIN_FOLDER_').Update(binfolder)
     #device = device.encode('utf-8')
     while True:
         event, values = window.Read()
-        print(event, values)
+        #print(event, values)
         if event == 'Refresh':
-            _update_fetch(window,values,device)
-            _update_decode(window,values,device)
-            _update_exec(window,values,device)
-            _update_mem(window,values,device)
-            _get_mem_data(window,values,device)
+            _refresh(window,values,device)
         elif event == 'Write':
-            _write_bin(window,values)
-
+            _write_bin(window,values,device)
+        elif event == 'Step':
+            _step(window,values,device)
+            _refresh(window,values,device)
+        elif event == 'Start':
+            _start(window,values,device)
+            _refresh(window,values,device)
         elif event is None or event == 'Exit':
             break
 

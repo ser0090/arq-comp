@@ -50,6 +50,12 @@ while(1){
 		case STEP_REQ:
 			step_req(&uart_module);
 			break;
+		case START_REQ:
+			start_req(&uart_module);
+			break;
+		case TEST_REQ:
+			test_req(&uart_module);
+			break;
 	}
 
 }

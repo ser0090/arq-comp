@@ -24,9 +24,6 @@ def write_bin(serial,bin_file_path):
 		_wait_ack(serial,request_codes['write_bin']) ## el ack contiene el mismo codigo de request
 
 
-def start_req(serial):
-	serial.write(request_codes['start'])
-
 def step_req(serial):
 	serial.write(request_codes['step'])
 	_wait_ack(serial,request_codes['step'])
@@ -38,10 +35,10 @@ def fetch_req(serial):
 	pc_4   = serial.read(4)[::-1]
 	inst   = serial.read(4)[::-1]
 	cycles = serial.read(4)[::-1]
-	print("pc  :   ",''.join(format(x, '02x') for x in pc))
-	print("pc_4:   ",''.join(format(x, '02x') for x in pc_4))
-	print("inst:   ",''.join(format(x, '02x') for x in inst))
-	print("cycles: ",''.join(format(x, '02x') for x in cycles))
+	print("pc  :   0x"+''.join(format(x, '02x') for x in pc))
+	print("pc_4:   0x"+''.join(format(x, '02x') for x in pc_4))
+	print("inst:   0x"+''.join(format(x, '02x') for x in inst))
+	print("cycles: 0x"+''.join(format(x, '02x') for x in cycles))
 
 
 def decode_req(serial):
@@ -55,10 +52,10 @@ def decode_req(serial):
     for i in range(1,32):
         reg_file[i] = serial.read(4)[::-1]
 
-    print("pc_4:     0x",''.join(format(x, '02x') for x in pc_4))
-    print("rs:       0x",''.join(format(x, '02x') for x in rs))    
-    print("rt:       0x",''.join(format(x, '02x') for x in rt))
-    print("sign_ext: 0x",''.join(format(x, '02x') for x in sign_ext))
+    print("pc_4:     0x"+''.join(format(x, '02x') for x in pc_4))
+    print("rs:       0x"+''.join(format(x, '02x') for x in rs))    
+    print("rt:       0x"+''.join(format(x, '02x') for x in rt))
+    print("sign_ext: 0x"+''.join(format(x, '02x') for x in sign_ext))
     print("register_file: ")
     for k,v in reg_file.items():
         print('    ${}'.format(k),": 0x",''.join(format(x, '02x') for x in v))
@@ -85,11 +82,25 @@ def mem_req(serial):
 
 def mem_data_req(serial,addr,word_count):
 	serial.write(request_codes['mem_data']) #write header
-	serial.write(bytearray([(addr//4)%256 , (addr//4)//256])) # send address
-	serial.write(bytearray([(word_count//4)%256 , (word_count//4)//256])) # send count
+	serial.write(bytearray([(addr)%256 , (addr)//256])) # send address
+	serial.write(bytearray([(word_count)%256 , (word_count)//256])) # send count
 	_wait_ack(serial,request_codes['mem_data'])
 	words=[]
 	print('addr             value')
 	for i in range(word_count):
-		words.append(serial.read())
-		print('0x'.join(addr+i),":  0x",''.join(format(x, '02x') for x in words[i]))
+		words.append(serial.read(4)[::-1])
+		print(hex(addr+i)+":  0x"+''.join(format(x, '02x') for x in words[i]))
+
+
+def test_req(serial):
+	serial.write(request_codes['test'])
+	a = serial.read(1) #receive ack
+	if a == request_codes['test'] :
+		print('ok')
+	else:
+		print('connection error')
+
+def start_req(serial):
+	serial.write(request_codes['start'])
+	_wait_ack(serial,request_codes['start'])
+	print('halt instruction reached')

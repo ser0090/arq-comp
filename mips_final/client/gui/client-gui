@@ -1,26 +1,38 @@
 #!/usr/bin/python3
 
 import PySimpleGUI as sg
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 from frames import main_frame as mf
 
 
 if __name__ == '__main__':
     layout = [
         [sg.Text('Device connection')],
-        [sg.Text('Device', size=(15, 1)), sg.InputText(str(check_output('ls -1 /dev/ttyS*| head -n 1', shell=True).strip())[2:-1],key='_DEVICE_')],
-        [sg.Text('Baudrate', size=(15, 1)), sg.InputText('115200')],
-        [sg.Submit("Connect"), sg.Cancel()]
+        [sg.Text('Device', size=(15, 1)), sg.InputText(str(check_output('ls -1 /dev/ttyUSB*| head -n 1', shell=True).strip())[2:-1],background_color='white',text_color='black',key='_DEVICE_')],
+        [sg.Text('Baudrate', size=(15, 1)), sg.InputText('115200',background_color='white',text_color='black')],
+        [sg.Input(str(check_output('pwd', shell=True).strip())[2:-1],background_color='white',text_color='black',key='_BIN_FOLDER_'),sg.FileBrowse()],
+        [sg.Submit("Connect"), sg.Cancel()],
+        [sg.Text('',key='_TEST_',text_color='red',size=(20,1))]
     ]
-
     window = sg.Window('MIPS Debbugger Client').Layout(layout)
-    button, values = window.Read()
+    values = None
+    while True:
+        button, values = window.Read()
 
-
-    if button == 'Connect':
-        #TODO: implementar metodo de testeo de conexion
-        print(values['_DEVICE_'])
-        print("conecting..")
-        window.Close()
-        mf.show(values['_DEVICE_'])
-
+        if button == 'Connect':
+            try:
+                res = str(check_output(values['_BIN_FOLDER_']+'/test '+values['_DEVICE_'], shell=True).strip())[2:-1]
+                print (res)
+                if res == 'ok':
+                    break   
+                else:
+                    window.Element('_TEST_').Update('CONNECTION ERROR')
+            except CalledProcessError:
+                window.Element('_TEST_').Update('WRONG BIN PATH')
+            
+        elif button == 'Cancel' | button == 'Exit':
+            window.Close()
+            quit()
+    print(values)
+    window.Close()
+    mf.show(values['_DEVICE_'],values['_BIN_FOLDER_'])     

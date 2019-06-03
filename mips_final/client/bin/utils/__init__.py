@@ -9,6 +9,8 @@ request_codes['mem_data']  = b'\x05'
 request_codes['write_bin'] = b'\x10'
 request_codes['step']      = b'\x20'
 request_codes['start']     = b'\x30'
+request_codes['test']      = b'\xAA'
+
 
 #TODO: implementar metodo de testeo de conexion
 
