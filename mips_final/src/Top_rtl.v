@@ -19,11 +19,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 ///  SER0090
-//`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
+`include "/home/ssulca/arq-comp/mips_final/include/include.v"  //Comentar
 //`include "/home/sergio/arq-comp/mips_final/include/include.v"  //Comentar
 
 ///  IOTINCHO
-`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
 //`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 
@@ -57,20 +57,20 @@ module Top_rtl#
    //assign  uart_rtl_rxd    = uart_txd_in;
    //assign  uart_rxd_out    = uart_rtl_txd;
    //assign  gpio_i_data_tri_i   = {{28{1'b0}}, i_sw[4:1]};
-   assign  o_led[1] = gpio_o_data_tri_o[29];//SCLK conectamos lo primeros byts
-   assign  o_led[2] = gpio_o_data_tri_o[30];//STEP conectamos lo primeros byts
-   assign  o_led[0] = gpio_o_data_tri_o[31];//CONTINUE conectamos lo primeros byts
+   assign  o_led[1]   = gpio_o_data_tri_o[29];//SCLK conectamos lo primeros byts
+   assign  o_led[2]   = gpio_o_data_tri_o[30];//STEP conectamos lo primeros byts
+   assign  o_led[0]   = gpio_o_data_tri_o[31];//CONTINUE conectamos lo primeros byts
 
+   assign halt_or_spi = (|gpio_o_data_tri_o[28:25])? gpio_i_data_tri_i[GPIO_HALT_PIN]:halt;
    ///////////////////////////////////////////
    //////////////    MicroBlaze   ////////////
    ///////////////////////////////////////////
-   assign halt_or_spi = (|gpio_o_data_tri_o[28:25])? gpio_i_data_tri_i[GPIO_HALT_PIN]:halt;
    design_1 #()
    u_micro
      (
       .clock50        (clk50),             // Clock aplicacion
       .gpio_rtl_tri_o (gpio_o_data_tri_o), // GPIO OUTPUT
-      .gpio_rtl_tri_i ({gpio_i_data_tri_i[NB_BITS-1:1],halt_or_spi}), // GPIO INPUT
+      .gpio_rtl_tri_i ({gpio_i_data_tri_i[NB_BITS-1:1], halt_or_spi}), // GPIO INPUT
       .reset          (i_sw[0]),           // Hard Reset
       .sys_clock      (clk100),            // Clock de FPGA
       //.o_lock_clock // Senal Lock Clock

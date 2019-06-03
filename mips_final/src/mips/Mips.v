@@ -8,17 +8,24 @@
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
 //`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
+/** ####################### instrucction file init ########################## **/
+//`define INSTRUCTION_FILE "/home/ssulca/arq-comp/mips_final/bin_str_file" //Comentar
+`define INSTR_FILE "/home/ssulca/arq-comp/mips_final/out.hex" //Comentar
+//`define INSTRUCTION_FILE "/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file" //Comentar
+//`define INSTRUCTION_FILE "/home/martin/Documentos/arq-comp/mips_final/out.bin" //Comentar
+
+`define FILE_DEPTH 26
 
 module Mips #
   (
-   parameter NB_BITS   = `NB_BITS, /* asigancion de parametro local */
-   parameter NB_REG    = `NB_REG,
-   parameter NB_JMP    = `NB_JUMP,
-   parameter NB_EXEC   = `NB_CTR_EXEC,
-   parameter NB_MEM    = `NB_CTR_MEM,
-   parameter NB_WB     = `NB_CTR_WB,
-   parameter NB_MUX_FW = `NB_MUX_FW,
-   localparam NB_FUN   = `NB_FUN
+   parameter NB_BITS    = `NB_BITS, /* asigancion de parametro local */
+   parameter NB_REG     = `NB_REG,
+   parameter NB_JMP     = `NB_JUMP,
+   parameter NB_EXEC    = `NB_CTR_EXEC,
+   parameter NB_MEM     = `NB_CTR_MEM,
+   parameter NB_WB      = `NB_CTR_WB,
+   parameter NB_MUX_FW  = `NB_MUX_FW,
+   localparam NB_FUN    = `NB_FUN
    )
    (
     //output [31:0]         o_led,
@@ -138,11 +145,8 @@ module Mips #
     ##################################################################**/
    Fetch_module #
      (
-      .FILE_DEPTH(20),
-      //.INIT_FILE  ("/home/ssulca/arq-comp/mips_final/bin_str_file") //Comentar
-      .INIT_FILE  ("/home/sergio/arq-comp/mips_final/include/mem_instr.txt") //Comentar
-      // .INIT_FILE  ("/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file") //Comentar
-      // .INIT_FILE  ("/home/martin/Documentos/arq-comp/mips_final/out.bin") //Comentar
+      .FILE_DEPTH (`FILE_DEPTH),
+      .INIT_FILE  (`INSTR_FILE) //Comentar
       )
    inst_Fetch_module
      (
