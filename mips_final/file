@@ -3,19 +3,23 @@ ori  $10, $0, 0X00 ; inicia el valor
 ori  $11, $0, 0X01 ; inicia el limite
 ori  $12, $0, 0X02 ; inicia el limite
 ori  $13, $0, 0X03 ; inicia el limite
+ori  $14, $0, 0X04 ; inicia el limite
+
 loop:
 	addi $10,  $10, 1
-	beq  $10, $11, p1
+	beq  $10, $11, p1 
 	beq  $10, $12, p2
 	beq  $10, $13, p3
+	beq  $10, $14, p4
+	j    skip
 
-p1:
+p1: ; prueva de jump
 j loop
-p2:
+p2: ; prueva de jump and link
 jal loop
-p3:
+p3: ; prueva de jump register
 jr $31
-p4:
+p4: ; prueva de jump and link register
 ori  $9, $0, 0X04 ; direccion de salto
 jalr $9
 skip:
