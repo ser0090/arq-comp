@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module Debugger_interface #()
+module Debugger_interface
    (
     output o_debug_enb,   // Retorna un pulso si se esta en modo no continuo
     input  i_continue,    // 1 continuo  - 0 debug espera de pulso
