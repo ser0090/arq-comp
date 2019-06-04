@@ -10,7 +10,7 @@ if __name__ == '__main__':
         [sg.Text('Device connection')],
         [sg.Text('Device', size=(15, 1)), sg.InputText(str(check_output('ls -1 /dev/ttyUSB*| head -n 1', shell=True).strip())[2:-1],background_color='white',text_color='black',key='_DEVICE_')],
         [sg.Text('Baudrate', size=(15, 1)), sg.InputText('115200',background_color='white',text_color='black')],
-        [sg.Input(str(check_output('pwd', shell=True).strip())[2:-1],background_color='white',text_color='black',key='_BIN_FOLDER_'),sg.FileBrowse()],
+        [sg.Input(str(check_output('pwd', shell=True).strip())[2:-1],background_color='white',text_color='black',key='_BIN_FOLDER_'),sg.FolderBrowse()],
         [sg.Submit("Connect"), sg.Cancel()],
         [sg.Text('',key='_TEST_',text_color='red',size=(20,1))]
     ]
