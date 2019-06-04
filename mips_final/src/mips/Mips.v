@@ -9,7 +9,7 @@
 //`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 /** ####################### instrucction file init ########################## **/
-//`define INSTRUCTION_FILE "/home/ssulca/arq-comp/mips_final/bin_str_file" //Comentar
+`define INSTRUCTION_FILE "/home/ssulca/arq-comp/mips_final/include/mem_instr.txt" //Comentar
 //`define INSTR_FILE "/home/ssulca/arq-comp/mips_final/out.hex" //Comentar
 //`define INSTRUCTION_FILE "/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file" //Comentar
 //`define INSTRUCTION_FILE "/home/martin/Documentos/arq-comp/mips_final/out.bin" //Comentar
@@ -393,7 +393,10 @@ module Mips #
 			.i_read_mem (|dec_2_ex_mem[3:2]),     // read mem from DEC (or reduction 2 signals)
 			.i_branch   (dec_2_bmb_branch),
 			.i_jump     (dec_2_bmb_rjump),
-			.i_write_fr (dec_2_ex_wrback[2] | exe_2_mem_wb_ctl[2] | wb_reg_enb) // write back enabl fr
+			//.i_write_fr (dec_2_ex_wrback[2] | exe_2_mem_wb_ctl[2] | wb_reg_enb) //  fr
+			.i_idc_wfr  (dec_2_ex_wrback[2]), // write back enabl fr
+			.i_exe_wfr  (exe_2_mem_wb_ctl[2]), // write back enabl fr
+			.i_mem_wfr  (wb_reg_enb) // write back enabl fr
 		  );
 
 endmodule // Mpis

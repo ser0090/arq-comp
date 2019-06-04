@@ -33,7 +33,7 @@ module Register_file #
         for(rf_index = 0; rf_index < RF_DEPTH; rf_index = rf_index + 1)
           reg_file[rf_index] <= {NB_BITS{1'b0}};
       else if (i_wenb)
-        reg_file[i_write_addr] <= i_data;
+        reg_file[i_write_addr] <= (|i_write_addr)? i_data:  {NB_BITS{1'b0}};
       else
         for(rf_index = 0; rf_index < RF_DEPTH; rf_index = rf_index + 1)
           reg_file[rf_index] <= reg_file[rf_index];
