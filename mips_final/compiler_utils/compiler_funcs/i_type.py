@@ -5,14 +5,20 @@ from . import two_args_parser
 import re
 
 def to_16_bit_str(value):
-	value_aux = int(value)
+	value_aux = 0 
+	if value[0:2] == '0x':
+		value_aux = int(value[2:],16)
+	else:
+		value_aux = int(value)
+
+	sign = (value_aux) > 0
 	string = ''
 	for i in range (0,16):
 		res = '1' if (value_aux % 2) else '0'
 		value_aux = value_aux // 2
 		string = string+res
 	string = string[::-1] #reverse string
-	return string if int(value) > 0 else complementar(string)
+	return string if sign > 0 else complementar(string)
 
 def complementar(binary_string):
 	binary_string = binary_string[::-1] 

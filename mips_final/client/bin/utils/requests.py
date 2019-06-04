@@ -89,7 +89,7 @@ def mem_data_req(serial,addr,word_count):
 	print('addr             value')
 	for i in range(word_count):
 		words.append(serial.read(4)[::-1])
-		print(hex(addr+i)+":  0x"+''.join(format(x, '02x') for x in words[i]))
+		print(hex(addr+i*4)+":  0x"+''.join(format(x, '02x') for x in words[i]))
 
 
 def test_req(serial):

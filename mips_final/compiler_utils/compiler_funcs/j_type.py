@@ -5,7 +5,11 @@ from . import two_args_parser
 
 
 def to_26_bit_str(value):
-	value_aux = int(value)
+	value_aux = 0 
+	if value[0:2] == '0x':
+		value_aux = int(value[2:],16)
+	else:
+		value_aux = int(value)
 	string = ''
 	for i in range (0,26):
 		res = '1' if (value_aux % 2) else '0'

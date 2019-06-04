@@ -21,7 +21,12 @@ function['nor']  = "100111"
 function['slt']  = "101010"
 
 def to_5_bit_str(value):
-	value_aux = int(value)
+	value_aux = 0 
+	print(value[0:2])
+	if value[0:2] == '0x':
+		value_aux = int(value[2:],16)
+	else:
+		value_aux = int(value)
 	string = ''
 	for i in range (0,5):
 		res = '1' if (value_aux % 2) else '0'
