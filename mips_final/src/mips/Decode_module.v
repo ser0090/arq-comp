@@ -667,7 +667,7 @@ module Decode_module #
            mem_wr   = `WRITE_DISABLE;
            //write back signals
            wrt_back = `DATA_FROM_ALU;
-           wrt_enb  = (i_instr[5:0]==JR || i_instr[5:0]==6'd0)? 1'b0 : 1'b1;
+           wrt_enb  = (i_instr[5:0]==JR)? 1'b0 : 1'b1;
            // HALT signal
            halt     = 1'b1;
         end // case: SPECIAL
