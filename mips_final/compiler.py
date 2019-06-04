@@ -62,9 +62,9 @@ if __name__ == '__main__':
 			i=i-1
 			continue 
 
-		so = re.search(r'\s*([^\s:]*)\s+([^;\n]*)',line)
+		so = re.search(r'\s*([^\s:;]*)\s+([^;\n]*)',line)
 		if so.group().strip() == '': #buscando linea de label
-			so = re.search(r'([^:;]*):',line)
+			so = re.search(r'([^:]*):+',line)
 			if so.group() != None:
 				#labels[so.group(1).strip().lower()] = i
 				i=i-1
