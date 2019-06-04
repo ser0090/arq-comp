@@ -3,6 +3,18 @@ from . import reg_file
 from . import r_type
 from . import two_args_parser
 
+def num_or_label(value,labels):
+	add=0
+	if value.isnumeric():
+		add = value
+	elif value[0:2] == '0x':
+		add = value
+	elif value in labels:
+		add = str(labels[value]) 
+	else:
+		print('JUMP ADDRESS ERROR')
+		exit(1)
+	return add
 
 def to_26_bit_str(value):
 	value_aux = 0 
@@ -19,13 +31,14 @@ def to_26_bit_str(value):
 	return string[::-1] #reverse string
 
 
-def j(params):
+def j(params,labels):
 	return(opcode['j']+
-		  to_26_bit_str(params.strip()))
+		  to_26_bit_str(num_or_label(params.strip(),labels)))
 
-def jal(params):
+def jal(params,labels):
 	return(opcode['jal']+
-		  to_26_bit_str(params.strip()))
+		  to_26_bit_str(num_or_label(params.strip(),labels)))
+
 
 def jr(params):
 	rs = params.strip()

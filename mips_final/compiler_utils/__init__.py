@@ -3,47 +3,48 @@ from .compiler_funcs import i_type
 from .compiler_funcs import j_type
 
 
-instruction = {'nop':(lambda arg: '0'*32)};
+instruction = {'nop':(lambda args, labels, n_line: '0'*32)};
 
-instruction['sll']  = r_type.sll
-instruction['srl']  = r_type.srl
-instruction['sra']  = r_type.sra
-instruction['sllv'] = r_type.sllv
-instruction['srlv'] = r_type.srlv
-instruction['srav'] = r_type.srav
-instruction['addu'] = r_type.addu
-instruction['subu'] = r_type.subu
-instruction['and']  = r_type.and_f
-instruction['or']   = r_type.or_f
-instruction['xor']  = r_type.xor
-instruction['nor']  = r_type.nor
-instruction['slt']  = r_type.slt
+instruction['sll']  = lambda args, labels, n_line: r_type.sll(args)
+instruction['srl']  = lambda args, labels, n_line: r_type.srl(args)
+instruction['sra']  = lambda args, labels, n_line: r_type.sra(args)
+instruction['sllv'] = lambda args, labels, n_line: r_type.sllv(args)
+instruction['srlv'] = lambda args, labels, n_line: r_type.srlv(args)
+instruction['srav'] = lambda args, labels, n_line: r_type.srav(args)
+instruction['addu'] = lambda args, labels, n_line: r_type.addu(args)
+instruction['subu'] = lambda args, labels, n_line: r_type.subu(args)
+instruction['and']  = lambda args, labels, n_line: r_type.and_f(args)
+instruction['or']   = lambda args, labels, n_line: r_type.or_f(args)
+instruction['xor']  = lambda args, labels, n_line: r_type.xor(args)
+instruction['nor']  = lambda args, labels, n_line: r_type.nor(args)
+instruction['slt']  = lambda args, labels, n_line: r_type.slt(args)
 
-instruction['addi'] = i_type.addi
-instruction['slti'] = i_type.slti
-instruction['andi'] = i_type.andi
-instruction['ori']  = i_type.ori
-instruction['xori'] = i_type.xori
-instruction['lui']  = i_type.lui
+instruction['addi'] = lambda args, labels, n_line: i_type.addi(args)
+instruction['slti'] = lambda args, labels, n_line: i_type.slti(args)
+instruction['andi'] = lambda args, labels, n_line: i_type.andi(args)
+instruction['ori']  = lambda args, labels, n_line: i_type.ori(args)
+instruction['xori'] = lambda args, labels, n_line: i_type.xori(args)
+instruction['lui']  = lambda args, labels, n_line: i_type.lui(args)
 
-instruction['lb']   = i_type.lb
-instruction['lh']   = i_type.lh
-instruction['lw']   = i_type.lw
-instruction['lbu']  = i_type.lbu
-instruction['lhu']  = i_type.lhu
-instruction['lwu']  = i_type.lwu
-instruction['sb']   = i_type.sb
-instruction['sh']   = i_type.sh
-instruction['sw']   = i_type.sw
+instruction['lb']   = lambda args, labels, n_line: i_type.lb(args)
+instruction['lh']   = lambda args, labels, n_line: i_type.lh(args)
+instruction['lw']   = lambda args, labels, n_line: i_type.lw(args)
+instruction['lbu']  = lambda args, labels, n_line: i_type.lbu(args)
+instruction['lhu']  = lambda args, labels, n_line: i_type.lhu(args)
+instruction['lwu']  = lambda args, labels, n_line: i_type.lwu(args)
+instruction['sb']   = lambda args, labels, n_line: i_type.sb(args)
+instruction['sh']   = lambda args, labels, n_line: i_type.sh(args)
+instruction['sw']   = lambda args, labels, n_line: i_type.sw(args)
 
-instruction['beq']  = i_type.beq
-instruction['bne']  = i_type.bne
+instruction['beq']  = lambda args, labels, n_line: i_type.beq(args)
+instruction['bne']  = lambda args, labels, n_line: i_type.bne(args)
 
-instruction['j']    = j_type.j
-instruction['jal']  = j_type.jal
-instruction['jr']   = j_type.jr
-instruction['jalr'] = j_type.jalr
-instruction['halt'] = j_type.halt
+instruction['j']    = lambda args, labels, n_line: j_type.j(args,labels)
+instruction['jal']  = lambda args, labels, n_line: j_type.jal(args,labels)
+instruction['jr']   = lambda args, labels, n_line: j_type.jr(args)
+instruction['jalr'] = lambda args, labels, n_line: j_type.jalr(args)
+
+instruction['halt'] = lambda args, labels, n_line: j_type.halt(args)
 
 
 
