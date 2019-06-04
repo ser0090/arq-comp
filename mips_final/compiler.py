@@ -63,15 +63,16 @@ if __name__ == '__main__':
 			continue 
 
 		so = re.search(r'\s*([^\s:;]*)\s+([^;\n]*)',line)
-		if so.group().strip() == '': #buscando linea de label
+		#if so.group().strip() == '': #buscando linea de label
+		if so is None or so.group().strip() == '': #buscando linea de label
 			so = re.search(r'([^:]*):+',line)
-			if so.group() != None:
+			if so != None:
 				#labels[so.group(1).strip().lower()] = i
 				i=i-1
 				continue;
 			else: #por descarte puede ser una inst de halt o nop
 				func = instruction[line.strip().lower()]
-				inst = func('0')
+				inst = func('0',labels,i)
 
 		else:
 			print(so.group().strip())
