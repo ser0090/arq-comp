@@ -26,10 +26,13 @@ module Forwarding_Unit#
   );
 
    /*parametros definiedos tambine en Execurtion module */
-   localparam FROM_ID_EX  = 2'b00;
-   localparam FROM_EX_MEM = 2'b01;
-   localparam FROM_MEM_WB = 2'b10;
-
+   //localparam FROM_ID_EX  = 2'b00;
+   //localparam FROM_EX_MEM = 2'b01;
+   //localparam FROM_MEM_WB = 2'b10;
+   localparam FROM_ID_EX     = `FROM_ID_EX ;
+   localparam FROM_EX_MEM    = `FROM_EX_MEM;
+   localparam FROM_MEM_WB    = `FROM_MEM_WB;
+   
    reg [1:0]          mux_a;
    reg [1:0]          mux_b;
 
@@ -44,7 +47,7 @@ module Forwarding_Unit#
 
       else if(i_mem_wb_wr_en &&
               i_mem_wb_rd != 0 &&
-              i_ex_mem_rd == i_id_ex_rs) mux_a =FROM_MEM_WB;
+              i_mem_wb_rd == i_id_ex_rs) mux_a =FROM_MEM_WB;
       else
         mux_a = FROM_ID_EX;
 
@@ -55,7 +58,7 @@ module Forwarding_Unit#
 
       else if(i_mem_wb_wr_en &&
               i_mem_wb_rd != 0 &&
-              i_ex_mem_rd == i_id_ex_rt) mux_b =FROM_MEM_WB;
+              i_mem_wb_rd == i_id_ex_rt) mux_b =FROM_MEM_WB;
       else
          mux_b = FROM_ID_EX;
    end //always

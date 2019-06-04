@@ -30,7 +30,7 @@ if __name__ == '__main__':
             except CalledProcessError:
                 window.Element('_TEST_').Update('WRONG BIN PATH')
             
-        elif button == 'Cancel' | button == 'Exit':
+        elif button == 'Cancel' or button == 'Exit':
             window.Close()
             quit()
     print(values)
