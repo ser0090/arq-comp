@@ -30,7 +30,7 @@
 #define F_READ_PC         (u32)(0b00<<16)
 #define F_READ_PC_LATCH   (u32)(0b01<<16)
 #define F_READ_INST_LATCH (u32)(0b10<<16)
-#define F_READ_CYCLES     (u32)(0b10<<16)
+#define F_READ_CYCLES     (u32)(0b11<<16)
 
 
 typedef struct {

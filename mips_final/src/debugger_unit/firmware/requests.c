@@ -77,7 +77,7 @@ void mem_data_req(XUartLite *module){
 	uart_blok_recv(module,(u8*)&count,sizeof(u16));
 	uart_blok_send(module,&reply,1); //send header
 	for (int i=0 ; i<count; i++){
-		get_mem_data((addr+i*4),&buf);
+		get_mem_data((addr+i),&buf);
 		uart_blok_send(module,(u8*)&buf,sizeof(u32));
 	}
 }
