@@ -2,6 +2,7 @@ from . import opcode
 from . import reg_file
 from . import three_args_parser
 from . import two_args_parser
+from . import num_or_label
 import re
 
 def to_16_bit_str(value):
@@ -186,25 +187,33 @@ def sw(params):
 		  to_16_bit_str(inmediate))
 
 
-def beq(params):
+def beq(params,labels,n):
 	params = three_args_parser(params)
 	rs = params.group(1).strip()
 	rt = params.group(2).strip()
 	inmediate = params.group(3).strip()	
+	offset = num_or_label(inmediate,labels)
+	offset = int(offset[2:],16) if offset[0:2] == '0x' else int(offset)
+	if inmediate in labels:
+		offset = offset - n - 1
 	return(opcode['beq']+
 		  reg_file[rs]+
 		  reg_file[rt]+
-		  to_16_bit_str(inmediate))
+		  to_16_bit_str(str(offset)))
 
-def bne(params):
+def bne(params,labels,n):
 	params = three_args_parser(params)
 	rs = params.group(1).strip()
 	rt = params.group(2).strip()
 	inmediate = params.group(3).strip()	
+	offset = num_or_label(inmediate,labels)
+	offset = int(offset[2:],16) if offset[0:2] == '0x' else int(offset)
+	if inmediate in labels:
+		offset = offset - n - 1
 	return(opcode['bne']+
 		  reg_file[rs]+
 		  reg_file[rt]+
-		  to_16_bit_str(inmediate))
+		  to_16_bit_str(str(offset)))
 
 
 

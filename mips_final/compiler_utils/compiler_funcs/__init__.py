@@ -7,6 +7,18 @@ def three_args_parser(strg):
 def two_args_parser(strg):
 	return re.search(r'(.*),(.*)',strg)
 
+def num_or_label(value,labels):
+	add=0
+	if value.isnumeric():
+		add = value
+	elif value[0:2] == '0x':
+		add = value
+	elif value in labels:
+		add = str(labels[value]) 
+	else:
+		print('JUMP ADDRESS ERROR')
+		exit(1)
+	return add
 
 
 
@@ -34,12 +46,6 @@ opcode['jal']     = '000011'
 opcode['jr']      = '000000'
 opcode['jalr']    = '000000'
 opcode['halt']    = '101111'
-
-
-
-
-
-
 
 
 

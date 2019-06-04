@@ -2,19 +2,7 @@ from . import opcode
 from . import reg_file
 from . import r_type
 from . import two_args_parser
-
-def num_or_label(value,labels):
-	add=0
-	if value.isnumeric():
-		add = value
-	elif value[0:2] == '0x':
-		add = value
-	elif value in labels:
-		add = str(labels[value]) 
-	else:
-		print('JUMP ADDRESS ERROR')
-		exit(1)
-	return add
+from . import num_or_label
 
 def to_26_bit_str(value):
 	value_aux = 0 

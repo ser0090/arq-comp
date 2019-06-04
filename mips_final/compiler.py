@@ -26,27 +26,28 @@ inst = 0
 i=-1
 func = None
 while(True):
-	i=i+4
+	i=i+1
 	line = in_file.readline()
 
-	if line is None or \
-	   line is "" or \
-	   line is "\n": break
+	if line is None:
+		break
+	if not line.strip():
+		i=i-1
+		continue 
 
-
-	so = re.search(r'\s*([^\s:]*) ([^;\n]*)',line)
+	so = re.search(r'\s*([^\s:]*)\s+([^;\n]*)',line)
 	if so.group().strip() == '': #buscando linea de label
 		so = re.search(r'([^:]*):',line)
 		if so.group() != None:
 			labels[so.group(1).strip().lower()] = i
-			i=i-4
+			i=i-1
 			continue;
 		else: #por descarte puede ser una inst de halt o nop
 			func = instruction[line.strip().lower()]
 			inst = func('0')
 
 	else:
-		print(so.group())
+		print(so.group().strip())
 		func = instruction[so.group(1).strip().lower()]
 		inst = func(so.group(2),labels,i)
 

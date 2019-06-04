@@ -36,8 +36,8 @@ instruction['sb']   = lambda args, labels, n_line: i_type.sb(args)
 instruction['sh']   = lambda args, labels, n_line: i_type.sh(args)
 instruction['sw']   = lambda args, labels, n_line: i_type.sw(args)
 
-instruction['beq']  = lambda args, labels, n_line: i_type.beq(args)
-instruction['bne']  = lambda args, labels, n_line: i_type.bne(args)
+instruction['beq']  = lambda args, labels, n_line: i_type.beq(args,labels,n_line)
+instruction['bne']  = lambda args, labels, n_line: i_type.bne(args,labels,n_line)
 
 instruction['j']    = lambda args, labels, n_line: j_type.j(args,labels)
 instruction['jal']  = lambda args, labels, n_line: j_type.jal(args,labels)
@@ -45,6 +45,8 @@ instruction['jr']   = lambda args, labels, n_line: j_type.jr(args)
 instruction['jalr'] = lambda args, labels, n_line: j_type.jalr(args)
 
 instruction['halt'] = lambda args, labels, n_line: j_type.halt(args)
+instruction['end']  = lambda args, labels, n_line: exit(0)
+
 
 
 
