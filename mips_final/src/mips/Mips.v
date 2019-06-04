@@ -10,7 +10,7 @@
 
 /** ####################### instrucction file init ########################## **/
 //`define INSTRUCTION_FILE "/home/ssulca/arq-comp/mips_final/bin_str_file" //Comentar
-`define INSTR_FILE "/home/ssulca/arq-comp/mips_final/out.hex" //Comentar
+//`define INSTR_FILE "/home/ssulca/arq-comp/mips_final/out.hex" //Comentar
 //`define INSTRUCTION_FILE "/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file" //Comentar
 //`define INSTRUCTION_FILE "/home/martin/Documentos/arq-comp/mips_final/out.bin" //Comentar
 
@@ -145,8 +145,8 @@ module Mips #
     ##################################################################**/
    Fetch_module #
      (
-      .FILE_DEPTH (`FILE_DEPTH),
-      .INIT_FILE  (`INSTR_FILE) //Comentar
+      //.FILE_DEPTH (`FILE_DEPTH),
+      //.INIT_FILE  (`INSTR_FILE) //Comentar
       )
    inst_Fetch_module
      (

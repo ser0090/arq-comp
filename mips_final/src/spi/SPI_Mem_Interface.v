@@ -8,7 +8,7 @@ module SPI_Mem_Interface#(
 	) /* this is automatically generated */
 	(
 		output reg [NB_BITS-1:0] o_SPI,   //conectar al SPI_Slave data_in
-		output [RAM_DEPTH-1:0]	 o_addr,  //conectar al DataMem addr_in_2
+		output [RAM_DEPTH-3:0]	 o_addr,  //conectar al DataMem addr_in_2
 
 		input  [NB_LATCH-1:0]  i_latch, //conectal latch (probablemente hay que concatenar regs)
 		input  [NB_BITS-1:0]   i_mem_data,
@@ -31,7 +31,7 @@ module SPI_Mem_Interface#(
 	 localparam GET_ALU_LATCH = 2'b10;
 	 localparam GET_RD        = 2'b11;
 
-	assign o_addr = i_SPI[RAM_DEPTH-1:0];
+	assign o_addr = i_SPI[RAM_DEPTH-3:0];
 
 	always @(*) begin
 		case(i_SPI[17:16])

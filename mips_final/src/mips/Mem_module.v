@@ -48,7 +48,7 @@ module Mem_module #
 
    /* ### cables para debug unit ### */
 
-   wire [NB_DEPTH-1:0] debug_addr;
+   wire [NB_DEPTH-3:0] debug_addr;
    wire [NB_BITS-1:0]  mem_to_debug;
 
    /* ###### OUTPUTS ###### */
@@ -73,7 +73,7 @@ module Mem_module #
       end // else: !if(i_rst)
    end // always @ (posedge i_clk)
 
-   Data_Memory #
+   Data_Memory_v2 #
      (
       .NB_DEPTH       (NB_DEPTH),
       .NB_COL         (NB_COL),
@@ -83,7 +83,7 @@ module Mem_module #
      (
       .o_data         (mem_out),
       .o_data_debug   (mem_to_debug),  //conectar bus para sacar los datos, esperar un clico mas
-      .i_addr         ({2'b00, i_addr[9:2]}),
+      .i_addr         (i_addr[9:0]),
       .i_data         (i_data),
       .i_write_enable (i_write_ctl),
       .i_read_enable  (i_read_ctl),
