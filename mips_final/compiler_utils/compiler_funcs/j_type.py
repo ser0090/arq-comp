@@ -43,8 +43,8 @@ def jalr(params):
 		rs = params.strip()
 		rd = '$31'
 	else: 
-		rs = pars.group(1).strip()
-		rd = pars.group(2).strip()
+		rd = pars.group(1).strip()
+		rs = pars.group(2).strip()
 	return(opcode['jalr']+
 		   reg_file[rs] +
 		   reg_file[rt] +
