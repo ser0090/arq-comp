@@ -103,7 +103,7 @@ module Execution_module#
             EX_MEM[NB_WB-1:0]                                     <= i_wb_ctl;
             EX_MEM[NB_MEM+NB_WB-1:NB_WB]                          <= i_mem_ctl;
             EX_MEM[NB_MEM+NB_WB+NB_BITS-1:NB_MEM+NB_WB]           <= alu_out;
-            EX_MEM[2*NB_BITS+NB_MEM+NB_WB-1:NB_MEM+NB_WB+NB_BITS] <= i_rt_reg;
+            EX_MEM[2*NB_BITS+NB_MEM+NB_WB-1:NB_MEM+NB_WB+NB_BITS] <= dato_b;//i_rt_reg;
             EX_MEM[NB_LATCH-1:2*NB_BITS+NB_MEM+NB_WB]             <= reg_dst;
          end
       end // else: !if(i_rst)
