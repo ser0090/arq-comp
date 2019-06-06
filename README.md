@@ -15,6 +15,13 @@ para propositos de desarrollo y testing .
 
 ### Prerequisites
 
+#### MIPS
+```
+tkinter
+pyserial
+pysimplegui
+vivado 2018.3+
+```
 ### Installing
 
 
