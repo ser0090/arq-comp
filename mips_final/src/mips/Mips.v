@@ -9,7 +9,7 @@
 //`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 /** ####################### instrucction file init ########################## **/
-`define INSTRUCTION_FILE "/home/ssulca/arq-comp/mips_final/include/mem_instr.txt" //Comentar
+`define INSTRUCTION_FILE "/home/sergio/arq-comp/mips_final/include/mem_instr.txt" //Comentar
 //`define INSTR_FILE "/home/ssulca/arq-comp/mips_final/out.hex" //Comentar
 //`define INSTRUCTION_FILE "/home/tincho/Documentos/ADC/arq-comp/mips_final/bin_str_file" //Comentar
 //`define INSTRUCTION_FILE "/home/martin/Documentos/arq-comp/mips_final/out.bin" //Comentar
