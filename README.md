@@ -1,5 +1,7 @@
 # Aquitectura de Computadoras-Projects
 
+[![Build Status](https://travis-ci.org/nickhammond/ansible-logrotate.svg?branch=master)](https://travis-ci.org/nickhammond/ansible-logrotate)
+
 * Version 1.1
 
 ## 2018-2019
