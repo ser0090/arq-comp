@@ -1,4 +1,3 @@
-
 `timescale 1ns/1ps
 
 ///  SER0090
@@ -7,7 +6,7 @@
 
 ///  IOTINCHO
 //`include "/home/tincho/Documentos/ADC/arq-comp/mips_final/include/include.v" //Comentar
-`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
+//`include "/home/martin/Documentos/arq-comp/mips_final/include/include.v" //Comentar
 
 module Data_Memory_v2 #
   (
