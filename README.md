@@ -19,6 +19,18 @@ para propositos de desarrollo y testing .
 ## MIPS final
 Este trabajo fue presentado al Profesor Pereyra, reemplazate de Rodriguez en 
 Arquitectura de computadoras
+
+*MIPS schematic.*
+<p style="text-align: center;">
+<img src=figures/pipelinig-02.png width=100%>
+</p>
+
+*SPI interface schematic.*
+<p style="text-align: center;">
+<img src=figures/pipelinig-03.png width=100%>
+</p>
+
+
 ### Prerequisitos
  * `Vivado-2018.3+` 
  * `Python3`
