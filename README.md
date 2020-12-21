@@ -64,7 +64,7 @@ Arquitectura de computadoras
  * `SDK-2018.3+` 
 ## Authors
 * **Martin Barrera** - *Initial work* - [iotincho](https://github.com/iotincho)
-* **Sergio Sulca** - *Initial work* - [ser0090](https://github.com/ser0090)
+* **Sergio Sulca** - *Initial work* - [ssulca](https://github.com/ssulca)
 ## License
 **GNU General Public License v3.0**
 ## Notes
